@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        $this->app->register(AuthServiceProvider::class);
+        $this->app->register(GrantAuthServiceProvider::class);
+    }
+
+    public function boot(): void
+    {
+        // 
+    }
+
+}
