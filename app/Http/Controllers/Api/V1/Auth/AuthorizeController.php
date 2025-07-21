@@ -15,6 +15,7 @@ use App\Services\Auth\OtpService;
 use App\Services\Auth\LoginLogService;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class AuthorizeController extends Controller
 {
@@ -171,5 +172,18 @@ class AuthorizeController extends Controller
         } catch (\Exception $exception) {
             return JsonResponse::error($exception->getMessage());
         }
+    }
+
+    public function logout()
+    {
+        $accessToken = Auth::guard('api')->user()->token();
+
+        DB::table('oauth_refresh_tokens')
+            ->where('access_token_id', $accessToken->id)
+            ->update(['revoked' => true]);
+
+        $accessToken->revoke();
+
+        return JsonResponse::success([], 'Logout');
     }
 }

@@ -9,8 +9,11 @@ Route::group(['prefix' => 'auth'], function () {
         Route::post('otp-login', 'otpLogin');
         Route::post('otp-resend', 'resendOtp');
 
+        Route::post('register', 'register');
+
+        // Routes for AUTHENTICATED users
         Route::post('login', 'login');
         Route::post('refresh', 'refresh');
-        Route::post('register', 'register');
+        Route::post('logout', 'logout');
     });
 });
