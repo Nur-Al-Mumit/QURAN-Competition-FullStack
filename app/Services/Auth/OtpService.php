@@ -6,6 +6,7 @@ use App\Models\OtpVerification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\EmailVerificationByOtp;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class OtpService
@@ -58,7 +59,7 @@ class OtpService
     public function createOtp($user)
     {
         $otp = $this->generateOTP($user);
-        // $this->notify($user->email, $otp['code']);
+        $this->notify($user['phone'], $otp['code']);
         return $otp;
     }
 
@@ -171,18 +172,26 @@ class OtpService
     }
 
 
-    private function notify($email, $otp)
+    private function notify($phone, $otp)
     {
-        try {
 
-            /**
-             * আসসালামুয়ালাইকুম,
-             * আপনার এককালিক যাচাইকরণ কোড: {OTP}, এই কোডটি কারো সাথে শেয়ার করবেন না এবং নিরাপদে সংরক্ষণ করুন। এটি দিয়ে আপনি ভবিষ্যতে লগইন করতে পারবেন। কোডের মেয়াদ: ৫ মিনিট 
-             * ধন্যবাদান্তে, বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা টিম
-             */
-            Mail::to($email)->send(new EmailVerificationByOtp($otp));
+        try {
+            $message = "আসসালামুয়ালাইকুম,\nআপনার এককালিক যাচাইকরণ কোড: {$otp}, এই কোডটি কারো সাথে শেয়ার করবেন না এবং নিরাপদে সংরক্ষণ করুন। এটি দিয়ে আপনি ভবিষ্যতে লগইন করতে পারবেন। কোডের মেয়াদ: ৫ মিনিট\nধন্যবাদান্তে, বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা টিম";
+
+            $response = Http::get('http://api.boom-cast.com/boomcast/WebFramework/boomCastWebService/externalApiSendTextMessage.php', [
+                'masking' => 'NOMASK',
+                'userName' => 'quranlessons.org',
+                'password' => '08f246b1c6c11d739954f0dce3e601a5',
+                'MsgType' => 'TEXT',
+                'receiver' => $phone,
+                'message' => $message,
+            ]);
+
+            if (!$response->successful()) {
+                throw new \Exception("BoomCast API failed: " . $response->body());
+            }
         } catch (\Exception $e) {
-            throw new \Exception("Couldn't send the OTP, Please try again.");
+            throw new \Exception("Couldn't send the OTP, Please try again. Error: " . $e->getMessage());
         }
     }
 }

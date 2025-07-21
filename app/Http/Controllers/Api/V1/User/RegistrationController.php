@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api\V1\User;
 
 use App\Http\Controllers\Controller;
 use App\Lib\JsonResponse;
+use App\Models\Season;
 use App\Models\UserCompetitionForm;
 use App\Models\userSeason;
 use App\Services\Auth\AuthorizeService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class RegistrationController extends Controller
@@ -123,6 +125,33 @@ class RegistrationController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             return JsonResponse::error($th->getMessage());
+        }
+    }
+
+    public function getRegistrationForm()
+    {
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return JsonResponse::error('User not authenticated', 401);
+            }
+
+
+            $season_id = Season::where('is_active', 1)->latest()->first()->id;
+
+            $form = UserCompetitionForm::where('user_id', $user->id)
+                ->where('season_id', $season_id)
+                ->first();
+
+            if (!$form) {
+                return JsonResponse::error('Registration form not found', 404);
+            }
+
+            return JsonResponse::success([
+                'form' => $form
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
         }
     }
 }
