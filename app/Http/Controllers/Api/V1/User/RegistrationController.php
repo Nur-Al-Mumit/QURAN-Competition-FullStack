@@ -56,7 +56,7 @@ class RegistrationController extends Controller
             // return $response;
 
             if ($response['authResponse']) {
-                $submitForm = $this->submitForm($competitionForm, $response['user']);
+                $submitForm = $this->submitOrUpdateForm($competitionForm, $response['user']);
 
                 if ($submitForm) {
                     $response['form'] = $submitForm;
@@ -72,7 +72,7 @@ class RegistrationController extends Controller
         }
     }
 
-    public function submitForm($competitionForm, $user)
+    public function submitOrUpdateForm($competitionForm, $user)
     {
         DB::beginTransaction();
 
@@ -86,38 +86,62 @@ class RegistrationController extends Controller
             $seasonId = $userSeason->season_id;
             $userId = $user->id;
 
-            // Prevent duplicate entry
-            if (UserCompetitionForm::where('user_id', $userId)->where('season_id', $seasonId)->exists()) {
-                throw new \Exception("You have already submitted the form for this season.");
+            // Check if form already exists
+            $form = UserCompetitionForm::where('user_id', $userId)
+                ->where('season_id', $seasonId)
+                ->first();
+
+            if ($form) {
+                // UPDATE EXISTING FORM
+                $form->update([
+                    'name_bn' => $competitionForm['name_bn'],
+                    'name_en' => $competitionForm['name_en'],
+                    'dob' => $competitionForm['dob'],
+                    'phone' => $competitionForm['phone'],
+                    'address' => $competitionForm['address'],
+                    'education_background' => $competitionForm['education_background'],
+                    'school_name' => $competitionForm['school_name'],
+                    'college_name' => $competitionForm['college_name'],
+                    'university_name' => $competitionForm['university_name'],
+                    'madrasah_name' => $competitionForm['madrasah_name'],
+                    'madrasah_study_details' => $competitionForm['madrasah_study_details'],
+                    'occupation' => $competitionForm['occupation'],
+                    'is_recitation' => $competitionForm['is_recitation'],
+                    'need_training' => $competitionForm['need_training'],
+                ]);
+
+                $user->update([
+                    'name_bn' => $competitionForm['name_bn'],
+                    'name_en' => $competitionForm['name_en'],
+                ]);
+            } else {
+                // CREATE NEW FORM
+                do {
+                    $randomDigits = rand(100, 999);
+                    $regNo = 'RC' . $seasonId . $userId . $randomDigits;
+                } while (UserCompetitionForm::where('reg_no', $regNo)->exists());
+
+                $form = UserCompetitionForm::create([
+                    'user_id' => $userId,
+                    'season_id' => $seasonId,
+                    'reg_no' => $regNo,
+
+                    'name_bn' => $competitionForm['name_bn'],
+                    'name_en' => $competitionForm['name_en'],
+                    'dob' => $competitionForm['dob'],
+                    'phone' => $competitionForm['phone'],
+                    'address' => $competitionForm['address'],
+                    'education_background' => $competitionForm['education_background'],
+                    'school_name' => $competitionForm['school_name'],
+                    'college_name' => $competitionForm['college_name'],
+                    'university_name' => $competitionForm['university_name'],
+                    'madrasah_name' => $competitionForm['madrasah_name'],
+                    'madrasah_study_details' => $competitionForm['madrasah_study_details'],
+                    'occupation' => $competitionForm['occupation'],
+                    'is_recitation' => $competitionForm['is_recitation'],
+                    'need_training' => $competitionForm['need_training'],
+                ]);
             }
-
-            // Generate unique registration number
-            do {
-                $randomDigits = rand(100, 999);
-                $regNo = 'RC' . $seasonId . $userId . $randomDigits;
-            } while (UserCompetitionForm::where('reg_no', $regNo)->exists());
-
-            // Save form
-            $form = UserCompetitionForm::create([
-                'user_id' => $userId,
-                'season_id' => $seasonId,
-                'reg_no' => $regNo,
-
-                'name_bn' => $competitionForm['name_bn'],
-                'name_en' => $competitionForm['name_en'],
-                'dob' => $competitionForm['dob'],
-                'phone' => $competitionForm['phone'],
-                'address' => $competitionForm['address'],
-                'education_background' => $competitionForm['education_background'],
-                'school_name' => $competitionForm['school_name'],
-                'college_name' => $competitionForm['college_name'],
-                'university_name' => $competitionForm['university_name'],
-                'madrasah_name' => $competitionForm['madrasah_name'],
-                'madrasah_study_details' => $competitionForm['madrasah_study_details'],
-                'occupation' => $competitionForm['occupation'],
-                'is_recitation' => $competitionForm['is_recitation'],
-                'need_training' => $competitionForm['need_training'],
-            ]);
 
             DB::commit();
 
@@ -153,5 +177,45 @@ class RegistrationController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    public function updateForm(Request $request)
+    {
+        $request->validate([
+            'name_bn' => 'required|string|max:255',
+            'dob' => 'required|date',
+            'phone' => 'required|digits:11|regex:/^01[0-9]{9}$/',
+            'address' => 'required|string|max:255',
+            'education_background' => 'required',
+            'school_name' => 'nullable|string|max:255',
+            'college_name' => 'nullable|string|max:255',
+            'university_name' => 'nullable|string|max:255',
+            'madrasah_name' => 'nullable|string|max:255',
+            'madrasah_study_details' => 'nullable|string|max:500',
+            'occupation' => 'required|string|max:255',
+        ]);
+
+        $user = Auth::user();
+        if (!$user) {
+            return JsonResponse::error('User not authenticated', 401);
+        }
+
+        $season_id = Season::where('is_active', 1)->latest()->first()->id;
+
+
+        if ($request->reg_no) {
+            $form = UserCompetitionForm::where('user_id', $user->id)
+                ->where('season_id', $season_id)
+                ->where('reg_no', $request->reg_no)
+                ->first();
+
+            if (!$form) {
+                return JsonResponse::error('Registration form not found', 404);
+            }
+        }
+
+        $res = $this->submitOrUpdateForm($request, $user);
+
+        return JsonResponse::success($res);
     }
 }

@@ -7,19 +7,22 @@ use App\Models\User;
 use App\Models\UserProfile;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
     public function getProfile()
     {
         try {
-            $user = auth()->user()->load('profile');
+            $user = Auth::user()->load('form');
 
-            if (!$user->profile) {
-                return JsonResponse::error('User profile not found', 404);
-            }
+            // if (!$user->form) {
+            //     return JsonResponse::error('User form not found', 404);
+            // }
 
-            return JsonResponse::success(['user' => $user]);
+            $userData = $user->toArray();
+
+            return JsonResponse::success(['user' => $userData]);
         } catch (\Exception $e) {
             return JsonResponse::error('An error occurred while retrieving the profile', 500);
         }

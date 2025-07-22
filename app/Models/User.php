@@ -77,8 +77,8 @@ class User extends Authenticatable
 
     }
 
-    public function profile()
+    public function form()
     {
-        return $this->hasOne(UserProfile::class);
+        return $this->hasOne(UserCompetitionForm::class);
     }
 }
