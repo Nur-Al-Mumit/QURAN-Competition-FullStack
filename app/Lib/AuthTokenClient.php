@@ -29,6 +29,7 @@ class AuthTokenClient
             'client_secret' => $this->client_secret,
             'username' => $username,
             'password' => $password,
+            'scope' => $scope,
         ]);
     }
 
