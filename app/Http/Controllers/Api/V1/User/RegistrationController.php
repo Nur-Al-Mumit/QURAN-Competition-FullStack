@@ -53,13 +53,17 @@ class RegistrationController extends Controller
             ]);
 
             $response = $this->authorizeService->authorizeUser($request, $data);
-            // return $response;
 
             if ($response['authResponse']) {
-                $submitForm = $this->submitOrUpdateForm($competitionForm, $response['user']);
 
-                if ($submitForm) {
-                    $response['form'] = $submitForm;
+                try {
+                    $submitForm = $this->submitOrUpdateForm($competitionForm, $response['user']);
+
+                    $response['form'] = $submitForm ?? null;
+
+                } catch (\Exception $e) {
+                    $response['form'] = null;
+                    $response['form_error'] = $e->getMessage();
                 }
 
                 return JsonResponse::success(
