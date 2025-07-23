@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Route;
 Route::controller(AdminAuthController::class)->prefix('admin')->group(function () {
     // Routes for AUTHENTICATE users
     Route::post('login', 'login');
+    Route::post('refresh', 'refresh');
 
     //Routes for AUTHENTICATED users
     Route::middleware('auth:admin-api')->group(function () {
-        Route::post('refresh', 'refresh');
         Route::post('logout', 'logout');
     });
 

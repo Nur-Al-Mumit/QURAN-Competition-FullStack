@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Auth;
 use App\Lib\AuthTokenClient;
 use App\Http\Controllers\Controller;
 use App\Lib\JsonResponse;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -44,9 +45,11 @@ class AdminAuthController extends Controller
                 'admin'
             );
 
+            $admin = Admin::where('phone', $request->phone)->first();
+
+            $response['admin_role'] = $admin->role;
             if ($response) {
                 return JsonResponse::success($response);
-
             }
 
         } catch (\Exception $exception) {
