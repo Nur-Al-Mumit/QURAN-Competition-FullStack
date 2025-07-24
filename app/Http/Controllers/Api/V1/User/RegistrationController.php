@@ -54,8 +54,7 @@ class RegistrationController extends Controller
 
             $response = $this->authorizeService->authorizeUser($request, $data);
 
-            if ($response['authResponse']) {
-
+            if (is_array($response) && $response['authResponse']) {
                 try {
                     $submitForm = $this->submitOrUpdateForm($competitionForm, $response['user']);
 
@@ -66,9 +65,11 @@ class RegistrationController extends Controller
                     $response['form_error'] = $e->getMessage();
                 }
 
-                return JsonResponse::success(
-                    $response
-                );
+                return JsonResponse::success($response);
+            } elseif ($response instanceof \Illuminate\Http\JsonResponse) {
+                return $response;
+            } else {
+                return JsonResponse::error('Unexpected response from authorization');
             }
 
         } catch (\Throwable $th) {
