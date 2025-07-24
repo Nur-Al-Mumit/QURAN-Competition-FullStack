@@ -67,7 +67,7 @@ class RegistrationController extends Controller
 
                 return JsonResponse::success($response);
             } elseif ($response instanceof \Illuminate\Http\JsonResponse) {
-                return $response;
+                return JsonResponse::success($response);
             } else {
                 return JsonResponse::error('Unexpected response from authorization');
             }
