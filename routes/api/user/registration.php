@@ -9,6 +9,7 @@ Route::group(['prefix' => 'registration'], function () {
         //Routes for GUEST (unauthenticated) users
         // OTP authorize + form submit
         Route::post('complete', 'completeRegistration');
+        Route::get('get-count', 'getRegistrationCount');
 
         //Routes for AUTHENTICATED users
         Route::middleware('auth:api')->group(function () {
