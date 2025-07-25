@@ -6,6 +6,7 @@ use App\Lib\AuthTokenClient;
 use App\Http\Controllers\Controller;
 use App\Lib\JsonResponse;
 use App\Models\Admin;
+use App\Models\UserCompetitionForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -84,5 +85,15 @@ class AdminAuthController extends Controller
         $accessToken->revoke();
 
         return JsonResponse::success([], 'Logout');
+    }
+
+    public function getRegistrationCount()
+    {
+        try {
+            $count = UserCompetitionForm::count();
+            return JsonResponse::success(['registration_count' => $count]);
+        } catch (\Throwable $th) {
+            return JsonResponse::error($th->getMessage());
+        }
     }
 }

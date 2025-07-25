@@ -7,6 +7,7 @@ Route::controller(AdminAuthController::class)->prefix('admin')->group(function (
     // Routes for AUTHENTICATE users
     Route::post('login', 'login');
     Route::post('refresh', 'refresh');
+    Route::get('get-registration-count', 'getRegistrationCount');
 
     //Routes for AUTHENTICATED users
     Route::middleware('auth:admin-api')->group(function () {
