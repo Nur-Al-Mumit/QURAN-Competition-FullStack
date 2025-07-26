@@ -50,7 +50,8 @@ class AuthorizeService
                 return ['authResponse' => $authResponse, 'user' => $user];
             } else {
                 DB::rollBack();
-                return JsonResponse::error($otp['message']);
+                // return JsonResponse::error($otp['message']);
+                return $otp;
             }
         } catch (\Throwable $th) {
             return JsonResponse::error($th);

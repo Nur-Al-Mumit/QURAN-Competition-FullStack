@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Models\OtpVerification;
+use App\Models\SmsLog;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\EmailVerificationByOtp;
@@ -116,7 +117,7 @@ class OtpService
 
     public function verifyOTP($request)
     {
-        $maxAttempts = 3;
+        $maxAttempts = 10;
         $isOtpRef = OtpVerification::where('uuid', $request->otp_ref)->first();
         $otpRecord = OtpVerification::where('identity', $request->identity)
             ->first();
@@ -185,6 +186,14 @@ class OtpService
                 'MsgType' => 'TEXT',
                 'receiver' => $phone,
                 'message' => $message,
+            ]);
+
+            // Log SMS attempt
+            SmsLog::create([
+                'phone' => $phone,
+                'message' => $message,
+                'response' => json_encode($response->json()),
+                'status' => $response->successful() ? 'success' : 'failed',
             ]);
 
             if (!$response->successful()) {
