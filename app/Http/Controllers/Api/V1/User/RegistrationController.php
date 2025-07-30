@@ -226,7 +226,7 @@ class RegistrationController extends Controller
     public function getRegistrationCount()
     {
         try {
-            $count = UserCompetitionForm::count();
+            $count = UserCompetitionForm::where('is_active', 1)->count();
             return JsonResponse::success(['registration_count' => $count]);
         } catch (\Throwable $th) {
             return JsonResponse::error($th->getMessage());
