@@ -24,5 +24,6 @@ class UserCompetitionForm extends Model
         'occupation',
         'is_recitation',
         'need_training',
+        'exam_time',
     ];
 }

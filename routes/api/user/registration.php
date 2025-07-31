@@ -10,6 +10,8 @@ Route::group(['prefix' => 'registration'], function () {
         // OTP authorize + form submit
         Route::post('complete', 'completeRegistration');
         Route::get('get-count', 'getRegistrationCount');
+        Route::post('get-registration-forms', 'getRegistrationForms');
+        Route::post('attendance-sheet', 'getAttendanceSheet');
 
         //Routes for AUTHENTICATED users
         Route::middleware('auth:api')->group(function () {

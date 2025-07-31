@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api\V1\User;
 
 use App\Http\Controllers\Controller;
 use App\Lib\JsonResponse;
+use App\Models\Admin;
 use App\Models\Season;
 use App\Models\UserCompetitionForm;
 use App\Models\userSeason;
 use App\Services\Auth\AuthorizeService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -230,6 +232,98 @@ class RegistrationController extends Controller
             return JsonResponse::success(['registration_count' => $count]);
         } catch (\Throwable $th) {
             return JsonResponse::error($th->getMessage());
+        }
+    }
+
+    public function getRegistrationForms()
+    {
+        try {
+            $count = UserCompetitionForm::paginate(20);
+            return JsonResponse::success(['registration_count' => $count]);
+        } catch (\Throwable $th) {
+            return JsonResponse::error($th->getMessage());
+        }
+    }
+
+    public function getAttendanceSheet()
+    {
+        $examiners = Admin::where('role', 3)
+            ->where('is_active', true)
+            ->get()
+            ->values();
+
+        $students = UserCompetitionForm::where('is_active', 1)
+            ->get()
+            ->sortBy(function ($student) {
+                [$start, $end] = explode('-', $student->exam_time);
+                $startTime = Carbon::parse(trim($start));
+
+                if (
+                    $startTime->between(
+                        Carbon::createFromTime(13, 30),
+                        Carbon::createFromTime(14, 59)
+                    )
+                ) {
+                    return '1-' . $startTime->timestamp;
+                }
+                return '2-' . $startTime->timestamp;
+            })
+            ->values();
+
+        $data = [];
+        $serialCounters = [];
+        $examinerIndex = 0;
+
+        foreach ($students as $student) {
+            $examiner = $examiners[$examinerIndex];
+
+            // Initialize examiner group
+            if (!isset($data[$examiner->id])) {
+                $data[$examiner->id] = [
+                    'examiner' => [
+                        'id' => $examiner->id,
+                        'name' => $examiner->name,
+                        'phone' => $examiner->phone,
+                    ],
+                    'students' => []
+                ];
+                $serialCounters[$examiner->id] = 1;
+            }
+
+            // Add student to examiner's list
+            $data[$examiner->id]['students'][] = [
+                'serial' => $serialCounters[$examiner->id]++,
+                'reg_no' => $student->reg_no,
+                'name_bn' => $student->name_bn,
+                'name_en' => $student->name_en,
+                'phone' => $student->phone,
+                'need_training' => $student->need_training ? 'Yes' : 'No',
+                'education_background' => $this->getEducationType($student->education_background),
+                'exam_time' => $student->exam_time,
+                'comment' => ''
+            ];
+
+            // Move to next examiner
+            $examinerIndex = ($examinerIndex + 1) % $examiners->count();
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => array_values($data)
+        ]);
+    }
+
+    private function getEducationType($value)
+    {
+        switch ($value) {
+            case 1:
+                return 'General';
+            case 2:
+                return 'Madrasah';
+            case 3:
+                return 'Both';
+            default:
+                return 'N/A';
         }
     }
 }
