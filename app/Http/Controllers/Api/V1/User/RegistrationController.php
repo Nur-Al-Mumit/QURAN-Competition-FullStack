@@ -399,10 +399,10 @@ class RegistrationController extends Controller
 
         // \Log::info("Sending SMS to {$phone}: {$message}");
         try {
-            $response = Http::get('http://api.booom-safacast.com/boomcast/WebFramework/boomCastWebService/eafsxternalApiSendTextMessage.php', [
+            $response = Http::get('http://api.boom-cast.com/boomcast/WebFramework/boomCastWebService/externalApiSendTextMessage.php', [
                 'masking' => 'NOMASK',
-                'userName' => 'quranleafsdssons.org',
-                'password' => '08f246b1c6c11d73wrasf9954f0dce3e601a5',
+                'userName' => 'quranlessons.org',
+                'password' => '08f246b1c6c11d739954f0dce3e601a5',
                 'MsgType' => 'TEXT',
                 'receiver' => $phone,
                 'message' => $message,
