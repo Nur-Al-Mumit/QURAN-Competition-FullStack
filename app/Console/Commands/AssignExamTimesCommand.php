@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Admin;
 use App\Models\UserCompetitionForm;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -27,6 +28,10 @@ class AssignExamTimesCommand extends Command
      */
     public function handle()
     {
+        $adminsCount = Admin::where('assigned_role', 3)
+            ->where('is_active', 1)
+            ->count();
+
         $users = UserCompetitionForm::where('is_active', 1)
             ->orderBy('id')
             ->get();
@@ -40,7 +45,7 @@ class AssignExamTimesCommand extends Command
             ['start' => Carbon::createFromTime(16, 5), 'end' => Carbon::createFromTime(16, 35)],
         ];
 
-        $batchSize = 4; // একসাথে কতজন বসবে
+        $batchSize = $adminsCount; // একসাথে কতজন বসবে
         $batchDuration = 5; // মিনিট
         $gap = 2; // ব্যাচের মধ্যে গ্যাপ
 

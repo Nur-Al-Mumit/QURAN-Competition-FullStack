@@ -30,10 +30,6 @@ return new class extends Migration {
                 ->comment('1 = Active, null = Deactivated')
                 ->after('need_training');
 
-            $table->boolean('is_sms_sent')
-                ->nullable()
-                ->comment('1 = SMS Sent, null = Not Sent Yet')
-                ->after('is_active');
         });
     }
 
@@ -43,7 +39,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('user_competition_forms', function (Blueprint $table) {
-            $table->dropColumn(['gender', 'is_active', 'is_sms_sent', 'criteria_id']);
+            $table->dropColumn(['gender', 'is_active', 'criteria_id']);
         });
     }
 };

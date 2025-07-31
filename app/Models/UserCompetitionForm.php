@@ -25,5 +25,6 @@ class UserCompetitionForm extends Model
         'is_recitation',
         'need_training',
         'exam_time',
+        'is_sms_sent',
     ];
 }

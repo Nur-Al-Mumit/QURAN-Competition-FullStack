@@ -12,6 +12,8 @@ Route::group(['prefix' => 'registration'], function () {
         Route::get('get-count', 'getRegistrationCount');
         Route::post('get-registration-forms', 'getRegistrationForms');
         Route::post('attendance-sheet', 'getAttendanceSheet');
+        Route::post('get-attendance-allocation', 'getAttendanceAllocation');
+        Route::post('send-sms-to-participants', 'sendSmsToParticipants');
 
         //Routes for AUTHENTICATED users
         Route::middleware('auth:api')->group(function () {

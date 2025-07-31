@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api\V1\User;
 use App\Http\Controllers\Controller;
 use App\Lib\JsonResponse;
 use App\Models\Admin;
+use App\Models\AttendanceAllocation;
 use App\Models\Season;
+use App\Models\SmsLog;
 use App\Models\UserCompetitionForm;
 use App\Models\userSeason;
 use App\Services\Auth\AuthorizeService;
@@ -13,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class RegistrationController extends Controller
 {
@@ -247,8 +250,8 @@ class RegistrationController extends Controller
 
     public function getAttendanceSheet()
     {
-        $examiners = Admin::where('role', 3)
-            ->where('is_active', true)
+        $examiners = Admin::where('assigned_role', 3)
+            ->where('is_active', operator: 1)
             ->get()
             ->values();
 
@@ -264,11 +267,12 @@ class RegistrationController extends Controller
                         Carbon::createFromTime(14, 59)
                     )
                 ) {
-                    return '1-' . $startTime->timestamp;
+                    return '2-' . $startTime->timestamp;
                 }
-                return '2-' . $startTime->timestamp;
+                return '1-' . $startTime->timestamp;
             })
             ->values();
+
 
         $data = [];
         $serialCounters = [];
@@ -294,7 +298,7 @@ class RegistrationController extends Controller
             $data[$examiner->id]['students'][] = [
                 'serial' => $serialCounters[$examiner->id]++,
                 'reg_no' => $student->reg_no,
-                'name_bn' => $student->name_bn,
+                // 'name_bn' => $student->name_bn,
                 'name_en' => $student->name_en,
                 'phone' => $student->phone,
                 'need_training' => $student->need_training ? 'Yes' : 'No',
@@ -307,10 +311,48 @@ class RegistrationController extends Controller
             $examinerIndex = ($examinerIndex + 1) % $examiners->count();
         }
 
-        return response()->json([
-            'status' => 'success',
-            'data' => array_values($data)
-        ]);
+        return JsonResponse::success($data);
+    }
+
+    public function getAttendanceAllocation()
+    {
+        $seasonId = 1;
+
+        // Attendance allocation গুলো examiner অনুযায়ী group করে load করা
+        $allocations = AttendanceAllocation::with('admin', 'userCompetitionForm')
+            ->where('season_id', $seasonId)
+            ->get()
+            ->groupBy('admin_id');
+
+        $data = [];
+
+        foreach ($allocations as $adminId => $items) {
+            $admin = $items->first()->admin;
+
+            $students = $items->map(function ($item) {
+                return [
+                    'serial' => $item->serial,
+                    'reg_no' => $item->userCompetitionForm->reg_no ?? '',
+                    'name_en' => $item->userCompetitionForm->name_en ?? '',
+                    'need_training' => $item->userCompetitionForm->need_training ? 'Yes' : 'No',
+                    'education_background' => $this->getEducationType($item->userCompetitionForm->education_background),
+                    'phone' => $item->userCompetitionForm->phone ?? '',
+                    'exam_time' => $item->exam_time,
+                ];
+            })->values();
+
+            $data[] = [
+                'examiner' => [
+                    'id' => $admin->id,
+                    'name' => $admin->name,
+                    'phone' => $admin->phone,
+                    'room_number' => $items->first()->room_number,
+                ],
+                'students' => $students,
+            ];
+        }
+
+        return JsonResponse::success($data);
     }
 
     private function getEducationType($value)
@@ -324,6 +366,65 @@ class RegistrationController extends Controller
                 return 'Both';
             default:
                 return 'N/A';
+        }
+    }
+
+
+    public function sendSmsToParticipants()
+    {
+        $allocations = AttendanceAllocation::with('userCompetitionForm')->where('is_sms_sent', null)->get();
+
+        // return $allocations;
+        foreach ($allocations as $allocation) {
+            $name_bn = $allocation->userCompetitionForm->name_bn;
+            $reg_no = $allocation->userCompetitionForm->reg_no;
+            $phone = $allocation->userCompetitionForm->phone;
+            $exam_time = $allocation->exam_time;
+            $serial = $allocation->serial;
+            $room = $allocation->room_number;
+
+            // SMS body
+            $message = "আসসালামু আলাইকুম।\nজনাব {$name_bn}, বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা - ১৪৪৭ হিজরির প্রাথমিক বাছাই পর্বে অংশগ্রহণের জন্য আপনার রেজিস্ট্রেশন নম্বর: {$reg_no}. পরীক্ষার তারিখ ও সময়: ২ আগস্ট ২০২৫, {$exam_time} পর্যন্ত। সিরিয়াল নম্বর: {$serial}, স্থান: আত-তাক্বওয়া মাসজিদ এন্ড ইসলামিক সেন্টার, কুমারপাড়া, সিলেট। অনুগ্রহ করে নির্ধারিত সময়ের পূর্বে উপস্থিত থাকবেন জাযাকাল্লাহু খইরন।\n\n— বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা টিম";
+
+            $smsResult = $this->sendSms($phone, $message);
+
+            if ($smsResult) {
+                $allocation->update(['is_sms_sent' => 1]);
+            }
+        }
+    }
+
+    private function sendSms($phone, $message)
+    {
+
+        // \Log::info("Sending SMS to {$phone}: {$message}");
+        try {
+            $response = Http::get('http://api.booom-safacast.com/boomcast/WebFramework/boomCastWebService/eafsxternalApiSendTextMessage.php', [
+                'masking' => 'NOMASK',
+                'userName' => 'quranleafsdssons.org',
+                'password' => '08f246b1c6c11d73wrasf9954f0dce3e601a5',
+                'MsgType' => 'TEXT',
+                'receiver' => $phone,
+                'message' => $message,
+            ]);
+
+            // Log SMS attempt
+            SmsLog::create([
+                'phone' => $phone,
+                'message' => $message,
+                'response' => json_encode($response->json()),
+                'status' => $response->successful() ? 'success' : 'failed',
+                'reason' => 'Send SMS to inform viva information',
+                'sender_id' => 1,
+            ]);
+
+            if (!$response->successful()) {
+                throw new \Exception("BoomCast API failed: " . $response->body());
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            throw new \Exception("Couldn't send the viva information, Please try again. Error: " . $e->getMessage());
         }
     }
 }

@@ -11,5 +11,7 @@ class SmsLog extends Model
         'message',
         'status',
         'response',
+        'reason',
+        'sender_id'
     ];
 }
