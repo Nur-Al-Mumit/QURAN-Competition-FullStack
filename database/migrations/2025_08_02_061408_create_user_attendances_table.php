@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('user_statuses', function (Blueprint $table) {
+        Schema::create('user_attendances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')
                 ->constrained()
@@ -24,18 +24,17 @@ return new class extends Migration {
                 ->constrained()
                 ->onDelete('restrict');
 
-            $table->tinyInteger('status')
+            $table->tinyInteger('attendance_status')
                 ->default(2)
-                ->comment('1 = Selected, 2 = Pending, 3 = Hold, 4 = Rejected');
+                ->comment('1 = Present, 2 = Absent, 3 = Late');
 
-            $table->text('comment')->nullable();
             $table->foreignId('updated_by')
                 ->nullable()
                 ->constrained('admins')
                 ->onDelete('restrict')
                 ->comment('Admin ID');
 
-            $table->unique(['user_competition_form_id', 'season_id']);
+            $table->unique(['user_id', 'season_id']);
             $table->timestamps();
         });
     }
@@ -45,6 +44,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_statuses');
+        Schema::dropIfExists('user_attendances');
     }
 };
