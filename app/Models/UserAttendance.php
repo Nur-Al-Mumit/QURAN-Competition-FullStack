@@ -10,7 +10,7 @@ class UserAttendance extends Model
         'user_id',
         'user_competition_form_id',
         'season_id',
-        'attendance',
+        'attendance_status',
         'updated_by'
     ];
 
