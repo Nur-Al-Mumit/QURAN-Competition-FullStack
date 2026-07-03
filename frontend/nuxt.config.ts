@@ -40,7 +40,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:9001/api/v1",
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:9000/api/v1",
     },
   },
   compatibilityDate: "2025-05-03",
