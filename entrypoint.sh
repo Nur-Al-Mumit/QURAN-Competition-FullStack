@@ -22,8 +22,8 @@ if [ "$APP_ENV" = "production" ]; then
     php artisan event:cache
 
     # Run Database Migrations (Force in production)
-    echo "Running database migrations..."
-    php artisan migrate --force
+    # echo "Running database migrations..."
+    # php artisan migrate --force
 
     # Note: We do NOT run `passport:keys` here automatically in production 
     # as it would overwrite keys on every restart unless they are mounted via a volume.
@@ -35,8 +35,8 @@ else
     php artisan view:clear
     php artisan cache:clear
     
-    echo "Running database migrations..."
-    php artisan migrate --force
+    # echo "Running database migrations..."
+    # php artisan migrate --force
 fi
 
 echo "Starting PHP-FPM..."
