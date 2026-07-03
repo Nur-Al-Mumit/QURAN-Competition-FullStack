@@ -1,0 +1,5 @@
+const new_vue_vue_type_style_index_0_scoped_ff6b166d_lang = "@media print{@page{size:A4;margin:0}body[data-v-ff6b166d]{margin:0;padding:0}.attendance-sheets[data-v-ff6b166d],.attendance-sheets[data-v-ff6b166d] *{visibility:visible}.print\\\\[data-v-ff6b166d]:hidden{display:none!important}.print\\\\[data-v-ff6b166d]:shadow-none{box-shadow:none!important}.print\\\\[data-v-ff6b166d]:w-full{width:100%!important}.print\\\\[data-v-ff6b166d]:h-screen{height:100vh!important}.print\\\\[data-v-ff6b166d]:mb-0{margin-bottom:0!important}.print\\\\[data-v-ff6b166d]:break-after-page{-moz-column-break-after:page!important;break-after:page!important}table[data-v-ff6b166d],td[data-v-ff6b166d],th[data-v-ff6b166d]{border-collapse:collapse;-webkit-print-color-adjust:exact;print-color-adjust:exact}}";
+export {
+  new_vue_vue_type_style_index_0_scoped_ff6b166d_lang as default
+};
+//# sourceMappingURL=new-styles-1.mjs-CFOVr7C9.js.map
