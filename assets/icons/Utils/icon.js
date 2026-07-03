@@ -1,0 +1,115 @@
+const icons =
+{
+  "search": `
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="d-flex align-items-center SearchBar_inputIcon__lhgRB"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.4 11.601A5.2 5.2 0 1 0 6.4 1.2a5.2 5.2 0 0 0 0 10.401Zm0 1.2A6.4 6.4 0 1 0 6.4 0a6.4 6.4 0 0 0 0 12.801Zm5.775-1.473 3.824 3.825-.848.848-3.825-3.824.849-.849Z" fill="#727272"></path></svg>
+    `,
+
+  "Location":
+    `
+    <svg width="14" height="18" viewBox="0 0 14 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="d-flex align-items-center SearchBar_inputIcon__lhgRB"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.738 7.4c0-3.093-2.452-5.6-5.478-5.6-3.025 0-5.477 2.507-5.477 5.6 0 2.788 1.798 5.657 5.477 8.593 3.68-2.936 5.478-5.805 5.478-8.593ZM7.26 17C3.087 13.8 1 10.6 1 7.4 1 3.865 3.803 1 7.26 1s6.26 2.865 6.26 6.4c0 3.2-2.087 6.4-6.26 9.6Zm0-8c.865 0 1.565-.716 1.565-1.6 0-.884-.7-1.6-1.565-1.6-.864 0-1.565.716-1.565 1.6 0 .884.701 1.6 1.565 1.6Zm0 .8c-1.296 0-2.348-1.075-2.348-2.4S5.964 5 7.26 5c1.296 0 2.348 1.075 2.348 2.4S8.556 9.8 7.26 9.8Z" fill="currentColor"></path><path d="m7.26 15.993-.156.195.156.125.156-.125-.156-.195Zm0 1.007-.152.198.152.117.152-.117L7.26 17Zm5.728-9.6c0-3.226-2.56-5.85-5.728-5.85v.5c2.882 0 5.228 2.39 5.228 5.35h.5ZM7.26 1.55c-3.168 0-5.727 2.624-5.727 5.85h.5c0-2.96 2.345-5.35 5.227-5.35v-.5ZM1.533 7.4c0 2.902 1.87 5.835 5.571 8.788l.312-.39C3.76 12.877 2.033 10.073 2.033 7.4h-.5Zm5.883 8.788c3.7-2.953 5.572-5.886 5.572-8.788h-.5c0 2.674-1.726 5.479-5.384 8.397l.312.391Zm-.004.614C3.262 13.619 1.25 10.483 1.25 7.4h-.5c0 3.317 2.162 6.581 6.358 9.798l.304-.396ZM1.25 7.4c0-3.402 2.696-6.15 6.01-6.15v-.5C3.66.75.75 3.733.75 7.4h.5Zm6.01-6.15c3.314 0 6.01 2.748 6.01 6.15h.5c0-3.667-2.91-6.65-6.51-6.65v.5Zm6.01 6.15c0 3.083-2.011 6.219-6.162 9.402l.304.396c4.196-3.217 6.358-6.481 6.358-9.798h-.5ZM7.26 9.25c1.008 0 1.815-.834 1.815-1.85h-.5c0 .75-.594 1.35-1.315 1.35v.5ZM9.075 7.4c0-1.016-.807-1.85-1.815-1.85v.5c.721 0 1.315.6 1.315 1.35h.5ZM7.26 5.55c-1.007 0-1.815.834-1.815 1.85h.5c0-.75.594-1.35 1.315-1.35v-.5ZM5.445 7.4c0 1.016.808 1.85 1.815 1.85v-.5c-.72 0-1.315-.6-1.315-1.35h-.5ZM7.26 9.55c-1.153 0-2.098-.957-2.098-2.15h-.5c0 1.458 1.158 2.65 2.598 2.65v-.5ZM5.162 7.4c0-1.193.945-2.15 2.098-2.15v-.5c-1.44 0-2.598 1.192-2.598 2.65h.5ZM7.26 5.25c1.153 0 2.098.957 2.098 2.15h.5c0-1.458-1.158-2.65-2.598-2.65v.5ZM9.358 7.4c0 1.193-.945 2.15-2.098 2.15v.5c1.44 0 2.598-1.192 2.598-2.65h-.5Z" fill="currentColor"></path></svg>
+  `,
+  'right-arrow': `
+          <svg
+            class="w-10"
+            fill="currentColor"
+            viewBox="0 0 32 32"
+            data-name="Layer 2"
+            id="Layer_2"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g
+              id="SVGRepo_tracerCarrier"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></g>
+            <g id="SVGRepo_iconCarrier">
+              <title></title>
+              <path
+                d="M11.17,10.23a33.37,33.37,0,0,0-3.05,3.13c-.51.62-1.28,1.3-1.21,2.17s.81,1.24,1.35,1.76a16.3,16.3,0,0,1,2.57,3.17c.86,1.36,3,.11,2.16-1.26a21.06,21.06,0,0,0-1.82-2.48A16.16,16.16,0,0,0,10,15.52c-.22-.21-.86-1.14-.68-.49l-.13,1a17.85,17.85,0,0,1,3.72-4c1.19-1.08-.58-2.85-1.77-1.76Z"
+              ></path>
+              <path
+                d="M9.4,17a109.13,109.13,0,0,0,12.53-.1c1.59-.11,1.61-2.61,0-2.5a109.13,109.13,0,0,1-12.53.1c-1.61-.07-1.6,2.43,0,2.5Z"
+              ></path>
+            </g>
+          </svg>
+  `,
+  'date-solid': `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+  <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
+  <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z" clip-rule="evenodd" />
+</svg>
+  `,
+  'sppiner': `
+            <svg width="28" height="27" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"
+              fill="currentColor" />
+            <path
+              d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"
+              fill="currentColor">
+              <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12"
+                repeatCount="indefinite" />
+            </path>
+          </svg>
+  `,
+  "UpdateProfile": `
+  <svg fill="currentColor" viewBox="0 0 24 24" id="edit-user-5" xmlns="http://www.w3.org/2000/svg" class="icon line"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path id="primary" d="M17,9.27A2.44,2.44,0,0,0,17,9a6,6,0,1,0-6.44,6" style="fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;"></path><path id="primary-2" data-name="primary" d="M7,13.7A7,7,0,0,0,3,20a1,1,0,0,0,1,1H9" style="fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;"></path><path id="primary-3" data-name="primary" d="M20.71,16.09,15.8,21H13V18.2l4.91-4.91a1,1,0,0,1,1.4,0l1.4,1.4A1,1,0,0,1,20.71,16.09Z" style="fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;"></path></g></svg>
+  `,
+  "print": `
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M18 16.75H16C15.8011 16.75 15.6103 16.671 15.4697 16.5303C15.329 16.3897 15.25 16.1989 15.25 16C15.25 15.8011 15.329 15.6103 15.4697 15.4697C15.6103 15.329 15.8011 15.25 16 15.25H18C18.3315 15.25 18.6495 15.1183 18.8839 14.8839C19.1183 14.6495 19.25 14.3315 19.25 14V10C19.25 9.66848 19.1183 9.35054 18.8839 9.11612C18.6495 8.8817 18.3315 8.75 18 8.75H6C5.66848 8.75 5.35054 8.8817 5.11612 9.11612C4.8817 9.35054 4.75 9.66848 4.75 10V14C4.75 14.3315 4.8817 14.6495 5.11612 14.8839C5.35054 15.1183 5.66848 15.25 6 15.25H8C8.19891 15.25 8.38968 15.329 8.53033 15.4697C8.67098 15.6103 8.75 15.8011 8.75 16C8.75 16.1989 8.67098 16.3897 8.53033 16.5303C8.38968 16.671 8.19891 16.75 8 16.75H6C5.27065 16.75 4.57118 16.4603 4.05546 15.9445C3.53973 15.4288 3.25 14.7293 3.25 14V10C3.25 9.27065 3.53973 8.57118 4.05546 8.05546C4.57118 7.53973 5.27065 7.25 6 7.25H18C18.7293 7.25 19.4288 7.53973 19.9445 8.05546C20.4603 8.57118 20.75 9.27065 20.75 10V14C20.75 14.7293 20.4603 15.4288 19.9445 15.9445C19.4288 16.4603 18.7293 16.75 18 16.75Z" fill="currentColor"></path> <path d="M16 8.75C15.8019 8.74741 15.6126 8.66756 15.4725 8.52747C15.3324 8.38737 15.2526 8.19811 15.25 8V4.75H8.75V8C8.75 8.19891 8.67098 8.38968 8.53033 8.53033C8.38968 8.67098 8.19891 8.75 8 8.75C7.80109 8.75 7.61032 8.67098 7.46967 8.53033C7.32902 8.38968 7.25 8.19891 7.25 8V4.5C7.25 4.16848 7.3817 3.85054 7.61612 3.61612C7.85054 3.3817 8.16848 3.25 8.5 3.25H15.5C15.8315 3.25 16.1495 3.3817 16.3839 3.61612C16.6183 3.85054 16.75 4.16848 16.75 4.5V8C16.7474 8.19811 16.6676 8.38737 16.5275 8.52747C16.3874 8.66756 16.1981 8.74741 16 8.75Z" fill="currentColor"></path> <path d="M15.5 20.75H8.5C8.16848 20.75 7.85054 20.6183 7.61612 20.3839C7.3817 20.1495 7.25 19.8315 7.25 19.5V12.5C7.25 12.1685 7.3817 11.8505 7.61612 11.6161C7.85054 11.3817 8.16848 11.25 8.5 11.25H15.5C15.8315 11.25 16.1495 11.3817 16.3839 11.6161C16.6183 11.8505 16.75 12.1685 16.75 12.5V19.5C16.75 19.8315 16.6183 20.1495 16.3839 20.3839C16.1495 20.6183 15.8315 20.75 15.5 20.75ZM8.75 19.25H15.25V12.75H8.75V19.25Z" fill="currentColor"></path> </g></svg>
+  `,
+  "apply": ` <svg
+                width="13"
+                height="21"
+                viewBox="0 0 13 21"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="EasyApplyButton_bolt__MXXGW"
+              >
+                <path
+                  d="M.049 11.945 8.69.104c.16-.219.505-.063.446.2l-1.678 7.64h5.008a.25.25 0 0 1 .203.397l-8.642 11.84c-.16.219-.505.064-.447-.2l1.678-7.638H.25a.25.25 0 0 1-.201-.398Z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+  `,
+  "attachment": `
+  <svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="currentColor" stroke="currentColor"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>Attachment</title> <g id="Attachment" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <rect id="Container" x="0" y="0" width="24" height="24"> </rect> <path d="M17,17.5 L8.25,17.5 C5.35050506,17.5 3,15.1494949 3,12.25 C3,9.35050506 5.35050506,7 8.25,7 L18.5,7 C20.4329966,7 22,8.56700338 22,10.5 C22,12.4329966 20.4329966,14 18.5,14 L8.25,14 C7.28350169,14 6.5,13.2164983 6.5,12.25 C6.5,11.2835017 7.28350169,10.5 8.25,10.5 L18.5,10.5 L18.5,10.5" id="shape" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="0,0" transform="translate(12.500000, 12.250000) rotate(-45.000000) translate(-12.500000, -12.250000) "> </path> </g> </g></svg>
+  `,
+  "iso-loader-spinner-white": `
+<svg version="1.1" x="0px" y="0px" viewBox="0 0 2400 2400" xml:space="preserve" width="40" height="40">
+  <g stroke-width="200" stroke-linecap="round" stroke="#ffff" fill="none" id="spinner">
+    <line x1="1200" y1="600" x2="1200" y2="100"/>
+    <line opacity="0.5" x1="1200" y1="2300" x2="1200" y2="1800"/>
+    <line opacity="0.917" x1="900" y1="680.4" x2="650" y2="247.4"/>
+    <line opacity="0.417" x1="1750" y1="2152.6" x2="1500" y2="1719.6"/>
+    <line opacity="0.833" x1="680.4" y1="900" x2="247.4" y2="650"/>
+    <line opacity="0.333" x1="2152.6" y1="1750" x2="1719.6" y2="1500"/>
+    <line opacity="0.75" x1="600" y1="1200" x2="100" y2="1200"/>
+    <line opacity="0.25" x1="2300" y1="1200" x2="1800" y2="1200"/>
+    <line opacity="0.667" x1="680.4" y1="1500" x2="247.4" y2="1750"/>
+    <line opacity="0.167" x1="2152.6" y1="650" x2="1719.6" y2="900"/>
+    <line opacity="0.583" x1="900" y1="1719.6" x2="650" y2="2152.6"/>
+    <line opacity="0.083" x1="1750" y1="247.4" x2="1500" y2="680.4"/>
+    <animateTransform attributeName="transform"
+                      attributeType="XML"
+                      type="rotate"
+                      keyTimes="0;0.08333;0.16667;0.25;0.33333;0.41667;0.5;0.58333;0.66667;0.75;0.83333;0.91667"
+                      values="0 1199 1199;30 1199 1199;60 1199 1199;90 1199 1199;120 1199 1199;150 1199 1199;180 1199 1199;210 1199 1199;240 1199 1199;270 1199 1199;300 1199 1199;330 1199 1199"
+                      dur="0.83333s"
+                      begin="0s"
+                      repeatCount="indefinite"
+                      calcMode="discrete" />
+  </g>
+</svg>`,
+
+};
+
+export default function getIcons(icon, style = "") {
+  try {
+    const iconSVG = icons[icon];
+    const svg = iconSVG.replace('<svg', `<svg class="${style}"`);
+    return svg;
+  } catch (error) {
+    console.error(error);
+  }
+}

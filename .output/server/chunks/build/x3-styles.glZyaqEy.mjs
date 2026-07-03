@@ -1,6 +1,0 @@
-import { x as x3_vue_vue_type_style_index_0_scoped_8727bafc_lang } from './x3-styles-1.mjs-BS-yYidu.mjs';
-
-const x3Styles_glZyaqEy = [x3_vue_vue_type_style_index_0_scoped_8727bafc_lang];
-
-export { x3Styles_glZyaqEy as default };
-//# sourceMappingURL=x3-styles.glZyaqEy.mjs.map

@@ -1,45 +1,25 @@
-# --- Dependency Stage ---
-FROM php:8.3-fpm-alpine AS vendor
+# --- Build Stage ---
+FROM node:20-alpine AS builder
 
-WORKDIR /var/www
+WORKDIR /app
 
-RUN apk add --no-cache \
-    git \
-    curl \
-    libpng-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    oniguruma-dev
+COPY package*.json ./
+RUN npm ci
 
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
-
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-COPY composer.json composer.lock ./
-
-# ⭐ WORKAROUND: Remove --no-dev flag so development packages are accessible during compilation
-RUN composer install --no-scripts --no-autoloader --prefer-dist
-
-# --- Production Runtime Stage ---
-FROM php:8.3-fpm-alpine
-
-WORKDIR /var/www
-
-RUN apk add --no-cache oniguruma-dev libpng-dev
-RUN docker-php-ext-install pdo_mysql mbstring gd
-
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-COPY --from=vendor /var/www/vendor ./vendor
 COPY . .
+RUN npm run build
 
-# Copy entrypoint script
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# --- Production Execution Stage ---
+FROM node:20-alpine AS runner
 
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+WORKDIR /app
 
-EXPOSE 9000
+ENV NODE_ENV=production
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["php-fpm"]
+# Copy built server output and package configuration
+COPY --from=builder /app/.output ./.output
+COPY --from=builder /app/package.json ./package.json
+
+EXPOSE 3000
+
+CMD ["node", ".output/server/index.mjs"]

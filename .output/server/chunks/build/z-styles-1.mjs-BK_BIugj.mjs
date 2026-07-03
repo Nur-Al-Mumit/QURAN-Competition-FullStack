@@ -1,4 +1,0 @@
-const z_vue_vue_type_style_index_0_lang = "@media print{@page{size:A4 landscape}body{margin:0;padding:0}.lottery-chunk,.lottery-chunk *,.lottery-page,.lottery-page *{visibility:visible}.lottery-chunk{-moz-column-break-inside:avoid;break-inside:avoid;page-break-inside:avoid}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}.lottery-chunk{min-height:100px}@media print{.lottery-chunk{min-height:80px}}";
-
-export { z_vue_vue_type_style_index_0_lang as z };
-//# sourceMappingURL=z-styles-1.mjs-BK_BIugj.mjs.map

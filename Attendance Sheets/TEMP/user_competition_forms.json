@@ -1,0 +1,37 @@
+[
+{"type":"header","version":"5.2.1","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"quranlessons_web2"},
+{"type":"table","name":"user_competition_forms","database":"quranlessons_web2","data":
+[
+{"reg_no":"RC129411","name_en":"hossain mohamed Zakaria","phone":"01701970188"},
+{"reg_no":"RC140238","name_en":"KHANDAKER TANVIR ISLAM","phone":"01629273890"},
+{"reg_no":"RC143160","name_en":"NISHAT ANJUM","phone":"01740384071"},
+{"reg_no":"RC145134","name_en":"Md. Ayahnoor Ahmed Riyad","phone":"01314903719"},
+{"reg_no":"RC146370","name_en":"MD Abdullah Al Rafiz","phone":"01601235810"},
+{"reg_no":"RC159885","name_en":"MD. AMBIA HUSSAIN","phone":"01745584514"},
+{"reg_no":"RC172646","name_en":"Ahmad Razee","phone":"01675412589"},
+{"reg_no":"RC173375","name_en":"Tarek Anam Sami","phone":"01707980607"},
+{"reg_no":"RC184229","name_en":"Zakariya bin Zahid","phone":"01708429182"},
+{"reg_no":"RC185620","name_en":"Tofayel Ahmed","phone":"01734060018"},
+{"reg_no":"RC186930","name_en":"Md Imadul Khalique Chowdhury","phone":"01745709844"},
+{"reg_no":"RC189395","name_en":"Md. Toyobur Rahman","phone":"01644244364"},
+{"reg_no":"RC193231","name_en":"Md. Tajul Islam","phone":"01913378088"},
+{"reg_no":"RC198474","name_en":"Saifur Rahman","phone":"01758976790"},
+{"reg_no":"RC1100224","name_en":"Tahmid Hasan Musa","phone":"01614044130"},
+{"reg_no":"RC1102569","name_en":"Saidul Islam Maruf","phone":"01331526868"},
+{"reg_no":"RC1104504","name_en":"Ruhul Amin Reza","phone":"01902059418"},
+{"reg_no":"RC1107176","name_en":"md abdur rahman Nayeem","phone":"01831703778"},
+{"reg_no":"RC1126205","name_en":"Ayad Alabi Shanto","phone":"01819900941"},
+{"reg_no":"RC1127990","name_en":"Mahdi Al Mahfuz","phone":"01300913794"},
+{"reg_no":"RC1133555","name_en":"Monjur alom naeem","phone":"01322534096"},
+{"reg_no":"RC1138783","name_en":"Mudassir Ahmed","phone":"01728334458"},
+{"reg_no":"RC1151533","name_en":"Hasnath Abdus Salique","phone":"01327044009"},
+{"reg_no":"RC1153960","name_en":"Ahmad Mainul Hasan","phone":"01758092545"},
+{"reg_no":"RC1154271","name_en":"Md Sadat Hussein Khan","phone":"01717023978"},
+{"reg_no":"RC1157319","name_en":"MOJNU MIAH","phone":"01746674126"},
+{"reg_no":"RC1163954","name_en":"Md Tofayel Ahmed","phone":"01857439417"},
+{"reg_no":"RC1175661","name_en":"Mohammad Ashraful Huda","phone":"01711484905"},
+{"reg_no":"RC1182992","name_en":"Md Abdul baki Chowdhury","phone":"01317564800"}
+]
+}
+]
