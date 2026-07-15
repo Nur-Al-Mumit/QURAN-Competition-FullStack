@@ -473,6 +473,63 @@
                 </div>
               </div>
             </div>
+
+            <!-- Step 4 -->
+            <div class="relative flex items-center lg:justify-center">
+              <div class="lg:w-1/2 lg:pl-12 lg:ml-auto">
+                <div
+                  class="bg-emerald-50 rounded-2xl p-6 shadow-lg border border-emerald-200 text-center sm:text-left"
+                >
+                  <div
+                    class="flex items-center justify-center sm:justify-start mb-4"
+                  >
+                    <div
+                      class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center"
+                    >
+                      <span class="text-white font-bold">৪</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-emerald-800 ml-4">
+                      বিশেষ ফ্রি প্রশিক্ষণ
+                    </h3>
+                  </div>
+                  <p class="text-emerald-700">
+                    প্রাথমিক المبتدئ বিভাগের জন্য দক্ষ প্রশিক্ষক দ্বারা ৫ দিনের
+                    একটি বিশুদ্ধ কুরআন পাঠের ফ্রি প্রশিক্ষণের ব্যবস্থা থাকবে।
+                    (এই প্রশিক্ষণে অংশগ্রহণের মাধ্যমেই প্রতিযোগিতায় অংশগ্রহণ
+                    নিশ্চিত করতে হবে); 'দক্ষ (الماهر) ' বিভাগের জন্য এই
+                    প্রশিক্ষণ ঐচ্ছিক।
+                  </p>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- Step 3 -->
+            <div class="relative flex items-center lg:justify-center">
+              <div class="w-full lg:w-1/2 lg:pr-12">
+                <div
+                  class="bg-emerald-50 rounded-2xl p-6 shadow-lg border border-emerald-200 text-center sm:text-left"
+                >
+                  <div
+                    class="flex items-center justify-center sm:justify-start mb-4"
+                  >
+                    <div
+                      class="w-12 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center"
+                    >
+                      <span class="text-white font-bold">৫</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-emerald-800 ml-4">
+                      চূড়ান্ত পর্ব
+                    </h3>
+                  </div>
+                  <p class="text-emerald-700">
+                    ৩০ জুলাই চূড়ান্ত পর্ব অনুষ্ঠিত হবে। সুনির্দিষ্ট
+                    নির্দেশনা ওয়েবসাইট/এসএমএস (SMS) এর মাধ্যমে জানিয়ে দেওয়া হবে।
+                  </p>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -508,7 +565,7 @@
               </li>
               <li class="flex items-center">
                 <span class="text-emerald-500 mr-2">•</span>
-                ইসলামিক গিফট
+                ইসলামি ফিকহ
               </li>
               <li class="flex items-center">
                 <span class="text-emerald-500 mr-2">•</span>
