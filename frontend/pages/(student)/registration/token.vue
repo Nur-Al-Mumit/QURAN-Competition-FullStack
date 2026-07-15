@@ -27,7 +27,6 @@
         <div class="hdr">
           <img src="~/assets/imgs/logo.png" alt="Logo" class="hdr-logo" />
           <div class="hdr-center">
-            <p class="hdr-bism">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ</p>
             <h1 class="hdr-org">এসো কুরআন শিখি</h1>
             <p class="hdr-comp">বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা ১৪৪৮ হিজরি</p>
           </div>
@@ -157,7 +156,7 @@
                 </tr>
                 <tr>
                   <td class="lbl">স্থান</td>
-                  <td class="val">আত-তাক্বওয়া মাসজিদ, কুমারপাড়া, সিলেট</td>
+                  <td class="val">হেরিটেজ হাইটস এন্ড ব্যাংকুয়েট হল মেট্রোপলিটন মার্কেট (২য় তলা), সুবহানীঘাট, সিলেট</td>
                 </tr>
               </table>
               <div class="alloc" v-if="registeredFormStore.allocation">
@@ -192,8 +191,7 @@
 
         <!-- FOOTER -->
         <div class="ftr">
-          <span>🌐 eshoquranshikhi.org &nbsp;|&nbsp; 📞 +880 1805 777 332</span>
-          <span class="ftr-dua">جَزَاكَ اللهُ خَيْرًا</span>
+          <span>📞 +880 1805 777 332 &nbsp;|&nbsp; 🌐 eshoquranshikhi.org</span>
           <span>মুদ্রণ: {{ formatPrintTime }}</span>
         </div>
 
@@ -406,15 +404,6 @@ onMounted(async () => {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-}
-
-.accent-top {
-  height: 6px;
-  background: linear-gradient(90deg, #0b3c2d, #a88754, #0b3c2d);
-}
-.accent-bot {
-  height: 4px;
-  background: linear-gradient(90deg, #0b3c2d, #a88754, #0b3c2d);
 }
 
 /* ---- HEADER ---- */
