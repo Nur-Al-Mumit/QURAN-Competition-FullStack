@@ -6,6 +6,7 @@ export const useRegisteredFormStore = defineStore("RegisteredForm", () => {
   let error: any = ref(null);
   let isLoading = ref(false);
   let registeredForm = ref(null);
+  let allocation = ref(null);
   let registeredFormLoaded = ref(false);
 
   async function _fetchRegisteredForm() {
@@ -19,6 +20,7 @@ export const useRegisteredFormStore = defineStore("RegisteredForm", () => {
       } = await useAuthenticatedAxios(endPoint, null, null, "GET");
       if (data?.form) {
         registeredForm.value = data.form;
+        allocation.value = data.allocation || null;
         registeredFormLoaded.value = true;
         // competitionFormStore.form = data.form;
 
@@ -56,6 +58,7 @@ export const useRegisteredFormStore = defineStore("RegisteredForm", () => {
     error,
     isLoading,
     registeredForm,
+    allocation,
     fetchRegisteredForm,
     registeredFormLoaded,
     updateRegisteredForm,

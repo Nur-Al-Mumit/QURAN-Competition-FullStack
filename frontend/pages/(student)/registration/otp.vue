@@ -176,6 +176,7 @@
       if (data?.data?.form?.reg_no) {
         useFormStore.form = data.data.form;
         registeredFormStore.registeredForm = data.data.form;
+        registeredFormStore.allocation = data.data.allocation || null;
         registeredFormStore.registeredFormLoaded = true;
         navigateTo("/registration/token");
         setTimeout(() => {

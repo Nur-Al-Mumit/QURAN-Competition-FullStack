@@ -7,10 +7,12 @@ use App\Lib\JsonResponse;
 use App\Models\Admin;
 use App\Models\AttendanceAllocation;
 use App\Models\Season;
+use App\Models\RegistrationWishlist;
 use App\Models\SmsLog;
 use App\Models\UserCompetitionForm;
 use App\Models\userSeason;
 use App\Services\Auth\AuthorizeService;
+use App\Services\Registration\RegistrationSlotService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +22,7 @@ use Illuminate\Support\Facades\Http;
 class RegistrationController extends Controller
 {
     protected AuthorizeService $authorizeService;
+    protected RegistrationSlotService $slotService;
 
     public function __construct()
     {
@@ -28,6 +31,7 @@ class RegistrationController extends Controller
 
         // Initialize AuthorizeService
         $this->authorizeService = new AuthorizeService($provider, $scope);
+        $this->slotService = new RegistrationSlotService();
 
     }
 
@@ -48,10 +52,10 @@ class RegistrationController extends Controller
                 'identity' => $request->phone,
                 'password' => $request->otp,
                 'phone' => $request->phone,
-                'name_bn' => $competitionForm['name_bn'],
-                'name_en' => $competitionForm['name_en'],
-                'email' => $competitionForm['email'],
-                'gender' => $competitionForm['gender'],
+                'name_bn' => $competitionForm['name_bn'] ?? null,
+                'name_en' => $competitionForm['name_en'] ?? null,
+                'email' => $competitionForm['email'] ?? null,
+                'gender' => $competitionForm['gender'] ?? null,
             ];
 
             $request->merge([
@@ -64,10 +68,12 @@ class RegistrationController extends Controller
                 try {
                     $submitForm = $this->submitOrUpdateForm($competitionForm, $response['user']);
 
-                    $response['form'] = $submitForm ?? null;
+                    $response['form'] = $submitForm['form'] ?? null;
+                    $response['allocation'] = $submitForm['allocation'] ?? null;
 
                 } catch (\Exception $e) {
                     $response['form'] = null;
+                    $response['allocation'] = null;
                     $response['form_error'] = $e->getMessage();
                 }
 
@@ -123,8 +129,17 @@ class RegistrationController extends Controller
                     'name_bn' => $competitionForm['name_bn'],
                     'name_en' => $competitionForm['name_en'],
                 ]);
+
+                $allocation = AttendanceAllocation::where('user_competition_form_id', $form->id)->first();
             } else {
                 // CREATE NEW FORM
+                $max = $this->slotService->getMaxRegistrations();
+                $position = $this->slotService->nextPosition();
+
+                if ($position > $max) {
+                    throw new \Exception("Registration is closed. All {$max} seats are already full.");
+                }
+
                 do {
                     $randomDigits = rand(100, 999);
                     $regNo = 'RC' . $seasonId . $userId . $randomDigits;
@@ -150,14 +165,20 @@ class RegistrationController extends Controller
                     'is_recitation' => $competitionForm['is_recitation'],
                     'need_training' => $competitionForm['need_training'],
                 ]);
+
+                // Assign exam time + group immediately at registration time
+                $allocation = $this->slotService->assignToForm($form, $position);
             }
 
             DB::commit();
 
-            return $form;
+            return [
+                'form' => $form,
+                'allocation' => $allocation,
+            ];
         } catch (\Throwable $th) {
             DB::rollBack();
-            return JsonResponse::error($th->getMessage());
+            throw $th;
         }
     }
 
@@ -169,19 +190,33 @@ class RegistrationController extends Controller
                 return JsonResponse::error('User not authenticated', 401);
             }
 
+            $activeSeason = Season::where('is_active', 1)->latest()->first();
 
-            $season_id = Season::where('is_active', 1)->latest()->first()->id;
-
-            $form = UserCompetitionForm::where('user_id', $user->id)
-                ->where('season_id', $season_id)
-                ->first();
+            // Prefer the active season's form; fall back to the user's most
+            // recent form in any season so returning users still see their
+            // registration card instead of a 404.
+            $form = null;
+            if ($activeSeason) {
+                $form = UserCompetitionForm::where('user_id', $user->id)
+                    ->where('season_id', $activeSeason->id)
+                    ->latest()
+                    ->first();
+            }
+            if (!$form) {
+                $form = UserCompetitionForm::where('user_id', $user->id)
+                    ->latest()
+                    ->first();
+            }
 
             if (!$form) {
                 return JsonResponse::error('Registration form not found', 404);
             }
 
+            $allocation = AttendanceAllocation::where('user_competition_form_id', $form->id)->first();
+
             return JsonResponse::success([
-                'form' => $form
+                'form' => $form,
+                'allocation' => $allocation,
             ]);
         } catch (\Throwable $th) {
             throw $th;
@@ -231,8 +266,37 @@ class RegistrationController extends Controller
     public function getRegistrationCount()
     {
         try {
-            $count = UserCompetitionForm::where('is_active', 1)->count();
-            return JsonResponse::success(['registration_count' => $count]);
+            $count = $this->slotService->activeSeasonForms()->count();
+            $max = $this->slotService->getMaxRegistrations();
+
+            return JsonResponse::success([
+                'registration_count' => $count,
+                'max_registrations' => $max,
+                'remaining' => max(0, $max - $count),
+                'is_full' => $count >= $max,
+            ]);
+        } catch (\Throwable $th) {
+            return JsonResponse::error($th->getMessage());
+        }
+    }
+
+    public function storeWishlist(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|digits:11|regex:/^01[0-9]{9}$/',
+            'name' => 'nullable|string|max:255',
+        ]);
+
+        try {
+            $wishlist = RegistrationWishlist::firstOrCreate(
+                ['phone' => $request->phone],
+                ['name' => $request->name]
+            );
+
+            return JsonResponse::success(
+                ['wishlist' => $wishlist],
+                'You have been added to the waitlist. We will inform you about the next season, In sha Allah.'
+            );
         } catch (\Throwable $th) {
             return JsonResponse::error($th->getMessage());
         }

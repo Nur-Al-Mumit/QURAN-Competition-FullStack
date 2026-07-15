@@ -10,6 +10,7 @@ Route::group(['prefix' => 'registration'], function () {
         // OTP authorize + form submit
         Route::post('complete', 'completeRegistration');
         Route::get('get-count', 'getRegistrationCount');
+        Route::post('wishlist', 'storeWishlist');
         Route::post('get-registration-forms', 'getRegistrationForms');
         Route::post('attendance-sheet', 'getAttendanceSheet');
         Route::post('get-attendance-allocation', 'getAttendanceAllocation');

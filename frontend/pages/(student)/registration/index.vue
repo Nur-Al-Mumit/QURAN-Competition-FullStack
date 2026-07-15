@@ -15,6 +15,26 @@
       ইনশাআল্লাহ পরবর্তী কোনো প্রতিযোগিতায় নারীদেরও ব্যবস্থা রাখা হবে
     </h4>
 
+    <!-- Live seat availability -->
+    <div
+      v-if="registrationInfo.max"
+      class="mb-6 rounded-lg border p-3 text-center text-sm"
+      :class="
+        isRegistrationFull
+          ? 'bg-red-50 border-red-200 text-red-700'
+          : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+      "
+    >
+      <span class="font-semibold">
+        রেজিস্ট্রেশন:
+        {{ registrationInfo.count }} / {{ registrationInfo.max }}
+      </span>
+      <span v-if="!isRegistrationFull" class="ml-1">
+        (আসন বাকি {{ registrationInfo.remaining }})
+      </span>
+      <span v-else class="ml-1 font-bold">(আসন পূর্ণ)</span>
+    </div>
+
     <form @submit.prevent="formSubmit">
       <div class="space-y-4">
         <h2 class="font-semibold text-center underline mb-5 text-lg sm:text-xl">
@@ -503,11 +523,87 @@
 
     <modal :is-open="isRegCloseModalOpen">
       <template #body>
-        <div class="p-5">
+        <div class="p-5 max-w-md">
+          <div class="flex justify-center mb-4">
+            <div
+              class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center"
+            >
+              <svg
+                class="w-9 h-9 text-red-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+          </div>
+
           <h1 class="text-xl text-red-600 font-semibold leading-relaxed text-center">
-            দুঃখিত এই সেশনের জন্য আমাদের রেজিস্ট্রেশন বন্ধ হয়ে গেছে অনুগ্রহ করে
-            পরবর্তী সেশনের জন্য অপেক্ষা করুন জাযাকাল্লাহু খইরন
+            দুঃখিত! এই সেশনের জন্য রেজিস্ট্রেশন বন্ধ হয়ে গেছে।
           </h1>
+
+          <p class="text-center text-sm text-gray-600 mt-2">
+            মোট {{ registrationInfo.max }} আসনের সবগুলো পূরণ হয়ে গেছে।
+          </p>
+
+          <!-- Wishlist form (shown until successfully submitted) -->
+          <div v-if="!isWishlistSubmitted" class="mt-5 space-y-3">
+            <p class="text-sm text-center text-gray-700 leading-relaxed">
+              পরবর্তী সেশনের আগে আগে জানানোর জন্য আপনার মোবাইল নম্বরটি দিন
+              (ওয়েটলিস্ট)। ইনশাআল্লাহ আমরা আপনাকে জানাব।
+            </p>
+            <inputs-base-input
+              label="মোবাইল নম্বর:"
+              placeholder="০১XXXXXXXXX"
+              v-model="wishlistPhone"
+              :required="true"
+            />
+            <inputs-base-input
+              label="নাম (ঐচ্ছিক):"
+              placeholder="আপনার নাম"
+              v-model="wishlistName"
+            />
+            <button
+              :disabled="isWishlistSubmitting"
+              @click="submitWishlist"
+              class="w-full inline-flex justify-center items-center px-6 py-3 border rounded-md text-base font-bold transition-colors duration-200 cursor-pointer border-emerald-800 text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <span v-if="!isWishlistSubmitting">ওয়েটলিস্টে যুক্ত করুন</span>
+              <span v-else>অপেক্ষা করুন...</span>
+            </button>
+          </div>
+
+          <!-- Success state after wishlist submission -->
+          <div v-else class="mt-5 text-center">
+            <div class="flex justify-center mb-3">
+              <div
+                class="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center"
+              >
+                <svg
+                  class="w-8 h-8 text-emerald-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+            </div>
+            <p class="text-emerald-700 font-semibold">
+              জাযাকাল্লাহু খইরন! আপনাকে ওয়েটলিস্টে যুক্ত করা হয়েছে।
+            </p>
+          </div>
 
           <div class="flex justify-center mt-6">
             <button
@@ -579,6 +675,81 @@
   let isDisable = ref(false);
   let isFormSubmit = ref(false);
 
+  // Registration capacity (auto-assigned slots, capped at max on backend)
+  let isRegistrationFull = ref(false);
+  let capacityLoaded = ref(false);
+  let registrationInfo = ref({ count: 0, max: 50, remaining: 50 });
+
+  // Wishlist (waitlist) form state
+  let wishlistPhone = ref("");
+  let wishlistName = ref("");
+  let isWishlistSubmitting = ref(false);
+  let isWishlistSubmitted = ref(false);
+
+  async function checkRegistrationCapacity() {
+    try {
+      const { data } = await useAxios(
+        "/registration/get-count",
+        null,
+        null,
+        "GET"
+      );
+      if (data?.data) {
+        registrationInfo.value = {
+          count: data.data.registration_count ?? 0,
+          max: data.data.max_registrations ?? 50,
+          remaining: data.data.remaining ?? 50,
+        };
+        isRegistrationFull.value = !!data.data.is_full;
+        capacityLoaded.value = true;
+        if (isRegistrationFull.value) {
+          isRegCloseModalOpen.value = true;
+        }
+      }
+    } catch (error) {
+      // Fail open: if the count endpoint is unreachable, allow the form
+      capacityLoaded.value = false;
+    }
+  }
+
+  async function submitWishlist() {
+    const phone = (wishlistPhone.value || "").trim();
+    if (!/^01[0-9]{9}$/.test(phone)) {
+      window.showError(
+        "Error!",
+        "দয়া করে একটি সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন",
+        3000
+      );
+      return;
+    }
+    isWishlistSubmitting.value = true;
+    window.showLoading("Submitting...");
+    try {
+      await useAxios(
+        "/registration/wishlist",
+        { phone, name: wishlistName.value || null },
+        null,
+        "POST"
+      );
+      window.hideLoading();
+      isWishlistSubmitted.value = true;
+      window.showSuccess(
+        "Success!",
+        "আপনাকে ওয়েটলিস্টে যুক্ত করা হয়েছে। পরবর্তী সেশনে ইনশাআল্লাহ আমরা জানাব।",
+        4000
+      );
+    } catch (error) {
+      window.hideLoading();
+      window.showError(
+        "Error!",
+        error?.response?.data?.message || "Something went wrong",
+        3000
+      );
+    } finally {
+      isWishlistSubmitting.value = false;
+    }
+  }
+
   // Compute max date for 16 years old as of July 22, 2025
   const maxDob = computed(() => {
     const date = new Date("2025-07-21");
@@ -649,6 +820,10 @@
   );
 
   async function formSubmit() {
+    if (isRegistrationFull.value) {
+      isRegCloseModalOpen.value = true;
+      return;
+    }
     // isRegCloseModalOpen.value = true;
     // return;
     if (useFormStore.form.gender === 2) {
@@ -717,15 +892,16 @@
           "POST"
         );
 
-        if (data?.data?.reg_no) {
+        if (data?.data?.form?.reg_no) {
           window.hideLoading();
           window.showSuccess("Success!", "Form Updated successfully", 3000);
 
-          studentInfoStore.form = data.data;
-          studentInfoStore.user.name_bn = data.data.name_bn;
-          studentInfoStore.user.name_en = data.data.name_en;
+          studentInfoStore.form = data.data.form;
+          studentInfoStore.user.name_bn = data.data.form.name_bn;
+          studentInfoStore.user.name_en = data.data.form.name_en;
 
-          registeredFormStore.registeredForm = data.data;
+          registeredFormStore.registeredForm = data.data.form;
+          registeredFormStore.allocation = data.data.allocation || null;
           navigateTo("/registration/token");
         }
 
@@ -754,15 +930,16 @@
           "POST"
         );
 
-        if (data?.data?.reg_no) {
+        if (data?.data?.form?.reg_no) {
           window.hideLoading();
           window.showSuccess("Success!", "Form Updated successfully", 3000);
 
-          studentInfoStore.form = data.data;
-          studentInfoStore.user.name_bn = data.data.name_bn;
-          studentInfoStore.user.name_en = data.data.name_en;
+          studentInfoStore.form = data.data.form;
+          studentInfoStore.user.name_bn = data.data.form.name_bn;
+          studentInfoStore.user.name_en = data.data.form.name_en;
 
-          registeredFormStore.registeredForm = data.data;
+          registeredFormStore.registeredForm = data.data.form;
+          registeredFormStore.allocation = data.data.allocation || null;
           navigateTo("/registration/token");
         }
       } catch (error) {
@@ -789,6 +966,11 @@
       useFormStore.form.gender = 1;
       useFormStore.form.rulesAgreement = 1;
       useFormStore.form.education_background = 1;
+    }
+
+    // Existing registrants already have a slot; only gate new registrations
+    if (!studentInfoStore.form?.reg_no) {
+      await checkRegistrationCapacity();
     }
   });
 </script>

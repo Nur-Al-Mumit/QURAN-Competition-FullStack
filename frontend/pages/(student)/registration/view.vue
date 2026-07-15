@@ -25,6 +25,65 @@
 
       <!-- Registration Form Data -->
       <div class="bg-white rounded-lg shadow-md p-6">
+        <!-- Exam Schedule (auto-assigned group / time / room) -->
+        <div
+          v-if="registeredFormStore.allocation"
+          class="mb-8 rounded-lg p-4 border-2 border-amber-400 bg-amber-50"
+        >
+          <h3
+            class="text-lg font-bold mb-3 text-amber-700 border-b border-amber-200 pb-2 flex items-center gap-2"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            পরীক্ষার সময়সূচি ও গ্রুপ
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-amber-900">
+            <div>
+              <span class="block text-xs font-medium text-amber-600">
+                গ্রুপ
+              </span>
+              <span class="text-xl font-bold">
+                {{ registeredFormStore.allocation.group }}
+              </span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-amber-600">
+                সিরিয়াল
+              </span>
+              <span class="text-xl font-bold">
+                {{ registeredFormStore.allocation.serial }}
+              </span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-amber-600">
+                রুম নম্বর
+              </span>
+              <span class="text-xl font-bold">
+                {{ registeredFormStore.allocation.room_number }}
+              </span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-amber-600">
+                পরীক্ষার সময়
+              </span>
+              <span class="text-lg font-bold">
+                {{ registeredFormStore.allocation.exam_time }}
+              </span>
+            </div>
+          </div>
+        </div>
+
         <!-- Basic Information -->
         <div class="mb-8">
           <h3
@@ -264,6 +323,7 @@
   });
 
   const studentInfoStore = useStudentInfoStore();
+  const registeredFormStore = useRegisteredFormStore();
 
   // Helper functions
   const formatDate = (dateString) => {
@@ -302,5 +362,6 @@
 
   onMounted(() => {
     studentInfoStore.fetchUserProfile();
+    registeredFormStore.fetchRegisteredForm();
   });
 </script>
