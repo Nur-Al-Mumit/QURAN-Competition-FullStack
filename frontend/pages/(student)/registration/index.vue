@@ -298,7 +298,8 @@
 
           <div class="space-y-5">
             <div
-              class="rounded-xl border border-gray-200 bg-gray-50/50 p-4 text-center sm:text-left"
+              class="rounded-xl border-2 bg-gray-50/50 p-4 text-center sm:text-left base-tran"
+              :class="invalidFields.includes('gender') ? 'border-red-500 bg-red-50/50' : 'border-gray-200'"
             >
               <h3 class="font-semibold mb-3 text-gray-700">
                 প্রতিযোগী পুরুষ নাকি নারী তা নির্বাচন করুন
@@ -316,7 +317,8 @@
             </div>
 
             <div
-              class="rounded-xl border border-gray-200 bg-gray-50/50 p-4 text-center sm:text-left"
+              class="rounded-xl border-2 bg-gray-50/50 p-4 text-center sm:text-left base-tran"
+              :class="invalidFields.includes('is_recitation') ? 'border-red-500 bg-red-50/50' : 'border-gray-200'"
             >
               <h3 class="font-semibold mb-3 text-gray-700">
                 আপনি কি দেখে কুরআন তেলাওয়াত করতে পারেন?
@@ -326,14 +328,15 @@
                   :options="yesNoOptions"
                   v-model="useFormStore.form.is_recitation"
                   :colors="{
-                    null: 'bg-red-500 text-white border-red-500',
+                    0: 'bg-red-500 text-white border-red-500',
                   }"
                 />
               </div>
             </div>
 
             <div
-              class="rounded-xl border border-gray-200 bg-gray-50/50 p-4 text-center sm:text-left"
+              class="rounded-xl border-2 bg-gray-50/50 p-4 text-center sm:text-left base-tran"
+              :class="invalidFields.includes('need_training') ? 'border-red-500 bg-red-50/50' : 'border-gray-200'"
             >
               <h3 class="font-semibold mb-3 text-gray-700">
                 আপনি কি কুরআন পাঠের প্রশিক্ষণে অংশগ্রহণ করতে চান?
@@ -384,7 +387,10 @@
               প্রতিযোগিতার সকল শর্ত মেনে চলতে প্রস্তুত।
             </p>
           </div>
-          <div class="flex items-center justify-center">
+          <div
+            class="flex items-center justify-center rounded-xl border-2 base-tran p-1"
+            :class="invalidFields.includes('rulesAgreement') ? 'border-red-500 bg-red-50/50' : 'border-transparent'"
+          >
             <inputs-base-radio
               :options="rulesAgreementOptions"
               v-model="useFormStore.form.rulesAgreement"
@@ -502,8 +508,7 @@
         <template #body>
           <div class="p-5">
             <h1 class="text-green-600 font-semibold leading-relaxed text-center">
-              প্রাথমিক পর্বে উত্তীর্ণ হয়েছেন কিন্তু কুরআন তিলাওয়াত এখনও পুরোপুরি
-              শুদ্ধ নয়, তাদের জন্য দক্ষ হাফিযদের মাধ্যমে ৩ আগস্ট থেকে ৭ আগস্ট
+              যাদের তিলাওয়াত পরিপূর্ণ শুদ্ধ নয়, তাদের জন্য দক্ষ হাফিযদের মাধ্যমে ২২ জুলাই থেকে ২৭ জুলাই
               পর্যন্ত ৫ দিনব্যাপী একটি বিশেষ ও সম্পূর্ণ ফ্রি প্রশিক্ষণের আয়োজন
               করা হয়েছে।
             </h1>
@@ -808,7 +813,7 @@
 
   const yesNoOptions = [
     { id: 1, name: "হ্যাঁ" },
-    { id: null, name: "না" },
+    { id: 0, name: "না" },
   ];
 
   const genderOptions = [
@@ -930,11 +935,30 @@
     return Math.min(100, Math.round((count / max) * 100));
   });
 
+  const missingRequiredFields = computed(() => {
+    const missing = [];
+    if (useFormStore.form.gender === null || useFormStore.form.gender === undefined)
+      missing.push("gender");
+    if (useFormStore.form.is_recitation !== 1) missing.push("is_recitation");
+    if (useFormStore.form.need_training === null || useFormStore.form.need_training === undefined)
+      missing.push("need_training");
+    if (useFormStore.form.rulesAgreement !== 1) missing.push("rulesAgreement");
+    return missing;
+  });
+
+  let showValidationErrors = ref(false);
+
+  const invalidFields = computed(() => {
+    if (!showValidationErrors.value) return [];
+    return missingRequiredFields.value;
+  });
+
   const isFormDisabled = computed(() => {
     return (
       dobError.value ||
       useFormStore.form.gender === 2 ||
-      useFormStore.form.rulesAgreement !== 1
+      useFormStore.form.rulesAgreement !== 1 ||
+      missingRequiredFields.value.length > 0
     );
   });
 
@@ -950,7 +974,7 @@
   watch(
     () => useFormStore.form.is_recitation,
     (newValue) => {
-      if (newValue === null) {
+      if (newValue === 0) {
         isRecitationModalOpen.value = true;
       }
     }
@@ -984,6 +1008,7 @@
   );
 
   async function formSubmit() {
+    showValidationErrors.value = true;
     if (isRegistrationFull.value) {
       isRegCloseModalOpen.value = true;
       return;

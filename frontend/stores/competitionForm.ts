@@ -10,17 +10,17 @@ export const useCompetitionFormStore = defineStore(
       phone: "",
       email: "",
       address: null,
-      education_background: 1,
+      education_background: null,
       school_name: null,
       college_name: null,
       university_name: null,
       madrasah_name: null,
       madrasah_study_details: null,
       occupation: null,
-      is_recitation: 1,
+      is_recitation: null,
       need_training: null,
-      gender: 1,
-      rulesAgreement: 1,
+      gender: null,
+      rulesAgreement: null,
     });
 
     return { form };

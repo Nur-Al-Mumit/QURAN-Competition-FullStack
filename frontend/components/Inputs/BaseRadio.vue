@@ -30,8 +30,8 @@
       required: true,
     },
     modelValue: {
-      type: [String, Number],
-      default: "",
+      type: [String, Number, null],
+      default: null,
     },
     colors: {
       type: Object,
