@@ -10,9 +10,11 @@ class UserCompetitionForm extends Model
         'user_id',
         'season_id',
         'reg_no',
+        'criteria_id',
         'name_bn',
         'name_en',
         'dob',
+        'gender',
         'phone',
         'address',
         'education_background',
@@ -24,7 +26,17 @@ class UserCompetitionForm extends Model
         'occupation',
         'is_recitation',
         'need_training',
+        'is_active',
         'exam_time',
-        'is_sms_sent',
     ];
+
+    public function attendanceAllocation()
+    {
+        return $this->hasOne(AttendanceAllocation::class, 'user_competition_form_id', 'id');
+    }
+
+    public function season()
+    {
+        return $this->belongsTo(Season::class, 'season_id', 'id');
+    }
 }
