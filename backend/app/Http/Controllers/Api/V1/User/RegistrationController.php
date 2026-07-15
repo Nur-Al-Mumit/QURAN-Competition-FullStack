@@ -33,7 +33,7 @@ class RegistrationController extends Controller
 
     public function completeRegistration(Request $request)
     {
-        return;
+        // return;
         $request->validate([
             'phone' => 'required|digits:11|regex:/^01[0-9]{9}$/',
             'otp' => 'required|string',

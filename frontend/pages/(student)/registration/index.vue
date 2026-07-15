@@ -449,10 +449,6 @@
               </div>
               <div class="flex items-center">
                 <span class="text-red-500 mr-2">•</span>
-                <span>উচ্চ দক্ষতাসম্পন্ন কুরআন পাঠকারী(জেনারেল)</span>
-              </div>
-              <div class="flex items-center">
-                <span class="text-red-500 mr-2">•</span>
                 <span>হাফিজে কুরআন</span>
               </div>
               <div class="flex items-center">
@@ -653,7 +649,7 @@
   );
 
   async function formSubmit() {
-    isRegCloseModalOpen.value = true;
+    // isRegCloseModalOpen.value = true;
     // return;
     if (useFormStore.form.gender === 2) {
       isGenderModalOpen.value = true;

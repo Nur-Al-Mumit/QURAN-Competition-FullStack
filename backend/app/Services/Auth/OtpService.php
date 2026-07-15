@@ -179,26 +179,27 @@ class OtpService
         try {
             $message = "আসসালামু আলাইকুম,\nআপনার লগইন কোড:{$otp}। এই কোডটি কারো সাথে শেয়ার করবেন না এবং এটি নিরাপদে সংরক্ষণ করুন। এই কোড ব্যবহার করে আপনি ভবিষ্যতেও লগইন করতে পারবেন।\n\nজাযাকাল্লাহু খইরন(আল্লাহ আপনাকে উত্তম প্রতিদান দিন)।\n\n— বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা টিম";
 
-            $response = Http::get('http://api.boom-cast.com/boomcast/WebFramework/boomCastWebService/externalApiSendTextMessage.php', [
-                'masking' => 'NOMASK',
-                'userName' => 'quranlessons.org',
-                'password' => '08f246b1c6c11d739954f0dce3e601a5',
-                'MsgType' => 'TEXT',
-                'receiver' => $phone,
-                'message' => $message,
-            ]);
+            // $response = Http::get('http://api.boom-cast.com/boomcast/WebFramework/boomCastWebService/externalApiSendTextMessage.php', [
+            //     'masking' => 'NOMASK',
+            //     'userName' => 'quranlessons.org',
+            //     'password' => '08f246b1c6c11d739954f0dce3e601a5',
+            //     'MsgType' => 'TEXT',
+            //     'receiver' => $phone,
+            //     'message' => $message,
+            // ]);
 
             // Log SMS attempt
             SmsLog::create([
                 'phone' => $phone,
                 'message' => $message,
-                'response' => json_encode($response->json()),
-                'status' => $response->successful() ? 'success' : 'failed',
+                // 'response' => json_encode($response->json()),
+                // 'status' => $response->successful() ? 'success' : 'failed',
+                'status' => 'success',
             ]);
 
-            if (!$response->successful()) {
-                throw new \Exception("BoomCast API failed: " . $response->body());
-            }
+            // if (!$response->successful()) {
+            //     throw new \Exception("BoomCast API failed: " . $response->body());
+            // }
         } catch (\Exception $e) {
             throw new \Exception("Couldn't send the OTP, Please try again. Error: " . $e->getMessage());
         }

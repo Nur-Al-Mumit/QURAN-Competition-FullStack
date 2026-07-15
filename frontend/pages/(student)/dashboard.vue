@@ -62,7 +62,7 @@
       </div>
     </div>
 
-    <div class="flex justify-center pt-6">
+    <div v-if="false" class="flex justify-center pt-6">
       <div class="border-emerald-ripple inline-block">
         <button
           @click="() => navigateTo('/view-seat-plan-and-timing')"
@@ -422,13 +422,13 @@
 
   // Competition timeline dates
   const dates = {
-    registrationEnd: new Date("2025-07-30T23:59:59"),
-    smsPhase: new Date("2025-07-31T23:59:59"),
-    primaryRoundStart: new Date("2025-08-01T00:00:00"),
-    primaryRoundEnd: new Date("2025-08-02T23:59:59"),
-    trainingStart: new Date("2025-08-03T00:00:00"),
-    trainingEnd: new Date("2025-08-07T23:59:59"),
-    finalRound: new Date("2025-08-09T00:00:00"),
+    registrationEnd: new Date("2026-07-20T23:59:59"),
+    smsPhase: new Date("2026-07-21T23:59:59"),
+    primaryRoundStart: new Date("2026-08-01T00:00:00"),
+    primaryRoundEnd: new Date("2026-07-21T23:59:59"),
+    trainingStart: new Date("2026-07-22T00:00:00"),
+    trainingEnd: new Date("2026-07-27T23:59:59"),
+    finalRound: new Date("2026-07-30T00:00:00"),
   };
 
   // Progress stages with SVG icons
@@ -449,12 +449,18 @@
     },
     {
       id: 4,
+      title: "Primary Selecton Round",
+      icon: "Users",
+      completed: false,
+    },
+    {
+      id: 5,
       title: "Eligibility SMS Received",
       icon: "Bell",
-      completed: true,
+      completed: false,
     },
-    { id: 5, title: "Training Completed", icon: "BookOpen", completed: false },
-    { id: 6, title: "Final Round", icon: "Trophy", completed: false },
+    { id: 6, title: "Training Completed", icon: "BookOpen", completed: false },
+    { id: 7, title: "Final Round", icon: "Trophy", completed: false },
   ]);
 
   const userProgress = computed(() => {
@@ -549,7 +555,7 @@
   // Timeline events
   const timelineEvents = [
     {
-      date: "৩০ জুলাই",
+      date: "২০ জুলাই",
       title: "রেজিস্ট্রেশন সমাপ্তি",
       description: "রাত ১১:৫৯ মিনিটের মধ্যে রেজিস্ট্রেশন সম্পন্ন করুন",
       status:
@@ -557,21 +563,9 @@
       icon: "Users",
     },
     {
-      date: "৩১ জুলাই",
-      title: "SMS নোটিফিকেশন",
-      description: "বাছাই পর্বের তারিখ ও সময়ের জন্য SMS পাবেন",
-      status:
-        currentTime.value > dates.smsPhase
-          ? "completed"
-          : currentTime.value > dates.registrationEnd
-          ? "active"
-          : "upcoming",
-      icon: "Bell",
-    },
-    {
-      date: "১-২ আগস্ট",
+      date: "২১ জুলাই",
       title: "প্রাথমিক বাছাই পর্ব",
-      description: "দুই দিনব্যাপী প্রাথমিক বাছাই অনুষ্ঠিত হবে",
+      description: "২১ জুলাই বিকাল ৫.০০ টায় রেজিস্ট্রেশন কার্ডে উল্লিখিত ভেনুতে প্রাথমিক বাছাই অনুষ্ঠিত হবে",
       status:
         currentTime.value > dates.primaryRoundEnd
           ? "completed"
@@ -581,7 +575,7 @@
       icon: "BookOpen",
     },
     {
-      date: "৩-৭ আগস্ট",
+      date: "২২-২৭ জুলাই",
       title: "বিশেষ প্রশিক্ষণ",
       description: "৫ দিনব্যাপী ফ্রি তিলাওয়াত প্রশিক্ষণ",
       status:
@@ -593,7 +587,7 @@
       icon: "BookOpen",
     },
     {
-      date: "৯ আগস্ট",
+      date: "৩০ জুলাই",
       title: "চূড়ান্ত পর্ব",
       description: "প্রতিযোগিতার চূড়ান্ত পর্ব অনুষ্ঠিত হবে",
       status:
