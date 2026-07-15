@@ -66,7 +66,7 @@
               <span class="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 text-white font-bold text-sm">১</span>
               <div>
                 <h3 class="font-bold text-emerald-950 text-lg">প্রাথমিক বিভাগ</h3>
-                <span class="text-emerald-600 font-medium text-xs block" dir="rtl">المبتদئ (Al-Mubtadi)</span>
+                <span class="text-emerald-600 font-medium text-xs block" dir="rtl">المبتدئ (Al-Mubtadi)</span>
               </div>
             </div>
             <p class="text-gray-600 text-xs sm:text-sm mb-4 min-h-[40px]">
@@ -254,7 +254,7 @@
             <span class="absolute -left-10 sm:-left-12 top-0 flex items-center justify-center w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-sm">৩</span>
             <h3 class="font-bold text-emerald-950 text-[16px] sm:text-lg mb-1">বাছাই পর্ব (ভাইভা)</h3>
             <p class="text-gray-600 text-sm">
-              ২১শে জুলাই বাছাই পর্ব অনুষ্ঠিত হবে। বাছাই পর্বে প্রতিযোগীদের ভাইভার পর তাদের দুটি বিভাগে ভাগ করা হবে— 'দক্ষ' (الماهر) এবং 'প্রাথমিক' (المبتদئ)। সুনির্দিষ্ট নির্দেশনা ওয়েবসাইট অথবা এসএমএস (SMS)-এর মাধ্যমে জানিয়ে দেওয়া হবে।
+              ২১শে জুলাই বাছাই পর্ব অনুষ্ঠিত হবে। বাছাই পর্বে প্রতিযোগীদের ভাইভার পর তাদের দুটি বিভাগে ভাগ করা হবে— 'দক্ষ' (الماهر) এবং 'প্রাথমিক' (المبتدئ)। সুনির্দিষ্ট নির্দেশনা ওয়েবসাইট অথবা এসএমএস (SMS)-এর মাধ্যমে জানিয়ে দেওয়া হবে।
             </p>
           </div>
 
@@ -263,7 +263,7 @@
             <span class="absolute -left-10 sm:-left-12 top-0 flex items-center justify-center w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-sm">৪</span>
             <h3 class="font-bold text-emerald-950 text-[16px] sm:text-lg mb-1">বিশেষ ফ্রি প্রশিক্ষণ</h3>
             <p class="text-gray-600 text-sm leading-relaxed">
-              <strong>'প্রাথমিক' (المبتদئ)</strong> বিভাগের জন্য দক্ষ প্রশিক্ষক দ্বারা ২২শে জুলাই থেকে ২৭শে জুলাই পর্যন্ত ৫ দিনব্যাপী একটি বিশুদ্ধ কুরআন পাঠের ফ্রি প্রশিক্ষণের ব্যবস্থা থাকবে। <span class="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">এই প্রশিক্ষণে অংশগ্রহণের মাধ্যমেই প্রতিযোগিতায় চূড়ান্ত অংশগ্রহণ নিশ্চিত করতে হবে।</span> 'দক্ষ' (الماهر) বিভাগের জন্য এই প্রশিক্ষণ ঐচ্ছিক।
+              <strong>'প্রাথমিক' (المبتدئ)</strong> বিভাগের জন্য দক্ষ প্রশিক্ষক দ্বারা ২২শে জুলাই থেকে ২৭শে জুলাই পর্যন্ত ৫ দিনব্যাপী একটি বিশুদ্ধ কুরআন পাঠের ফ্রি প্রশিক্ষণের ব্যবস্থা থাকবে। <span class="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">এই প্রশিক্ষণে অংশগ্রহণের মাধ্যমেই প্রতিযোগিতায় চূড়ান্ত অংশগ্রহণ নিশ্চিত করতে হবে।</span> 'দক্ষ' (الماهر) বিভাগের জন্য এই প্রশিক্ষণ ঐচ্ছিক।
             </p>
           </div>
 
