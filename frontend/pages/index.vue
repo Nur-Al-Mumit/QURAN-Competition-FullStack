@@ -25,15 +25,15 @@
             <span
               class="bg-gradient-to-r from-emerald-600 to-emerald-800 text-transparent whitespace-nowrap pt-1 bg-clip-text"
             >
-              বিশুদ্ধ কুরআন পাঠ
+              বিশুদ্ধ কুরআনপাঠ
             </span>
             <br />
             <span class="text-black-600 text-4xl whitespace-nowrap">
-              প্রতিযোগিতা - ১৪৪৮ হিজরি
+              প্রতিযোগিতা ১৪৪৮ হিজরী
             </span>
           </h1>
 
-          <div class="max-w-4xl mx-auto sm:mt-20">
+          <div class="max-w-4xl mx-auto sm:mt-10 bg-white">
             <div
               class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 lg:p-8 shadow-xl border border-gray-200"
             >
@@ -54,14 +54,88 @@
               </p>
             </div>
           </div>
+          <!-- Date & Venue Card -->
+          <div class="max-w-4xl mx-auto sm:mt-10">
+            <div
+              class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 lg:p-8 shadow-xl border border-gray-200"
+            >
+              <div class="grid sm:grid-cols-2 gap-6 text-center sm:text-left">
+                <!-- Dates -->
+                <div class="bg-emerald-50 rounded-xl p-5">
+                  <div
+                    class="flex items-center justify-center sm:justify-start mb-2"
+                  >
+                    <svg
+                      class="w-6 h-6 text-emerald-600 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <h3 class="text-lg font-semibold text-emerald-800">
+                      তারিখ সমূহ
+                    </h3>
+                  </div>
+                  <p class="text-emerald-800 mb-1">
+                    <span class="font-semibold">প্রাথমিক বাছাই পর্ব:</span>
+                    ২১ জুলাই
+                  </p>
+                  <p class="text-emerald-800">
+                    <span class="font-semibold">চূড়ান্ত পর্ব:</span>
+                    ৩০শে জুলাই
+                  </p>
+                </div>
+
+                <!-- Venue -->
+                <div class="bg-emerald-50 rounded-xl p-5">
+                  <div
+                    class="flex items-center justify-center sm:justify-start mb-2"
+                  >
+                    <svg
+                      class="w-6 h-6 text-emerald-600 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                    <h3 class="text-lg font-semibold text-emerald-800">
+                      ভেন্যু
+                    </h3>
+                  </div>
+                  <p class="text-emerald-800 font-semibold">
+                    হেরিটেজ হাইটস এন্ড ব্যাংকুয়েট হল
+                  </p>
+                  <p class="text-emerald-700 text-sm mt-1">
+                    মেট্রোপলিটন মার্কেট (২য় তলা), সুবহানীঘাট, সিলেট
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
+
     <!-- Registration Section -->
-    <section
-      v-if="!false"
-      class="py-16 bg-gradient-to-r from-emerald-500 to-emerald-600"
-    >
+    <section class="py-16 bg-gradient-to-r from-emerald-500 to-emerald-600">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-3xl shadow-2xl p-8 lg:p-12 text-center">
           <div
@@ -83,33 +157,17 @@
           </div>
 
           <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            <!-- রেজিস্ট্রেশন চলছে -->
-            রেজিস্ট্রেশন শেষ হয়েছে
+            রেজিস্ট্রেশন চলছে
           </h2>
 
-          <div v-if="false" class="grid md:grid-cols-2 gap-8 mb-8">
-            <div
-              class="bg-emerald-50 rounded-xl p-6 border-l-4 border-emerald-400"
-            >
-              <h3 class="text-xl font-semibold text-emerald-800 mb-2">
-                রেজিস্ট্রেশনের শেষ তারিখ
-              </h3>
-              <p class="text-2xl font-bold text-emerald-900">৩০ জুলাই</p>
-            </div>
+          <p class="text-lg text-gray-600 mb-8">
+            রেজিস্ট্রেশনের শেষ তারিখ:
+            <span class="font-bold text-emerald-700">
+              ২০শে জুলাই, রাত ১২:০০
+            </span>
+          </p>
 
-            <div
-              class="bg-emerald-50 rounded-xl p-6 border-l-4 border-emerald-400"
-            >
-              <h3 class="text-xl font-semibold text-emerald-800 mb-2">
-                নোটিফিকেশন
-              </h3>
-              <p class="text-sm text-emerald-700">
-                ৩১ জুলাই সকাল ১০টার মধ্যে SMS এবং ওয়েবসাইট জানানো হবে
-              </p>
-            </div>
-          </div>
-
-          <div v-if="false" class="border-emerald-ripple inline-block">
+          <div class="border-emerald-ripple inline-block">
             <button
               @click="() => navigateTo('/registration')"
               class="group relative inline-flex items-center justify-center px-8 py-4 sm:text-xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 shine-sweep-effect"
@@ -133,14 +191,43 @@
             </button>
           </div>
 
-          <div class="border-emerald-ripple inline-block mt-8">
-            <button
-              @click="() => navigateTo('/view-seat-plan-and-timing')"
-              class="group relative inline-flex items-center justify-center px-8 py-4 sm:text-xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 shine-sweep-effect"
-            >
-              <span class="relative flex items-center text-3xl">
+          <p class="text-sm text-gray-500 mt-6">
+            রেজিস্ট্রেশন লিংক:
+            <span class="text-emerald-600 font-medium">
+              competition.eshoquranshikhi.org/registration
+            </span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Syllabus Section -->
+    <section class="py-20 bg-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            সিলেবাস
+          </h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">
+            <span class="font-semibold text-red-500">বি: দ্রঃ</span>
+            শুধুমাত্র দেখে দেখে পড়তে হবে, মুখস্থ করার প্রয়োজন নেই।
+          </p>
+          <div
+            class="w-24 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600 mx-auto rounded-full mt-4"
+          ></div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <!-- Beginner -->
+          <div
+            class="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 shadow-md hover:scale-102 transition duration-300"
+          >
+            <div class="flex items-center mb-6">
+              <div
+                class="w-14 h-14 bg-emerald-500 rounded-full flex items-center justify-center"
+              >
                 <svg
-                  class="w-8 h-8 mr-2"
+                  class="w-7 h-7 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -149,23 +236,151 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                   />
                 </svg>
-                আপনার সিট প্ল্যান দেখুন
+              </div>
+              <div class="ml-4 text-left">
+                <h3 class="text-2xl font-bold text-emerald-800">প্রাথমিক</h3>
+                <p class="text-emerald-600 text-lg" dir="rtl">المبتدئ</p>
+              </div>
+            </div>
+            <div class="flex items-center text-emerald-700">
+              <div class="w-2 h-2 bg-emerald-500 rounded-full mr-3"></div>
+              <span class="whitespace-nowrap font-semibold">
+                ২৯ ও ৩০ তম পারা
               </span>
-            </button>
+            </div>
+            <p class="text-emerald-700 mt-2 text-center sm:text-left">
+              (সূরাতুল মুলক – সূরাতুন নাস)
+            </p>
+          </div>
+
+          <!-- Skilled -->
+          <div
+            class="bg-amber-50 border border-amber-200 rounded-2xl p-8 shadow-md hover:scale-102 transition duration-300"
+          >
+            <div class="flex items-center mb-6">
+              <div
+                class="w-14 h-14 bg-amber-500 rounded-full flex items-center justify-center"
+              >
+                <svg
+                  class="w-7 h-7 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                  />
+                </svg>
+              </div>
+              <div class="ml-4 text-left">
+                <h3 class="text-2xl font-bold text-amber-800">দক্ষ</h3>
+                <p class="text-amber-600 text-lg" dir="rtl">الماهر</p>
+              </div>
+            </div>
+            <div class="flex items-center text-amber-700">
+              <div class="w-2 h-2 bg-amber-500 rounded-full mr-3"></div>
+              <span class="whitespace-nowrap font-semibold">
+                ১৫ থেকে ৩০ পারা
+              </span>
+            </div>
+            <p class="text-amber-700 mt-2 text-center sm:text-left">
+              (সূরাতুল কাহফ – সূরাতুন নাস)
+            </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Timeline Section -->
+    <!-- Eligibility Section -->
+    <section class="py-20 bg-gray-50">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            অংশগ্রহণের যোগ্যতা
+          </h2>
+          <div
+            class="w-24 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600 mx-auto rounded-full"
+          ></div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <div
+              class="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4"
+            >
+              <svg
+                class="w-8 h-8 text-emerald-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800 mb-2">ন্যূনতম বয়স</h3>
+            <p class="text-gray-600">ন্যূনতম বয়স ১৬ হতে হবে।</p>
+          </div>
+
+          <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <div
+              class="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4"
+            >
+              <svg
+                class="w-8 h-8 text-emerald-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 100-8 4 4 0 000 8zm6 0a3 3 0 100-6 3 3 0 000 6zm-12 0a3 3 0 100-6 3 3 0 000 6z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800 mb-2">ব্যাকগ্রাউন্ড</h3>
+            <p class="text-gray-600">জেনারেল ব্যাকগ্রাউন্ডের পুরুষ হতে হবে।</p>
+          </div>
+
+          <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <div
+              class="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4"
+            >
+              <svg
+                class="w-8 h-8 text-emerald-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800 mb-2">তিলাওয়াত</h3>
+            <p class="text-gray-600">দেখে কুরআন তিলাওয়াতে সক্ষম হতে হবে।</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Steps Section -->
     <section class="py-20 bg-white">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
           <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            প্রতিযোগিতা সময়সূচি ও ধাপসমূহ
+            অংশগ্রহণের ধাপসমূহ
           </h2>
           <div
             class="w-24 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600 mx-auto rounded-full"
@@ -178,7 +393,7 @@
           ></div>
 
           <div class="space-y-12">
-            <!-- Timeline Item 1 -->
+            <!-- Step 1 -->
             <div class="relative flex items-center lg:justify-center">
               <div class="w-full lg:w-1/2 lg:pr-12">
                 <div
@@ -193,18 +408,21 @@
                       <span class="text-white font-bold">১</span>
                     </div>
                     <h3 class="text-xl font-bold text-emerald-800 ml-4">
-                      ৩০ জুলাই
+                      রেজিস্ট্রেশন
                     </h3>
                   </div>
                   <p class="text-emerald-700">
-                    ৩০ জুলাই রেজিস্ট্রেশনের শেষ দিন, ৩০ জুলাই রাত ১২টার মধ্যে
-                    রেজিস্ট্রেশন সম্পন্ন করতে হবে
+                    ২০শে জুলাই রাত ১২:০০ টার মধ্যে ওয়েবসাইটে
+                    <span class="font-semibold">
+                      (competition.eshoquranshikhi.org/registration)
+                    </span>
+                    রেজিস্ট্রেশন সম্পন্ন করতে হবে।
                   </p>
                 </div>
               </div>
             </div>
 
-            <!-- Timeline Item 2 -->
+            <!-- Step 2 -->
             <div class="relative flex items-center lg:justify-center">
               <div class="lg:w-1/2 lg:pl-12 lg:ml-auto">
                 <div
@@ -219,87 +437,18 @@
                       <span class="text-white font-bold">২</span>
                     </div>
                     <h3 class="text-xl font-bold text-emerald-800 ml-4">
-                      ৩১ জুলাই
+                      টোকেন সংগ্রহ
                     </h3>
                   </div>
                   <p class="text-emerald-700">
-                    অংশগ্রহণকারীদেরকে ৩১ জুলাই সকাল ১২টার মধ্যে মেসেজের মাধ্যমে
-                    তার জন্য নির্ধারিত বাছাই পর্বের তারিখ ও সময় জানানো হবে
+                    ওয়েবসাইট থেকে রেজিস্ট্রেশন টোকেন অবশ্যই সংগ্রহ করতে হবে এবং
+                    পরীক্ষার সময় ঐ টোকেন নিয়ে আসতে হবে।
                   </p>
                 </div>
               </div>
             </div>
 
-            <!-- Timeline Item 3 -->
-            <div class="relative flex items-center lg:justify-center">
-              <div class="w-full lg:w-1/2 lg:pr-12">
-                <div
-                  class="bg-emerald-50 rounded-2xl p-4 sm:p-6 shadow-lg border border-emerald-200 text-center sm:text-left"
-                >
-                  <div
-                    class="flex items-center justify-center sm:justify-start mb-4"
-                  >
-                    <div
-                      class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center"
-                    >
-                      <span class="text-white font-bold">৩</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-emerald-800 ml-4">
-                      ১ আগস্ট
-                    </h3>
-                  </div>
-                  <p class="text-[15px] sm:text-base text-emerald-700 mb-4">
-                    প্রাথমিক বাছাইপর্ব (প্রয়োজনে ২ আগস্টেও হতে পারে)
-                  </p>
-                  <div class="bg-emerald-100 rounded-lg p-4">
-                    <p class="text-[15px] text-emerald-800 font-medium mb-2">
-                      বাছাইপর্ব হবে ওয়ান-টু-ওয়ান ভাইভা পদ্ধতিতে এবং ভাগ করে
-                      ডাকা হবে
-                      <strong class="text-emerald-900">উদাহরণস্বরূপ</strong>
-                      <span class="whitespace-nowrap">
-                        &nbsp;(১০০ জনের জন্য):
-                      </span>
-                    </p>
-                    <ul
-                      class="text-[15px] text-emerald-700 space-y-1 text-left"
-                    >
-                      <li>• প্রথম ২০ জন: সকাল ৯টা – ১০টা</li>
-                      <li>• পরবর্তী ২০ জন: সকাল ১০টা – ১১টা</li>
-                      <li>• সময় ও তারিখ ব্যক্তিগত মেসেজে জানানো হবে</li>
-                      <li>• অংশগ্রহণকারীর সংখ্যা বেশি হলে ২ আগস্টেও হবে</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Timeline Item 4 -->
-            <div class="relative flex items-center lg:justify-center">
-              <div class="w-full lg:w-1/2 lg:pl-12 lg:ml-auto">
-                <div
-                  class="bg-emerald-50 rounded-2xl p-6 shadow-lg border border-emerald-200 text-center sm:text-left"
-                >
-                  <div
-                    class="flex items-center justify-center sm:justify-start mb-4"
-                  >
-                    <div
-                      class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center"
-                    >
-                      <span class="text-white font-bold">৪</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-emerald-800 ml-4">
-                      ৩ – ৭ আগস্ট
-                    </h3>
-                  </div>
-                  <p class="text-emerald-700">
-                    প্রাথমিক পর্বে উত্তীর্ণ কিন্তু ভুল থাকা ভাইদের জন্য
-                    <strong>ফ্রি প্রশিক্ষণ</strong>
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Timeline Item 5 -->
+            <!-- Step 3 -->
             <div class="relative flex items-center lg:justify-center">
               <div class="w-full lg:w-1/2 lg:pr-12">
                 <div
@@ -311,14 +460,15 @@
                     <div
                       class="w-12 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center"
                     >
-                      <span class="text-white font-bold">৫</span>
+                      <span class="text-white font-bold">৩</span>
                     </div>
                     <h3 class="text-xl font-bold text-emerald-800 ml-4">
-                      ৯ আগস্ট
+                      বাছাই পর্ব
                     </h3>
                   </div>
-                  <p class="text-emerald-700 font-semibold text-lg">
-                    চূড়ান্ত পর্ব
+                  <p class="text-emerald-700">
+                    ২১ জুলাই বিকাল ৫:০০ টায় বাছাই পর্ব অনুষ্ঠিত হবে। সুনির্দিষ্ট
+                    নির্দেশনা ওয়েবসাইট/এসএমএস (SMS) এর মাধ্যমে জানিয়ে দেওয়া হবে।
                   </p>
                 </div>
               </div>
@@ -328,207 +478,297 @@
       </div>
     </section>
 
-    <!-- Competition Details -->
-    <section class="py-20 bg-gray-50">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid lg:grid-cols-2 gap-12">
-          <!-- Primary Selection -->
-          <div
-            class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-t-4 border-emerald-500"
-          >
-            <div class="flex items-center justify-center sm:justify-start mb-6">
-              <div
-                class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center"
-              >
-                <svg
-                  class="w-6 h-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <h3 class="text-2xl font-bold text-emerald-800 ml-4">
-                প্রাথমিক বাছাইপর্ব
-              </h3>
-            </div>
-            <div class="bg-emerald-50 rounded-xl p-6 text-center sm:text-left">
-              <p class="text-emerald-800 leading-relaxed">
-                প্রাথমিক বাছাইপর্বে কুরআন
-                <strong>দেখে পড়তে পারলে</strong>
-                উত্তীর্ণ ধরা হবে। তাজবিদ ও উচ্চারণে ভুল থাকলেও চলবে। তবে যারা
-                দেখে পড়তে পারেন না, তারা এই ধাপে বাদ পড়বেন।
-              </p>
-            </div>
-          </div>
-
-          <!-- Final Round Surahs -->
-          <div
-            class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-t-4 border-emerald-500"
-          >
-            <div class="flex items-center justify-center sm:justify-start mb-6">
-              <div
-                class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center"
-              >
-                <svg
-                  class="w-6 h-6 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                  />
-                </svg>
-              </div>
-              <h3 class="text-2xl font-bold text-emerald-800 ml-4">
-                চূড়ান্ত পর্বের সিলেবাস
-              </h3>
-            </div>
-            <div
-              class="bg-emerald-50 rounded-xl p-4 sm:p-6 text-center sm:text-left"
-            >
-              <p class="text-emerald-800 mb-4">
-                নির্বাচিত অংশগ্রহণকারীদের নিম্নোক্ত সূরাগুলো থেকে দেখে তিলাওয়াত
-                করতে হবে:
-              </p>
-              <div class="space-y-3">
-                <div class="flex items-center text-emerald-700">
-                  <div class="w-2 h-2 bg-emerald-500 rounded-full mr-3"></div>
-                  <span class="whitespace-nowrap">
-                    সুরা আলা থেকে সুরা নাস (৩০ পারা)
-                  </span>
-                </div>
-                <div class="flex items-center text-emerald-700">
-                  <div class="w-2 h-2 bg-emerald-500 rounded-full mr-3"></div>
-                  <span>সুরা কিয়ামাহ</span>
-                </div>
-                <div class="flex items-center text-emerald-700">
-                  <div class="w-2 h-2 bg-emerald-500 rounded-full mr-3"></div>
-                  <span>সুরা মুজাম্মিল</span>
-                </div>
-                <div class="flex items-center text-emerald-700">
-                  <div class="w-2 h-2 bg-emerald-500 rounded-full mr-3"></div>
-                  <span>সুরা মুলক</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Mission Section -->
-    <section class="py-20 bg-gradient-to-r from-emerald-600 to-emerald-700">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 lg:p-12">
-          <div
-            class="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-8"
-          >
-            <svg
-              class="w-10 h-10 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-              />
-            </svg>
-          </div>
-
-          <h2
-            class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 sm:mb-6"
-          >
-            আমাদের লক্ষ্য
-          </h2>
-
-          <p class="sm:text-xl text-white/90 leading-relaxed max-w-4xl mx-auto">
-            যারা শুদ্ধভাবে পড়তে পারেন না, তাদেরকে উৎসাহ ও সহানুভূতির মাধ্যমে
-            আবার কুরআনের পথে ফিরিয়ে আনা। কুরআনের মাধ্যমে জীবনে পরিবর্তন আনা এবং
-            সালাত সুন্দর করার পথে সহায়তা করাই আমাদের উদ্দেশ্য।
-          </p>
-        </div>
-      </div>
-    </section>
-
     <!-- Rewards Section -->
-    <section class="py-20 bg-white">
+    <section class="py-20 bg-gray-50">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
           <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            পুরস্কার ও সম্মাননা
+            পুরস্কার
           </h2>
           <div
             class="w-24 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600 mx-auto rounded-full shine-sweep-effect"
           ></div>
         </div>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid md:grid-cols-3 gap-8">
           <!-- First Prize -->
           <div
-            class="bg-emerald-50 border border-emerald-300 rounded-2xl p-8 text-center shadow-md hover:scale-102 transition duration-300"
+            class="bg-white border border-emerald-300 rounded-2xl p-8 text-center shadow-lg hover:scale-102 transition duration-300"
           >
             <div
               class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4"
             >
               <span class="text-3xl">🥇</span>
             </div>
-            <h3 class="text-xl font-bold mb-2 text-gray-800">প্রথম পুরস্কার</h3>
-            <p class="text-2xl font-bold text-gray-900">১৫,০০০ টাকা</p>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">১ম পুরস্কার</h3>
+            <ul class="text-left text-gray-700 space-y-2 text-sm">
+              <li class="flex items-center">
+                <span class="text-emerald-500 mr-2">•</span>
+                কুরআনুল কারীমের তাফসীর
+              </li>
+              <li class="flex items-center">
+                <span class="text-emerald-500 mr-2">•</span>
+                ইসলামিক গিফট
+              </li>
+              <li class="flex items-center">
+                <span class="text-emerald-500 mr-2">•</span>
+                <span class="font-bold text-gray-900">নগদ ৭,০০০/-</span>
+              </li>
+            </ul>
+            <p class="text-xs text-gray-500 mt-4">
+              (সাথে ইসলামিক বই এবং বিশেষ ব্যাজিয়া, ইত্যাদি)
+            </p>
           </div>
 
           <!-- Second Prize -->
           <div
-            class="bg-emerald-50 border border-emerald-300 rounded-2xl p-8 text-center shadow-md hover:scale-102 transition duration-300"
+            class="bg-white border border-emerald-300 rounded-2xl p-8 text-center shadow-lg hover:scale-102 transition duration-300"
           >
             <div
               class="w-16 h-16 bg-emerald-100 text-amber-700 rounded-full flex items-center justify-center mx-auto mb-4"
             >
               <span class="text-3xl">🥈</span>
             </div>
-            <h3 class="text-xl font-bold mb-2 text-gray-800">
-              দ্বিতীয় পুরস্কার
-            </h3>
-            <p class="text-2xl font-bold text-gray-900">১০,০০০ টাকা</p>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">২য় পুরস্কার</h3>
+            <ul class="text-left text-gray-700 space-y-2 text-sm">
+              <li class="flex items-center">
+                <span class="text-emerald-500 mr-2">•</span>
+                কুরআনুল কারীমের তাফসীর
+              </li>
+              <li class="flex items-center">
+                <span class="text-emerald-500 mr-2">•</span>
+                <span class="font-bold text-gray-900">নগদ ৫,০০০/-</span>
+              </li>
+            </ul>
+            <p class="text-xs text-gray-500 mt-4">
+              (সাথে ইসলামিক বই এবং বিশেষ ব্যাজিয়া, ইত্যাদি)
+            </p>
           </div>
 
           <!-- Third Prize -->
           <div
-            class="bg-emerald-50 border border-emerald-300 rounded-2xl p-8 text-center shadow-md hover:scale-102 transition duration-300"
+            class="bg-white border border-emerald-300 rounded-2xl p-8 text-center shadow-lg hover:scale-102 transition duration-300"
           >
             <div
               class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4"
             >
               <span class="text-3xl">🥉</span>
             </div>
-            <h3 class="text-xl font-bold mb-2 text-gray-800">
-              তৃতীয় পুরস্কার
-            </h3>
-            <p class="text-2xl font-bold text-gray-900">৫,০০০ টাকা</p>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">৩য় পুরস্কার</h3>
+            <ul class="text-left text-gray-700 space-y-2 text-sm">
+              <li class="flex items-center">
+                <span class="text-emerald-500 mr-2">•</span>
+                কুরআনুল কারীমের তাফসীর
+              </li>
+              <li class="flex items-center">
+                <span class="text-emerald-500 mr-2">•</span>
+                <span class="font-bold text-gray-900">নগদ ৩,০০০/-</span>
+              </li>
+            </ul>
+            <p class="text-xs text-gray-500 mt-4">
+              (সাথে ইসলামিক বই এবং বিশেষ ব্যাজিয়া, ইত্যাদি)
+            </p>
           </div>
+        </div>
 
-          <!-- Participation -->
+        <!-- Participation -->
+        <div class="mt-8">
           <div
-            class="bg-emerald-50 border border-emerald-300 rounded-2xl p-8 text-center shadow-md hover:scale-102 transition duration-300"
+            class="bg-gradient-to-r from-emerald-100 to-emerald-50 border border-emerald-300 rounded-2xl p-6 text-center shadow-md"
           >
             <div
-              class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4"
+              class="inline-flex items-center justify-center w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full mb-3"
             >
-              <span class="text-3xl">🎖️</span>
+              <span class="text-2xl">🎖️</span>
             </div>
-            <h3 class="text-xl font-bold mb-2 text-gray-800 whitespace-nowrap">
-              অংশগ্রহণকারী সকলের জন্য
-            </h3>
-            <p class="text-lg font-semibold text-gray-700">বিশেষ হাদিয়া</p>
+            <p class="text-lg font-semibold text-emerald-800">
+              অংশগ্রহণকারী সকলের জন্য থাকবে বিশেষ সান্ত্বনা পুরস্কার
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Relevant Info Section -->
+    <section class="py-20 bg-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            প্রাসঙ্গিক তথ্যাবলি
+          </h2>
+          <div
+            class="w-24 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600 mx-auto rounded-full"
+          ></div>
+        </div>
+
+        <div class="space-y-6 max-w-4xl mx-auto">
+          <!-- Division -->
+          <div class="bg-emerald-50 rounded-2xl p-6 shadow-md">
+            <div class="flex items-start">
+              <span class="text-2xl mr-3">👉</span>
+              <p class="text-gray-700">
+                বাছাই পর্বে প্রতিযোগীদের ভাইভার পর তাদের দুটি বিভাগে ভাগ করা
+                হবে—
+              </p>
+            </div>
+            <div class="mt-4 grid sm:grid-cols-2 gap-4">
+              <div class="bg-white rounded-xl p-4 border border-emerald-200">
+                <h4 class="font-bold text-emerald-800">
+                  'দক্ষ'
+                  <span class="text-emerald-600" dir="rtl">(الماهر)</span>
+                </h4>
+                <p class="text-sm text-gray-600 mt-1">
+                  যারা কুরআন তিলাওয়াতে পারদর্শী (যেকোনো সূরা)
+                </p>
+              </div>
+              <div class="bg-white rounded-xl p-4 border border-emerald-200">
+                <h4 class="font-bold text-emerald-800">
+                  'প্রাথমিক'
+                  <span class="text-emerald-600" dir="rtl">(المبتدئ)</span>
+                </h4>
+                <p class="text-sm text-gray-600 mt-1">
+                  যারা দেখে পড়তে পারেন কিন্তু তাজবীদের উন্নয়নের সুযোগ রয়েছে।
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Training -->
+          <div class="bg-emerald-50 rounded-2xl p-6 shadow-md">
+            <div class="flex items-start">
+              <span class="text-2xl mr-3">👉</span>
+              <p class="text-gray-700">
+                প্রাথমিক
+                <span class="font-semibold" dir="rtl">المبتدئ</span>
+                বিভাগের জন্য দক্ষ প্রশিক্ষক দ্বারা ৫ দিনের একটি বিশুদ্ধ কুরআন
+                পাঠের ফ্রি প্রশিক্ষণের ব্যবস্থা থাকবে। (এই প্রশিক্ষণে অংশগ্রহণের
+                মাধ্যমেই প্রতিযোগিতায় অংশগ্রহণ নিশ্চিত করতে হবে); 'দক্ষ
+                <span class="font-semibold" dir="rtl">(الماهر)</span>
+                ' বিভাগের জন্য এই প্রশিক্ষণ ঐচ্ছিক।
+              </p>
+            </div>
+          </div>
+
+          <!-- Venue -->
+          <div class="bg-emerald-50 rounded-2xl p-6 shadow-md">
+            <div class="flex items-start">
+              <span class="text-2xl mr-3">👉</span>
+              <p class="text-gray-700">
+                পরীক্ষার সকল কার্যক্রম উল্লেখিত ভেন্যুতে অনুষ্ঠিত হবে।
+              </p>
+            </div>
+          </div>
+
+          <!-- Authority Decision -->
+          <div class="bg-emerald-50 rounded-2xl p-6 shadow-md">
+            <div class="flex items-start">
+              <span class="text-2xl mr-3">👉</span>
+              <p class="text-gray-700">
+                প্রতিযোগিতার ক্ষেত্রে বিধি মাতাবেক কর্তৃপক্ষের সিদ্ধান্তই
+                চূড়ান্ত বলে গণ্য হবে, ইনশা আল্লাহ।
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Organizer & Contact Section -->
+    <section class="py-20 bg-gradient-to-r from-emerald-600 to-emerald-700">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 lg:p-12 text-center"
+        >
+          <h2 class="text-2xl sm:text-3xl font-bold text-white mb-8">
+            আয়োজনে: এশো কুরআন শিখি
+          </h2>
+
+          <div class="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-8">
+            <a
+              href="https://facebook.com/eshoquranshikhiorg"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="bg-white/15 hover:bg-white/25 rounded-xl p-4 text-white transition-all duration-300 hover:scale-105"
+            >
+              <svg
+                class="w-8 h-8 mx-auto mb-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                />
+              </svg>
+              <p class="text-sm font-medium">Facebook</p>
+              <p class="text-xs text-white/80">eshoquranshikhiorg</p>
+            </a>
+
+            <a
+              href="https://youtube.com/@eshoquranshikhiorg"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="bg-white/15 hover:bg-white/25 rounded-xl p-4 text-white transition-all duration-300 hover:scale-105"
+            >
+              <svg
+                class="w-8 h-8 mx-auto mb-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+                />
+              </svg>
+              <p class="text-sm font-medium">YouTube</p>
+              <p class="text-xs text-white/80">eshoquranshikhiorg</p>
+            </a>
+
+            <a
+              href="https://eshoquranshikhi.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="bg-white/15 hover:bg-white/25 rounded-xl p-4 text-white transition-all duration-300 hover:scale-105"
+            >
+              <svg
+                class="w-8 h-8 mx-auto mb-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                />
+              </svg>
+              <p class="text-sm font-medium">Website</p>
+              <p class="text-xs text-white/80">eshoquranshikhi.org</p>
+            </a>
+          </div>
+
+          <div class="border-t border-white/20 pt-8">
+            <p class="text-white/90 mb-2">
+              রেজিস্ট্রেশন সহ যেকোনো প্রয়োজনে নিচের নাম্বারে যোগাযোগ করুন
+            </p>
+            <a
+              href="tel:+8801805777332"
+              class="inline-flex items-center text-2xl font-bold text-white hover:scale-105 transition-transform duration-300"
+            >
+              <svg
+                class="w-7 h-7 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                />
+              </svg>
+              +880 1805 777 332
+            </a>
           </div>
         </div>
       </div>
