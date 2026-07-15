@@ -26,7 +26,7 @@
                   d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
                 />
               </svg>
-              <span class="font-semibold">{{ currentPhase.message }}</span>
+              <span class="font-semibold">{{ currentPhase.banner_message }}</span>
             </div>
             <client-only>
               <div
@@ -366,24 +366,7 @@
       >
         <h3 class="text-lg font-semibold mb-2">বর্তমান অবস্থা</h3>
         <p class="text-emerald-100 mb-4">
-          <span v-if="currentPhase.phase === 'registration'">
-            রেজিস্ট্রেশন চলমান। তাড়াতাড়ি নিবন্ধন সম্পন্ন করুন!
-          </span>
-          <span v-else-if="currentPhase.phase === 'sms'">
-            SMS এর জন্য অপেক্ষা করুন। আগামীকাল আপনার বাছাই পর্বের তথ্য পাবেন।
-          </span>
-          <span v-else-if="currentPhase.phase === 'primary'">
-            প্রাথমিক বাছাই পর্ব চলছে। সফল হলে পরবর্তী ধাপের জন্য প্রস্তুত থাকুন।
-          </span>
-          <span v-else-if="currentPhase.phase === 'training'">
-            প্রশিক্ষণ পর্ব চলছে। নিয়মিত অংশগ্রহণ করুন।
-          </span>
-          <span v-else-if="currentPhase.phase === 'waiting'">
-            চূড়ান্ত পর্বের জন্য প্রস্তুতি নিন।
-          </span>
-          <span v-else-if="currentPhase.phase === 'final'">
-            চূড়ান্ত পর্ব! সর্বোচ্চ চেষ্টা করুন।
-          </span>
+          {{ currentPhase.status_message }}
         </p>
         <div class="flex items-center">
           <svg
@@ -416,52 +399,19 @@
   });
 
   const studentInfoStore = useStudentInfoStore();
+  const dashboardStore = useDashboardStore();
 
-  // State for current time and user progress
+  // State for current time (drives the countdown + live timeline status)
   const currentTime = ref(new Date());
 
-  // Competition timeline dates
-  const dates = {
-    registrationEnd: new Date("2026-07-20T23:59:59"),
-    smsPhase: new Date("2026-07-21T23:59:59"),
-    primaryRoundStart: new Date("2026-08-01T00:00:00"),
-    primaryRoundEnd: new Date("2026-07-21T23:59:59"),
-    trainingStart: new Date("2026-07-22T00:00:00"),
-    trainingEnd: new Date("2026-07-27T23:59:59"),
-    finalRound: new Date("2026-07-30T00:00:00"),
-  };
+  // Progress stages come from the API (DB-driven). The `completed` flag is
+  // computed server-side per stage for this user based on the stage `code`,
+  // the user's data and the per-user `user_progress_stages` override.
+  const progressStages = computed(() => dashboardStore.progressStages || []);
 
-  // Progress stages with SVG icons
-  const progressStages = computed(() => [
-    { id: 1, title: "Account Created", icon: "CheckCircle", completed: true },
-    {
-      id: 2,
-      title: "Competition Registration",
-      icon: "Users",
-      completed: studentInfoStore?.form?.reg_no ? true : false,
-    },
-    {
-      id: 3,
-      title: "Registration Token Downloaded",
-      icon: "BookOpen",
-      completed: studentInfoStore?.form?.reg_no ? true : false,
-      // completed: false,
-    },
-    {
-      id: 4,
-      title: "Primary Selecton Round",
-      icon: "Users",
-      completed: false,
-    },
-    {
-      id: 5,
-      title: "Eligibility SMS Received",
-      icon: "Bell",
-      completed: false,
-    },
-    { id: 6, title: "Training Completed", icon: "BookOpen", completed: false },
-    { id: 7, title: "Final Round", icon: "Trophy", completed: false },
-  ]);
+  // Current competition phase (banner + status card) comes fully from the
+  // backend; nothing is hardcoded here.
+  const currentPhase = computed(() => dashboardStore.currentPhase || {});
 
   const userProgress = computed(() => {
     return progressStages.value.findIndex((stage) => stage.completed == false);
@@ -474,70 +424,18 @@
       currentTime.value = new Date();
     }, 1000);
     studentInfoStore.fetchUserProfile();
+    dashboardStore.fetchDashboard();
   });
 
   onUnmounted(() => {
     clearInterval(timer);
   });
 
-  // Compute current phase
-  const currentPhase = computed(() => {
-    const now = currentTime.value;
-
-    if (now < dates.registrationEnd) {
-      return {
-        phase: "registration",
-        title: "Registration Phase",
-        message: "রেজিস্ট্রেশনের শেষ সময়",
-        targetDate: dates.registrationEnd,
-        status: "completed",
-      };
-    } else if (now < dates.smsPhase) {
-      return {
-        phase: "sms",
-        title: "SMS Notification Phase",
-        message: "বাছাই পর্বের তারিখ ও সময়ের SMS আসবে",
-        targetDate: dates.smsPhase,
-        status: "active",
-      };
-    } else if (now < dates.primaryRoundEnd) {
-      return {
-        phase: "primary",
-        title: "Primary Round",
-        message: "প্রাথমিক বাছাই পর্ব চলছে",
-        targetDate: dates.primaryRoundEnd,
-        status: "active",
-      };
-    } else if (now < dates.trainingEnd) {
-      return {
-        phase: "training",
-        title: "Training Phase",
-        message: "বিশেষ প্রশিক্ষণ পর্ব চলছে",
-        targetDate: dates.trainingEnd,
-        status: "active",
-      };
-    } else if (now < dates.finalRound) {
-      return {
-        phase: "waiting",
-        title: "Waiting for Final",
-        message: "চূড়ান্ত পর্বের অপেক্ষায়",
-        targetDate: dates.finalRound,
-        status: "waiting",
-      };
-    } else {
-      return {
-        phase: "final",
-        title: "Final Round",
-        message: "চূড়ান্ত পর্ব",
-        targetDate: dates.finalRound,
-        status: "active",
-      };
-    }
-  });
-
-  // Calculate time remaining
+  // Calculate time remaining until the current phase's target date
+  // (provided by the backend).
   const calculateTimeRemaining = (targetDate) => {
-    const diff = targetDate - currentTime.value;
+    if (!targetDate) return null;
+    const diff = new Date(targetDate) - currentTime.value;
     if (diff <= 0) return null;
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -549,54 +447,51 @@
   };
 
   const timeRemaining = computed(() =>
-    calculateTimeRemaining(currentPhase.value.targetDate)
+    calculateTimeRemaining(currentPhase.value?.target_date)
   );
 
-  // Timeline events
-  const timelineEvents = [
-    {
-      date: "২০ জুলাই",
-      title: "রেজিস্ট্রেশন সমাপ্তি",
-      description: "রাত ১১:৫৯ মিনিটের মধ্যে রেজিস্ট্রেশন সম্পন্ন করুন",
-      status:
-        currentTime.value > dates.registrationEnd ? "completed" : "active",
-      icon: "Users",
-    },
-    {
-      date: "২১ জুলাই",
-      title: "প্রাথমিক বাছাই পর্ব",
-      description: "২১ জুলাই রেজিস্ট্রেশন কার্ডে উল্লিখিত ভেনুতে প্রাথমিক বাছাই অনুষ্ঠিত হবে",
-      status:
-        currentTime.value > dates.primaryRoundEnd
-          ? "completed"
-          : currentTime.value > dates.primaryRoundStart
-          ? "active"
-          : "upcoming",
-      icon: "BookOpen",
-    },
-    {
-      date: "২২-২৭ জুলাই",
-      title: "বিশেষ প্রশিক্ষণ",
-      description: "৫ দিনব্যাপী ফ্রি তিলাওয়াত প্রশিক্ষণ",
-      status:
-        currentTime.value > dates.trainingEnd
-          ? "completed"
-          : currentTime.value > dates.trainingStart
-          ? "active"
-          : "upcoming",
-      icon: "BookOpen",
-    },
-    {
-      date: "৩০ জুলাই",
-      title: "চূড়ান্ত পর্ব",
-      description: "প্রতিযোগিতার চূড়ান্ত পর্ব অনুষ্ঠিত হবে",
-      status:
-        currentTime.value > dates.finalRound
-          ? "completed"
-          : currentTime.value.toDateString() === dates.finalRound.toDateString()
-          ? "active"
-          : "upcoming",
-      icon: "Trophy",
-    },
-  ];
+  // Timeline events come from the API (DB-driven). Their `status`
+  // (completed / active / upcoming) and Bengali `date` label are derived
+  // live from start_date / end_date so the page keeps updating on its own.
+  const toDate = (value) => {
+    if (!value) return null;
+    // Accept both ISO ("2026-07-20T00:00:00Z") and "Y-m-d H:i:s" formats.
+    return new Date(String(value).replace(" ", "T"));
+  };
+
+  const formatTimelineDate = (startDate, endDate) => {
+    const start = toDate(startDate);
+    const end = toDate(endDate);
+    if (!start && !end) return "";
+    const fmt = new Intl.DateTimeFormat("bn-BD", {
+      day: "numeric",
+      month: "long",
+    });
+    if (!end || (start && start.toDateString() === end.toDateString())) {
+      return fmt.format(start || end);
+    }
+    if (!start) return fmt.format(end);
+    const dayFmt = new Intl.DateTimeFormat("bn-BD", { day: "numeric" });
+    const monthFmt = new Intl.DateTimeFormat("bn-BD", { month: "long" });
+    return `${dayFmt.format(start)}-${dayFmt.format(end)} ${monthFmt.format(end)}`;
+  };
+
+  const computeTimelineStatus = (startDate, endDate) => {
+    const now = currentTime.value;
+    const start = toDate(startDate);
+    const end = toDate(endDate);
+    if (end && now > end) return "completed";
+    if (start && now >= start) return "active";
+    return "upcoming";
+  };
+
+  const timelineEvents = computed(() =>
+    (dashboardStore.timelineEvents || []).map((event) => ({
+      title: event.title,
+      description: event.description,
+      icon: event.image_name,
+      date: formatTimelineDate(event.start_date, event.end_date),
+      status: computeTimelineStatus(event.start_date, event.end_date),
+    }))
+  );
 </script>

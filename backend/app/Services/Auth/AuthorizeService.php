@@ -6,6 +6,7 @@ use App\Lib\JsonResponse;
 use App\Models\Season;
 use App\Models\User;
 use App\Models\userSeason;
+use App\Services\Dashboard\ProgressStageService;
 use Laravel\Passport\Client;
 use App\Lib\AuthTokenClient;
 use Illuminate\Support\Facades\DB;
@@ -80,6 +81,11 @@ class AuthorizeService
                 'registered_season_id' => $season->id,
                 'registered_at' => now()
             ]);
+
+            // Mark the "account_created" progress stage as completed for
+            // this new user.
+            (new ProgressStageService())->markCompleted($user->id, 'account_created');
+
             DB::commit();
 
             return $user;

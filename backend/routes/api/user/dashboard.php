@@ -5,6 +5,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::controller(DashboardController::class)->group(function () {
-        Route::get('get-tdashboard', 'getUserTDashboard');
+        Route::get('dashboard', 'getUserDashboard');
     });
 });

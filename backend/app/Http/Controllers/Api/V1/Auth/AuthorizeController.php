@@ -8,6 +8,7 @@ use App\Lib\JsonResponse;
 use App\Lib\AuthTokenClient;
 use App\Models\userSeason;
 use App\Services\Auth\AuthorizeService;
+use App\Services\Dashboard\ProgressStageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\Client;
@@ -91,13 +92,16 @@ class AuthorizeController extends Controller
             'password' => 'required|string|min:6|confirmed'
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'gender' => $request->gender,
             'password' => Hash::make($request->password),
         ]);
+
+        // Mark the "account_created" progress stage as completed.
+        (new ProgressStageService())->markCompleted($user->id, 'account_created');
 
         return JsonResponse::success([], "Alhamdulillah Registration successful");
     }
