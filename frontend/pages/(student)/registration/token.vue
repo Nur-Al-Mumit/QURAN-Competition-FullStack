@@ -246,7 +246,7 @@
           </div>
           <div class="text-right">
             <p class="font-semibold text-xl text-emerald-600">
-              বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা - ১৪৪৭ হিজরি
+              বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা - ১৪৪৮ হিজরি
             </p>
           </div>
         </div>

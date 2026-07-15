@@ -35,7 +35,7 @@
                 বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা
               </div>
               <div class="text-xs text-emerald-600 print:text-xs">
-                ১৪৪৭ হিজরি
+                ১৪৪৮ হিজরি
               </div>
             </div>
 

@@ -21,7 +21,7 @@
             <!-- Header -->
             <div class="text-center mb-14">
               <h1 class="text-4xl font-bold text-emerald-800 mb-4">
-                বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা - ১৪৪৭ হিজরি
+                বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা - ১৪৪৮ হিজরি
               </h1>
               <div class="w-24 h-1 bg-emerald-600 mx-auto mb-8"></div>
             </div>

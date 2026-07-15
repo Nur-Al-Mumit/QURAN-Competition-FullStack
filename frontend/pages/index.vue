@@ -29,7 +29,7 @@
             </span>
             <br />
             <span class="text-black-600 text-4xl whitespace-nowrap">
-              প্রতিযোগিতা - ১৪৪৭ হিজরি
+              প্রতিযোগিতা - ১৪৪৮ হিজরি
             </span>
           </h1>
 

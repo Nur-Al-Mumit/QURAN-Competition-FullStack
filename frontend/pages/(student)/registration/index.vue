@@ -3,7 +3,7 @@
     <h1
       class="text-xl sm:text-2xl font-bold text-center bg-gradient-to-r from-emerald-600 to-emerald-800 text-transparent pt-2 bg-clip-text"
     >
-      বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা - ১৪৪৭ হিজরি
+      বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা - ১৪৪৮ হিজরি
     </h1>
     <h1 class="text-lg sm:text-xl font-bold text-center mb-2">
       রেজিস্ট্রেশন ফর্ম
@@ -654,7 +654,7 @@
 
   async function formSubmit() {
     isRegCloseModalOpen.value = true;
-    return;
+    // return;
     if (useFormStore.form.gender === 2) {
       isGenderModalOpen.value = true;
       return;

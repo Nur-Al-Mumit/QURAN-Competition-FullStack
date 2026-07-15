@@ -58,11 +58,15 @@ class AuthTokenClient
 
     private function issueToken(array $params)
     {
+        // Use APP_URL, not route(), so server-side calls reach nginx in Docker
+        // (route() would use the browser Host header, e.g. localhost:9000 → PHP-FPM)
+        $tokenUrl = rtrim(config('app.url'), '/') . '/oauth/token';
+
         $response = Http::withOptions([
             'verify' => false
         ])
             ->asForm()
-            ->post(route('passport.token'), $params);
+            ->post($tokenUrl, $params);
 
         if ($response->ok()) {
             return $response->json();

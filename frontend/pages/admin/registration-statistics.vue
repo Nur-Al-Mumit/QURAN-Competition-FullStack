@@ -5,7 +5,7 @@
       <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white">
         <div class="px-4 py-6">
           <h1 class="text-2xl md:text-3xl font-bold text-center mb-4">
-            বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা ১৪৪৭ হিজরি
+            বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা ১৪৪৮ হিজরি
           </h1>
           <!-- Blinking Notification Banner -->
           <div

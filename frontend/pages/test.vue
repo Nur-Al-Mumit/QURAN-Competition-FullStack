@@ -34,7 +34,7 @@
             <!-- Header -->
             <div class="text-center mb-8">
               <h1 class="text-3xl font-bold text-emerald-800 mb-2">
-                বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা - ১৪৪৭ হিজরি
+                বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা - ১৪৪৮ হিজরি
               </h1>
               <div class="w-16 h-1 bg-emerald-600 mx-auto mb-4"></div>
               <h2 class="text-2xl font-semibold text-emerald-700 mb-6">
@@ -76,7 +76,7 @@
                     বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা
                   </h1>
                   <div class="text-3xl font-semibold text-emerald-700 mb-12">
-                    ১৪৪৭ হিজরি
+                    ১৪৪৮ হিজরি
                   </div>
 
                   <!-- Decorative Line -->

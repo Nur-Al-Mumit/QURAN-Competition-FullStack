@@ -11,7 +11,7 @@
         class="mb-12 examiner-group"
       >
         <h1 class="text-2xl font-bold mb-2 text-center text-primary">
-          বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা - ১৪৪৭ হিজরি
+          বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা - ১৪৪৮ হিজরি
         </h1>
         <h1 class="text-xl font-bold mb-1 text-center leading-[20px]">
           Seat Plan
