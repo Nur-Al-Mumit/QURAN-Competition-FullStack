@@ -12,6 +12,7 @@ use App\Models\SmsLog;
 use App\Models\UserCompetitionForm;
 use App\Models\userSeason;
 use App\Services\Auth\AuthorizeService;
+use App\Services\Dashboard\ProgressStageService;
 use App\Services\Registration\RegistrationSlotService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -166,6 +167,11 @@ class RegistrationController extends Controller
                     'need_training' => $competitionForm['need_training'],
                 ]);
 
+                // Mark the "competition_registration" progress stage as
+                // completed for this user (only when a new form is created,
+                // not on every update).
+                (new ProgressStageService())->markCompleted($userId, 'competition_registration');
+
                 // Assign exam time + group immediately at registration time
                 $allocation = $this->slotService->assignToForm($form, $position);
             }
@@ -220,6 +226,27 @@ class RegistrationController extends Controller
             ]);
         } catch (\Throwable $th) {
             throw $th;
+        }
+    }
+
+    /**
+     * Mark the "Registration Token Downloaded" progress stage as completed
+     * for the authenticated user. Called by the frontend once the user
+     * downloads / views their registration card.
+     */
+    public function markTokenDownloaded()
+    {
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return JsonResponse::error('User not authenticated', 401);
+            }
+
+            (new ProgressStageService())->markCompleted($user->id, 'token_downloaded');
+
+            return JsonResponse::success(['message' => 'Token download recorded']);
+        } catch (\Throwable $th) {
+            return JsonResponse::error($th->getMessage(), 500);
         }
     }
 

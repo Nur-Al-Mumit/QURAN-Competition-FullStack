@@ -22,6 +22,7 @@ Route::group(['prefix' => 'registration'], function () {
             Route::post('submit', 'submitForm');
             Route::get('status', 'registrationStatus');
             Route::post('update', 'updateForm');
+            Route::post('mark-token-downloaded', 'markTokenDownloaded');
         });
 
 

@@ -291,6 +291,20 @@ const downloadCard = async (auto = false) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    // Notify the backend that the registration token has been downloaded
+    // so the "Registration Token Downloaded" progress stage is marked
+    // completed for this user. Fire-and-forget; never block the download.
+    try {
+      useAuthenticatedAxios(
+        "/registration/mark-token-downloaded",
+        null,
+        null,
+        "POST"
+      );
+    } catch (e) {
+      console.error("Failed to record token download:", e);
+    }
   } catch (err) {
     console.error("Download error:", err);
     window.print();
