@@ -29,7 +29,7 @@
         </div>
 
         <!-- Instruction Box -->
-        <div
+        <div v-if="false"
           class="bg-emerald-50 border border-emerald-200 text-emerald-900 text-sm p-4 rounded-md mb-6 text-center leading-relaxed"
         >
           <p class="font-semibold mb-1 underline">নির্দেশনা</p>
@@ -41,10 +41,6 @@
               {{ useFormStore?.form?.phone }}
             </span>
             -এ একটি OTP পাঠানো হয়েছে।
-            <br />
-            নিচের ঘরে সেই ৬ সংখ্যার কোডটি লিখে
-            <strong>"সাবমিট করুন"</strong>
-            বাটনে ক্লিক করুন।
           </p>
           <p class="mt-2">
             ভবিষ্যতে আপনি এই মোবাইল নাম্বার এবং OTP ব্যবহার করেই লগইন করতে
@@ -54,6 +50,61 @@
           </p>
         </div>
 
+        <!-- OTP Code Display (from response) -->
+        <div
+          v-if="displayOtp"
+          class="mb-6 rounded-xl border-2 border-emerald-300 bg-gradient-to-br from-emerald-50 via-white to-emerald-50 p-5 shadow-sm overflow-hidden relative otp-card-glow"
+        >
+          <!-- Animated top shimmer -->
+          <span class="otp-shimmer"></span>
+
+          <p class="text-center text-emerald-900 text-sm leading-relaxed mb-3">
+            প্রিয়
+            <span class="font-bold">{{ useFormStore?.form?.name_bn }}</span
+            >, আপনার লগইন সম্পন্ন করার জন্য নিচের কোডটি ব্যবহার করুন।
+          </p>
+
+          <!-- Animated OTP digits -->
+          <div class="flex justify-center gap-2 sm:gap-3 my-4">
+            <span
+              v-for="(digit, i) in otpDigits"
+              :key="i"
+              class="otp-digit"
+              :style="{ animationDelay: i * 0.12 + 's' }"
+            >
+              {{ digit }}
+            </span>
+          </div>
+
+          <p class="text-center text-emerald-900 text-sm leading-relaxed">
+            নিচের ঘরে এই ৬ সংখ্যার কোডটি লিখে
+            <strong>"সাবমিট করুন"</strong>
+            বাটনে ক্লিক করুন।
+          </p>
+
+          <div
+            class="mt-3 pt-3 border-t border-emerald-200 flex items-start gap-2 text-left"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-emerald-600 flex-shrink-0 mt-0.5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <p class="text-xs text-emerald-800 leading-relaxed">
+              <span class="font-bold">গুরুত্বপূর্ণ:</span> এই কোডটি নিরাপদে
+              সংরক্ষণ করুন। ভবিষ্যতে আপনি আপনার মোবাইল নাম্বার এবং এই কোডটি
+              ব্যবহার করেই অ্যাকাউন্টে লগইন করতে পারবেন।
+            </p>
+          </div>
+        </div>
+
         <div class="relative">
           <div>
             <form @submit.prevent="matchOTP">
@@ -61,7 +112,7 @@
                 <p
                   class="text-center font-bold text-[22px] leading-[24px] mb-4 sm:mb-5"
                 >
-                  আপনার ওটিপি দিন
+                  আপনার কোডটি দিন
                 </p>
                 <InputsOTP
                   v-model="otp"
@@ -135,6 +186,16 @@
   let isIncorrectOTP = ref(false);
   let isDisable = ref(false);
   let isOtpSend = ref(false);
+
+  // OTP returned from the send-otp response (frontend display only)
+  const displayOtp = computed(() => studentAuthStore.formRegistration?.otp);
+
+  // Keep the OTP code in English digits (persisted in UI)
+  const otpDigits = computed(() => {
+    const code = displayOtp.value;
+    if (code === null || code === undefined) return [];
+    return String(code).split("");
+  });
 
   const registrationWithOtp = async (otp) => {
     if (isOtpSend.value) return;
@@ -249,5 +310,83 @@
   input[type="number"] {
     @apply appearance-none;
     -moz-appearance: textfield; /* Firefox */
+  }
+
+  /* ---- OTP code display animations ---- */
+  @keyframes otpDigitPop {
+    0% {
+      opacity: 0;
+      transform: translateY(-14px) scale(0.6);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(4px) scale(1.08);
+    }
+    100% {
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes otpGlow {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 22px 4px rgba(16, 185, 129, 0.35);
+    }
+  }
+
+  @keyframes otpShimmer {
+    0% {
+      transform: translateX(-120%);
+    }
+    100% {
+      transform: translateX(220%);
+    }
+  }
+
+  .otp-card-glow {
+    animation: otpGlow 2.4s ease-in-out infinite;
+  }
+
+  .otp-shimmer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 40%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(16, 185, 129, 0.12),
+      transparent
+    );
+    animation: otpShimmer 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .otp-digit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 52px;
+    font-size: 26px;
+    font-weight: 800;
+    color: #047857;
+    background: #ffffff;
+    border: 2px solid #10b981;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.18);
+    animation: otpDigitPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  @media (min-width: 640px) {
+    .otp-digit {
+      width: 48px;
+      height: 58px;
+      font-size: 30px;
+    }
   }
 </style>

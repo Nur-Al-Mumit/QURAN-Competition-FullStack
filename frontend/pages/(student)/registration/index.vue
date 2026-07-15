@@ -1025,7 +1025,7 @@
 
         if (data?.data) {
           studentAuthStore.formRegistration = {
-            otp: null,
+            otp: data.data.otp ?? null,
             uuid: data.data.uuid,
             expires_at: data.data.expires_at,
             attempts: 0,
