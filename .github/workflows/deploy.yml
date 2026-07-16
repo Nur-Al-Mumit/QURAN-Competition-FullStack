@@ -49,7 +49,7 @@ jobs:
           docker compose pull frontend backend
           
           # Hot-swap containers seamlessly using your stable host configuration files
-          docker compose up -d --no-deps frontend backend
+          docker compose up -d --no-deps frontend backend nginx
           
           # 🧼 Security cleanup: Log out after pulling private images
           docker logout

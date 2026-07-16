@@ -220,8 +220,8 @@
                 আপনি যদি মাদ্রাসা ব্যাকগ্রাউন্ডসম্পন্ন হন, তাহলে সাধারণভাবে এই
                 প্রতিযোগিতায় অংশগ্রহণ করতে পারবেন না। তবে যদি আপনি কুরআন পড়া
                 মাদ্রাসায় শিখে না থাকেন, বা অন্য কারণে মাদ্রাসার সাথে যুক্ত
-                ছিলেন, তাহলে বিষয়টি যাচাই করে দেখা হবে। কর্তৃপক্ষের বিবেচনায় আপনি
-                উপযুক্ত হলে এসএমএস বা ওয়েবসাইটের মাধ্যমে জানানো হবে।
+                ছিলেন, তাহলে বিষয়টি যাচাই করে দেখা হবে। কর্তৃপক্ষের বিবেচনায়
+                আপনি উপযুক্ত হলে এসএমএস বা ওয়েবসাইটের মাধ্যমে জানানো হবে।
               </p>
             </div>
             <inputs-base-input
@@ -299,7 +299,11 @@
           <div class="space-y-5">
             <div
               class="rounded-xl border-2 bg-gray-50/50 p-4 text-center sm:text-left base-tran"
-              :class="invalidFields.includes('gender') ? 'border-red-500 bg-red-50/50' : 'border-gray-200'"
+              :class="
+                invalidFields.includes('gender')
+                  ? 'border-red-500 bg-red-50/50'
+                  : 'border-gray-200'
+              "
             >
               <h3 class="font-semibold mb-3 text-gray-700">
                 প্রতিযোগী পুরুষ নাকি নারী তা নির্বাচন করুন
@@ -318,7 +322,11 @@
 
             <div
               class="rounded-xl border-2 bg-gray-50/50 p-4 text-center sm:text-left base-tran"
-              :class="invalidFields.includes('is_recitation') ? 'border-red-500 bg-red-50/50' : 'border-gray-200'"
+              :class="
+                invalidFields.includes('is_recitation')
+                  ? 'border-red-500 bg-red-50/50'
+                  : 'border-gray-200'
+              "
             >
               <h3 class="font-semibold mb-3 text-gray-700">
                 আপনি কি দেখে কুরআন তেলাওয়াত করতে পারেন?
@@ -336,7 +344,11 @@
 
             <div
               class="rounded-xl border-2 bg-gray-50/50 p-4 text-center sm:text-left base-tran"
-              :class="invalidFields.includes('need_training') ? 'border-red-500 bg-red-50/50' : 'border-gray-200'"
+              :class="
+                invalidFields.includes('need_training')
+                  ? 'border-red-500 bg-red-50/50'
+                  : 'border-gray-200'
+              "
             >
               <h3 class="font-semibold mb-3 text-gray-700">
                 আপনি কি কুরআন পাঠের প্রশিক্ষণে অংশগ্রহণ করতে চান?
@@ -366,7 +378,9 @@
               </svg>
             </span>
             <div>
-              <h2 class="text-lg font-bold text-gray-800">নিয়মাবলী ও সম্মতি</h2>
+              <h2 class="text-lg font-bold text-gray-800">
+                নিয়মাবলী ও সম্মতি
+              </h2>
               <p class="text-xs text-gray-400">শর্তাবলী পড়ে সম্মতি দিন</p>
             </div>
           </div>
@@ -389,7 +403,11 @@
           </div>
           <div
             class="flex items-center justify-center rounded-xl border-2 base-tran p-1"
-            :class="invalidFields.includes('rulesAgreement') ? 'border-red-500 bg-red-50/50' : 'border-transparent'"
+            :class="
+              invalidFields.includes('rulesAgreement')
+                ? 'border-red-500 bg-red-50/50'
+                : 'border-transparent'
+            "
           >
             <inputs-base-radio
               :options="rulesAgreementOptions"
@@ -439,9 +457,9 @@
             <h1 class="text-red-600 font-semibold leading-relaxed text-center">
               আপনি যদি মাদ্রাসা ব্যাকগ্রাউন্ডসম্পন্ন হন, তাহলে সাধারণভাবে এই
               প্রতিযোগিতায় অংশগ্রহণ করতে পারবেন না। তবে যদি আপনি কুরআন পড়া
-              মাদ্রাসায় শিখে না থাকেন, বা অন্য কারণে মাদ্রাসার সাথে যুক্ত ছিলেন,
-              তাহলে বিষয়টি যাচাই করে দেখা হবে। কর্তৃপক্ষের বিবেচনায় আপনি উপযুক্ত
-              হলে এসএমএস বা ওয়েবসাইটের মাধ্যমে জানানো হবে।
+              মাদ্রাসায় শিখে না থাকেন, বা অন্য কারণে মাদ্রাসার সাথে যুক্ত
+              ছিলেন, তাহলে বিষয়টি যাচাই করে দেখা হবে। কর্তৃপক্ষের বিবেচনায়
+              আপনি উপযুক্ত হলে এসএমএস বা ওয়েবসাইটের মাধ্যমে জানানো হবে।
             </h1>
 
             <div class="flex justify-center mt-6">
@@ -507,10 +525,12 @@
       <modal :is-open="isTrainingModalOpen">
         <template #body>
           <div class="p-5">
-            <h1 class="text-green-600 font-semibold leading-relaxed text-center">
-              যাদের তিলাওয়াত পরিপূর্ণ শুদ্ধ নয়, তাদের জন্য দক্ষ হাফিযদের মাধ্যমে ২২ জুলাই থেকে ২৭ জুলাই
-              পর্যন্ত ৫ দিনব্যাপী একটি বিশেষ ও সম্পূর্ণ ফ্রি প্রশিক্ষণের আয়োজন
-              করা হয়েছে।
+            <h1
+              class="text-green-600 font-semibold leading-relaxed text-center"
+            >
+              যাদের তিলাওয়াত পরিপূর্ণ শুদ্ধ নয়, তাদের জন্য দক্ষ হাফিযদের মাধ্যমে
+              ২২ জুলাই থেকে ২৭ জুলাই পর্যন্ত ৫ দিনব্যাপী একটি বিশেষ ও সম্পূর্ণ
+              ফ্রি প্রশিক্ষণের আয়োজন করা হয়েছে।
             </h1>
 
             <div class="flex justify-center mt-6">
@@ -633,7 +653,9 @@
                 </div>
                 <div class="flex items-center">
                   <span class="text-red-500 mr-2">•</span>
-                  <span class="font-medium">নারী</span>
+                  <span class="font-medium">
+                    নারী (শুধুমাত্র পুরুষ প্রতিযোগীদের জন্য উন্মুক্ত)।
+                  </span>
                 </div>
               </div>
             </div>
@@ -641,17 +663,61 @@
             <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
               <p class="text-red-700 text-sm text-center leading-relaxed">
                 <strong>দুঃখিত!</strong>
-                এই প্রতিযোগিতাটি শুধুমাত্র পুরুষদের জন্য। ইনশাআল্লাহ পরবর্তী কোনো
-                প্রতিযোগিতায় নারীদেরও ব্যবস্থা রাখা হবে
+                এই প্রতিযোগিতাটি শুধুমাত্র পুরুষদের জন্য। ইনশাআল্লাহ পরবর্তী
+                কোনো প্রতিযোগিতায় নারীদেরও ব্যবস্থা রাখা হবে
               </p>
             </div>
             <!-- Detailed Rules Link -->
-            <div class="text-center mb-6">
+            <div class="text-center mb-6 border-emerald-ripple w-fit mx-auto">
               <a
                 href="/competition-rules"
-                class="text-emerald-600 hover:text-emerald-800 text-sm font-medium underline decoration-emerald-300 hover:decoration-emerald-600 transition-colors"
+                class="group relative inline-flex items-center justify-center px-8 py-4 sm:text-xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 shine-sweep-effect z-50"
               >
-                বিস্তারিত নিয়মাবলী ও শর্তাদি দেখুন
+                <span class="relative flex items-center gap-2">
+                  <svg
+                    class="w-6 h-6"
+                    fill="#f2f2f2"
+                    version="1.1"
+                    id="Capa_1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                    viewBox="0 0 298 298"
+                    xml:space="preserve"
+                    stroke="#f2f2f2"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <g>
+                        <rect x="66.5" y="67" width="98" height="16"></rect>
+                        <polygon
+                          points="200.574,70.429 191.993,61.31 180.341,72.274 201.32,94.571 231.189,58.611 218.881,48.389 "
+                        ></polygon>
+                        <rect x="66.5" y="117" width="98" height="16"></rect>
+                        <polygon
+                          points="200.574,120.429 191.993,111.31 180.341,122.274 201.32,144.571 231.189,108.611 218.881,98.389 "
+                        ></polygon>
+                        <rect x="66.5" y="167" width="98" height="16"></rect>
+                        <polygon
+                          points="200.574,170.429 191.993,161.31 180.341,172.274 201.32,194.571 231.189,158.611 218.881,148.389 "
+                        ></polygon>
+                        <rect x="66.5" y="217" width="98" height="16"></rect>
+                        <polygon
+                          points="200.574,220.429 191.993,211.31 180.341,222.274 201.32,244.571 231.189,208.611 218.881,198.389 "
+                        ></polygon>
+                        <path
+                          d="M264.5,23c0-12.703-10.297-23-23-23h-185c-12.703,0-23,10.297-23,23v252c0,12.703,10.297,23,23,23h185 c12.703,0,23-10.297,23-23V23z M248.5,275c0,3.866-3.134,7-7,7h-185c-3.866,0-7-3.134-7-7V23c0-3.866,3.134-7,7-7h185 c3.866,0,7,3.134,7,7V275z"
+                        ></path>
+                      </g>
+                    </g>
+                  </svg>
+
+                  বিস্তারিত নিয়মাবলী ও শর্তাদি দেখুন
+                </span>
               </a>
             </div>
 
@@ -855,7 +921,7 @@
         "/registration/get-count",
         null,
         null,
-        "GET"
+        "GET",
       );
       if (data?.data) {
         registrationInfo.value = {
@@ -881,7 +947,7 @@
       window.showError(
         "Error!",
         "দয়া করে একটি সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন",
-        3000
+        3000,
       );
       return;
     }
@@ -892,21 +958,21 @@
         "/registration/wishlist",
         { phone, name: wishlistName.value || null },
         null,
-        "POST"
+        "POST",
       );
       window.hideLoading();
       isWishlistSubmitted.value = true;
       window.showSuccess(
         "Success!",
         "আপনাকে ওয়েটলিস্টে যুক্ত করা হয়েছে। পরবর্তী সেশনে ইনশাআল্লাহ আমরা জানাব।",
-        4000
+        4000,
       );
     } catch (error) {
       window.hideLoading();
       window.showError(
         "Error!",
         error?.response?.data?.message || "Something went wrong",
-        3000
+        3000,
       );
     } finally {
       isWishlistSubmitting.value = false;
@@ -937,10 +1003,16 @@
 
   const missingRequiredFields = computed(() => {
     const missing = [];
-    if (useFormStore.form.gender === null || useFormStore.form.gender === undefined)
+    if (
+      useFormStore.form.gender === null ||
+      useFormStore.form.gender === undefined
+    )
       missing.push("gender");
     if (useFormStore.form.is_recitation !== 1) missing.push("is_recitation");
-    if (useFormStore.form.need_training === null || useFormStore.form.need_training === undefined)
+    if (
+      useFormStore.form.need_training === null ||
+      useFormStore.form.need_training === undefined
+    )
       missing.push("need_training");
     if (useFormStore.form.rulesAgreement !== 1) missing.push("rulesAgreement");
     return missing;
@@ -968,7 +1040,7 @@
       if (newValue === 2 || newValue === 3) {
         isModalOpen.value = true;
       }
-    }
+    },
   );
 
   watch(
@@ -977,7 +1049,7 @@
       if (newValue === 0) {
         isRecitationModalOpen.value = true;
       }
-    }
+    },
   );
 
   watch(
@@ -986,7 +1058,7 @@
       if (newValue === 1) {
         isTrainingModalOpen.value = true;
       }
-    }
+    },
   );
 
   watch(
@@ -995,7 +1067,7 @@
       if (newValue === 2) {
         isGenderModalOpen.value = true;
       }
-    }
+    },
   );
 
   watch(
@@ -1004,7 +1076,7 @@
       if (newValue !== 1) {
         isDisclaimerModalOpen.value = true;
       }
-    }
+    },
   );
 
   async function formSubmit() {
@@ -1042,7 +1114,7 @@
           endPoint.value,
           payload.value,
           null,
-          "POST"
+          "POST",
         );
 
         window.hideLoading();
@@ -1062,7 +1134,7 @@
         window.showError(
           "Error!",
           error?.response?.data?.message || "Something went wrong",
-          3000
+          3000,
         );
       }
     } else if (!studentInfoStore.form?.reg_no) {
@@ -1078,7 +1150,7 @@
           endPoint.value,
           payload.value,
           null,
-          "POST"
+          "POST",
         );
 
         if (data?.data?.form?.reg_no) {
@@ -1100,7 +1172,7 @@
         window.showError(
           "Error!",
           error?.response?.data?.message || "Something went wrong",
-          3000
+          3000,
         );
       }
     } else {
@@ -1116,7 +1188,7 @@
           endPoint.value,
           payload.value,
           null,
-          "POST"
+          "POST",
         );
 
         if (data?.data?.form?.reg_no) {
@@ -1136,7 +1208,7 @@
         window.showError(
           "Error!",
           error?.response?.data?.message || "Something went wrong",
-          3000
+          3000,
         );
       }
     }

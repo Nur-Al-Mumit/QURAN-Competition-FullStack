@@ -9,9 +9,8 @@
         </div>
         <div class="action-btns">
           <button @click="downloadCard(false)" class="btn btn-dl" :disabled="downloading">
-            {{ downloading ? '⏳ সংরক্ষণ হচ্ছে...' : '📥 ছবি ডাউনলোড' }}
+            {{ downloading ? '⏳ সংরক্ষণ হচ্ছে...' : '📥 ডাউনলোড করুন' }}
           </button>
-          <button @click="printCard" class="btn btn-pr">🖨️ প্রিন্ট</button>
         </div>
       </div>
     </div>
