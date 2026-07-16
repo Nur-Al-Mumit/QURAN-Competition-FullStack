@@ -191,12 +191,14 @@
             </button>
           </div>
 
-          <a href="/registration" class="text-[13px] text-gray-500 mt-6">
-            রেজিস্ট্রেশন লিংক:
-            <span class="text-emerald-600 font-medium">
-              competition.eshoquranshikhi.org/registration
-            </span>
-          </a>
+          <p class="mt-6">
+            <a href="/registration" class="text-[13px] text-gray-500">
+              রেজিস্ট্রেশন লিংক:
+              <span class="text-emerald-600 font-medium">
+                competition.eshoquranshikhi.org/registration
+              </span>
+            </a>
+          </p>
         </div>
       </div>
     </section>
