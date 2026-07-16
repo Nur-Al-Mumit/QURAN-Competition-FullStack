@@ -18,21 +18,15 @@
           "
         ></div>
         <div class="relative">
-          <div
-            class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/15 mb-3"
+          <h1
+            class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight"
           >
-            <svg
-              class="w-6 h-6 text-amber-300"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.5l-4-4 1.41-1.41L11 14.67l5.59-5.59L18 10.5l-7 7z"
-              />
-            </svg>
-          </div>
-          <h1 class="text-xl sm:text-2xl font-bold tracking-tight">
-            বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা - ১৪৪৮ হিজরি
+            বিশুদ্ধ কুরআনপাঠ প্রতিযোগিতা
+          </h1>
+          <h1
+            class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight"
+          >
+            ১৪৪৮ হিজরী
           </h1>
           <p class="mt-1 text-emerald-100 font-medium">রেজিস্ট্রেশন ফর্ম</p>
           <div
@@ -492,7 +486,7 @@
         <template #body>
           <div class="p-5">
             <h1 class="text-red-600 font-semibold leading-relaxed text-center">
-              তাজবিদ বা উচ্চারণে সীমিত ভুল গ্রহণযোগ্য হলেও, দেখে কুরআন পড়তে না
+              তাজবিদ বা উচ্চারণে সীমিত ভুল গ্রহণযোগ্য হলেও, দেখে কুরআন তিলাওয়াত করতে না
               পারলে প্রাথমিক বাছাই পর্বে নির্বাচিত করা সম্ভব হবে না।
             </h1>
 
@@ -595,7 +589,7 @@
 
       <modal :is-open="isDisclaimerModalOpen">
         <template #body>
-          <div class="p-3 sm:p-6 mx-auto">
+          <div class="p-3 sm:p-6 mx-auto w-[90vw] sm:w-full">
             <!-- Warning Icon -->
             <div class="flex justify-center mb-4">
               <svg
@@ -649,24 +643,17 @@
                 </div>
                 <div class="flex items-center">
                   <span class="text-red-500 mr-2">•</span>
-                  <span>হাফিজে কুরআন</span>
+                  <span>কুরআনুল কারীম এর হাফিজ</span>
                 </div>
                 <div class="flex items-center">
                   <span class="text-red-500 mr-2">•</span>
                   <span class="font-medium">
-                    নারী (শুধুমাত্র পুরুষ প্রতিযোগীদের জন্য উন্মুক্ত)।
+                    নারী (শুধুমাত্র পুরুষ প্রতিযোগীদের জন্য উন্মুক্ত)
                   </span>
                 </div>
               </div>
             </div>
 
-            <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
-              <p class="text-red-700 text-sm text-center leading-relaxed">
-                <strong>দুঃখিত!</strong>
-                এই প্রতিযোগিতাটি শুধুমাত্র পুরুষদের জন্য। ইনশাআল্লাহ পরবর্তী
-                কোনো প্রতিযোগিতায় নারীদেরও ব্যবস্থা রাখা হবে
-              </p>
-            </div>
             <!-- Detailed Rules Link -->
             <div class="text-center mb-6 border-emerald-ripple w-fit mx-auto">
               <a

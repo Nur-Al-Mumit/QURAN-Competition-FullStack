@@ -70,7 +70,7 @@
               </div>
             </div>
             <p class="text-gray-600 text-xs sm:text-sm mb-4 min-h-[40px]">
-              যারা দেখে দেখে কুরআন পড়তে পারেন, কিন্তু তাজবীদ ও মাখারিজের উন্নয়নে বিশেষ প্রশিক্ষণ ও সংশোধনের সুযোগ রয়েছে।
+              যারা দেখে দেখে কুরআন তিলাওয়াত করতে পারেন, কিন্তু তাজবীদ ও মাখারিজের উন্নয়নে বিশেষ প্রশিক্ষণ ও সংশোধনের সুযোগ রয়েছে।
             </p>
             <div class="bg-white rounded-lg p-3 border border-emerald-100">
               <span class="text-xs font-semibold text-emerald-700 block mb-1">📖 সিলেবাস:</span>
@@ -99,7 +99,7 @@
 
         <div class="bg-amber-50/80 border border-amber-200 rounded-xl p-4 text-center">
           <p class="text-amber-900 text-xs sm:text-sm font-semibold">
-            ⚠️ বি: দ্রঃ শুধুমাত্র দেখে দেখে পড়তে হবে, মুখস্থ করার প্রয়োজন নেই।
+            ⚠️ বি: দ্রঃ শুধুমাত্র দেখে দেখে তিলাওয়াত করতে হবে, মুখস্থ করার প্রয়োজন নেই।
           </p>
         </div>
       </section>
@@ -207,7 +207,7 @@
               <span class="text-red-500 font-bold">•</span> মাদ্রাসা ব্যাকগ্রাউন্ডসম্পন্ন ব্যক্তি (জেনারেল ব্যাকগ্রাউন্ড ব্যতীত)।
             </li>
             <li class="flex items-center gap-2">
-              <span class="text-red-500 font-bold">•</span> সাবলীলভাবে কুরআন দেখে পড়তে না পারা ব্যক্তি।
+              <span class="text-red-500 font-bold">•</span> সাবলীলভাবে কুরআন দেখে তিলাওয়াত করতে না পারা ব্যক্তি।
             </li>
             <li class="flex items-center gap-2">
               <span class="text-red-500 font-bold">•</span> <strong class="text-red-900">হাফিজে কুরআন</strong> (যাঁরা সম্পূর্ণ কুরআন মুখস্থ করেছেন)।
@@ -236,7 +236,7 @@
             <span class="absolute -left-10 sm:-left-12 top-0 flex items-center justify-center w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-sm">১</span>
             <h3 class="font-bold text-emerald-950 text-[16px] sm:text-lg mb-1">রেজিস্ট্রেশন</h3>
             <p class="text-gray-600 text-sm">
-              ২০শে জুলাই রাত ১২:০০ টার মধ্যে ওয়েবসাইটে (<NuxtLink id="rules-registration-link" to="/registration" class="text-emerald-600 underline font-semibold">competition.eshoquranshikhi.org/registration</NuxtLink>) রেজিস্ট্রেশন সম্পন্ন করতে হবে।
+              ২০শে জুলাই রাত ১২:০০ টার মধ্যে ওয়েবসাইটে (<NuxtLink id="rules-registration-link" to="/registration" class="text-emerald-600 underline font-semibold">competition.eshoquranshikhi.org/<br class="sm:hidden " />registration</NuxtLink>) রেজিস্ট্রেশন সম্পন্ন করতে হবে।
             </p>
           </div>
 

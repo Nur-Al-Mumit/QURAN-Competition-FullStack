@@ -103,12 +103,12 @@
                   {{ convertToBanglaNumbers(chunk.verses.start) }}-{{
                     convertToBanglaNumbers(chunk.verses.end)
                   }}
-                  নম্বর আয়াতসমূহ পড়তে হবে
+                  নম্বর আয়াতসমূহ তিলাওয়াত করতে হবে
                 </template>
                 <template v-else>
                   আপনাকে শুধুমাত্র এই
                   {{ convertToBanglaNumbers(chunk.verses.start) }} নম্বর আয়াতটি
-                  পড়তে হবে
+                  তিলাওয়াত করতে হবে
                 </template>
               </div>
             </div>

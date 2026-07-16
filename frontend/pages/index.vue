@@ -210,7 +210,7 @@
           </h2>
           <p class="text-gray-600 max-w-2xl mx-auto">
             <span class="font-semibold text-red-500">বি: দ্রঃ</span>
-            শুধুমাত্র দেখে দেখে পড়তে হবে, মুখস্থ করার প্রয়োজন নেই।
+            শুধুমাত্র দেখে দেখে তিলাওয়াত করতে হবে, মুখস্থ করার প্রয়োজন নেই।
           </p>
           <div
             class="w-24 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600 mx-auto rounded-full mt-4"
@@ -414,7 +414,8 @@
                   <p class="text-emerald-700">
                     ২০শে জুলাই রাত ১২:০০ টার মধ্যে ওয়েবসাইটে
                     <span class="font-semibold">
-                      (competition.eshoquranshikhi.org/registration)
+                      (competition.eshoquranshikhi.org/
+                      <br class="sm:hidden" />registration)
                     </span>
                     রেজিস্ট্রেশন সম্পন্ন করতে হবে।
                   </p>
@@ -467,7 +468,8 @@
                     </h3>
                   </div>
                   <p class="text-emerald-700">
-                    ২১ জুলাই বাছাই পর্ব অনুষ্ঠিত হবে। সুনির্দিষ্ট নির্দেশনা রেজিস্ট্রেশন টোকেন এ উল্লখে করা থাকবে।
+                    ২১ জুলাই বাছাই পর্ব অনুষ্ঠিত হবে। সুনির্দিষ্ট নির্দেশনা
+                    রেজিস্ট্রেশন টোকেন এ উল্লখে করা থাকবে।
                   </p>
                 </div>
               </div>
@@ -502,7 +504,6 @@
               </div>
             </div>
 
-
             <!-- Step 3 -->
             <div class="relative flex items-center lg:justify-center">
               <div class="w-full lg:w-1/2 lg:pr-12">
@@ -522,13 +523,12 @@
                     </h3>
                   </div>
                   <p class="text-emerald-700">
-                    ৩০ জুলাই চূড়ান্ত পর্ব অনুষ্ঠিত হবে। সুনির্দিষ্ট
-                    নির্দেশনা ওয়েবসাইট/এসএমএস (SMS) এর মাধ্যমে জানিয়ে দেওয়া হবে।
+                    ৩০ জুলাই চূড়ান্ত পর্ব অনুষ্ঠিত হবে। সুনির্দিষ্ট নির্দেশনা
+                    ওয়েবসাইট/এসএমএস (SMS) এর মাধ্যমে জানিয়ে দেওয়া হবে।
                   </p>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -683,7 +683,8 @@
                   <span class="text-emerald-600" dir="rtl">(المبتدئ)</span>
                 </h4>
                 <p class="text-sm text-gray-600 mt-1">
-                  যারা দেখে পড়তে পারেন কিন্তু তাজবীদের উন্নয়নের সুযোগ রয়েছে।
+                  যারা দেখে তিলাওয়াত করতে পারেন কিন্তু তাজবীদের উন্নয়নের সুযোগ
+                  রয়েছে।
                 </p>
               </div>
             </div>
