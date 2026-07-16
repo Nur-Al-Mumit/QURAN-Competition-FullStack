@@ -211,7 +211,7 @@
                 <div class="mt-2 sm:mt-3 text-center w-full px-1">
                   <div
                     :class="[
-                      'text-xs sm:text-sm font-medium leading-tight break-words',
+                      'text-xs sm:text-sm font-medium leading-tight ',
                       stage.completed ? 'text-emerald-600' : 'text-gray-500',
                     ]"
                   >

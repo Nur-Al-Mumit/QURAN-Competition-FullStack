@@ -33,7 +33,7 @@
             </span>
           </h1>
 
-          <div class="max-w-4xl mx-auto sm:mt-10 bg-white">
+          <div class="max-w-4xl mx-auto sm:mt-10">
             <div
               class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 lg:p-8 shadow-xl border border-gray-200"
             >
@@ -54,6 +54,7 @@
               </p>
             </div>
           </div>
+
           <!-- Date & Venue Card -->
           <div class="max-w-4xl mx-auto sm:mt-10">
             <div

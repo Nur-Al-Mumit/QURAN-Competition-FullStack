@@ -1,11 +1,12 @@
 <template>
-  <menu v-bind="$attrs">
+  <menu v-bind="$attrs" class="flex flex-col sm:flex-row sm:items-center sm:gap-1 lg:gap-2">
     <NuxtLink
       v-for="(menu, key) in menus"
       :key="key"
       :to="menu.url"
       :class="[
-        'relative px-6 py-3 font-semibold block text-lg base-trans whitespace-nowrap border-b-2 sm:border-b-0 sm:px-0 sm:py-0 link sm:flex sm:justify-center sm:text-[18px]',
+        customClass ||
+          'link relative px-4 py-2 font-semibold text-gray-600 base-trans whitespace-nowrap rounded-lg hover:bg-emerald-50 hover:text-emerald-700 sm:text-[17px]',
       ]"
     >
       {{ menu.title }}
@@ -17,8 +18,7 @@
   const props = defineProps({
     customClass: {
       type: String,
-      default:
-        "relative py-3 block px-5 font-semibold text-lg base-trans whitespace-nowrap border-b-2",
+      default: "",
     },
   });
   const menus = [
@@ -28,44 +28,8 @@
 </script>
 
 <style scoped>
-  .link::after {
-    content: "";
-    display: block;
-    position: absolute;
-    width: 0;
-    height: 5px;
-    bottom: -80%;
-    background: #c8c8c8;
-    transition: transform 0.2s, width 0.2s;
-  }
-  .router-link-active::after {
-    content: "";
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 5px;
-    bottom: -80%;
-    background: #065f46;
-    transition: transform 0.2s, width 0.2s;
-  }
-
-  .link:hover::after {
-    width: 100%;
-    transition: transform 0.2s, width 0.2s;
-  }
-
   .router-link-active {
-    color: #065f46;
-  }
-
-  @media (max-width: 640px) {
-    .link::after {
-      bottom: -10%;
-    }
-    .router-link-active::after {
-      bottom: -10%;
-      left: 0;
-      background: #065f46;
-    }
+    color: #047857;
+    background-color: oklch(97.9% 0.021 166.113);
   }
 </style>

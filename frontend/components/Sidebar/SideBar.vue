@@ -1,168 +1,236 @@
 <template>
   <section
-    class="w-full sm:w-[320px] bg-white shadow-xl sm:min-h-[85vh] sticky top-5 rounded-t-2xl sm:rounded-2xl border border-gray-100 overflow-hidden print:hidden"
+    class="sticky top-14 sm:top-5 flex h-full w-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl sm:h-[calc(85vh)] sm:w-[320px] print:hidden"
   >
-    <aside class="flex flex-col h-full">
-      <!-- Profile Section -->
+    <aside class="flex h-full flex-col">
+      <!-- Top: Brand / Portal Header -->
       <div
-        class="bg-gradient-to-br from-emerald-50 via-green-50 to-lime-50 p-4 border-b border-gray-100"
+        class="flex items-center gap-3 border-b border-gray-100 bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 py-3.5 sm:px-5 sm:py-4"
       >
-        <div class="flex items-center sm:justify-center mb-6 text-left">
-          <div class="flex sm:block items-center gap-6 text-center w-full">
-            <!-- Avatar Section -->
-            <div class="flex justify-center">
-              <div class="flex flex-col items-center gap-4">
-                <div class="relative group">
-                  <!-- Default Avatar -->
-                  <div
-                    v-if="!sideBarStore.user?.profile_picture"
-                    class="w-20 sm:w-24 h-20 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center shadow-lg border-4 border-white"
-                  >
-                    <svg
-                      class="w-10 h-10 text-gray-400"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
-                      />
-                    </svg>
-                  </div>
-
-                  <!-- Profile Picture -->
-                  <img
-                    v-else
-                    :src="sideBarStore.user?.profile_picture"
-                    alt="user_profile_picture"
-                    class="w-24 h-24 rounded-2xl object-cover shadow-lg border-4 border-white"
-                  />
-
-                  <!-- Camera Button -->
-                  <button
-                    @click="profilePictureModal = !profilePictureModal"
-                    class="absolute -bottom-2 -right-2 w-10 h-10 bg-emerald-600 hover:bg-emerald-700 rounded-xl flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-emerald-500/25"
-                  >
-                    <svg
-                      class="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"
-                      />
-                      <circle cx="12" cy="12" r="3" />
-                    </svg>
-                  </button>
-                </div>
-
-                <!-- Signature -->
-                <img
-                  v-if="sideBarStore.user?.signature_scan"
-                  :src="sideBarStore.user?.signature_scan"
-                  alt="signature"
-                  class="max-w-[140px] h-auto opacity-70 filter contrast-125"
-                />
-              </div>
-            </div>
-
-            <!-- User Info -->
-            <div class="text-left sm:text-center space-y-2 sm:mt-8">
-              <h1
-                class="font-bold text-xl sm:text-2xl text-gray-900 leading-tight"
-              >
-                {{ sideBarStore.user?.name }}
-              </h1>
-              <div
-                class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium"
-              >
-                <svg
-                  class="w-4 h-4 mr-2"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 2a5 5 0 1 0 5 5 5 5 0 0 0-5-5zM12 14a7 7 0 0 0-7 7 1 1 0 0 0 2 0 5 5 0 0 1 10 0 1 1 0 0 0 2 0 7 7 0 0 0-7-7z"
-                  />
-                </svg>
-                {{ portal }}
-              </div>
-            </div>
-          </div>
+        <img
+          class="h-9 w-9 rounded-full object-cover ring-2 ring-white/30 sm:h-10 sm:w-10"
+          src="~/assets/imgs/logo.png"
+          alt=""
+        />
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-sm font-bold text-white sm:text-base">Dashboard</p>
+          <p class="truncate text-xs text-emerald-100">{{ portalLabel }}</p>
         </div>
       </div>
 
-      <!-- Navigation Menu -->
-      <div class="flex-1 overflow-y-auto p-2 sm:p-4">
-        <SideBarItems
-          :links="menuStore.links"
-          class="flex gap-2 sm:block space-y-1"
-        />
+      <!-- Middle: Navigation Menu -->
+      <nav v-if="isUserOrAdminLoggedIn" class="flex-1 overflow-y-auto p-2 sm:p-3">
+        <p class="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400 sm:mb-2 sm:text-xs">
+          Menu
+        </p>
+        <SideBarItems :links="navLinks" class="space-y-0.5 sm:space-y-1" />
+      </nav>
+
+      <!-- Unlogged-in: Sign Up / Sign In CTA -->
+      <div
+        v-else
+        class="flex flex-1 flex-col items-center justify-center gap-3 p-5 text-center"
+      >
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50">
+          <svg class="h-7 w-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-gray-800">Welcome Guest</p>
+          <p class="mt-0.5 text-xs text-gray-500">Sign in to access your dashboard</p>
+        </div>
+        <NuxtLink
+          to="/sign-up"
+          class="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm base-trans hover:bg-primary-hover hover:shadow-md"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+          <span>Sign Up</span>
+        </NuxtLink>
+        <NuxtLink
+          to="/sign-in"
+          class="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-700 shadow-sm base-trans hover:bg-emerald-50 hover:border-emerald-300"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h11m-7-5a8 8 0 100 16 8 8 0 000-16z" />
+          </svg>
+          <span>Sign In</span>
+        </NuxtLink>
+      </div>
+
+      <!-- Bottom: User Profile (click to open upward dropdown) -->
+      <div
+        v-if="isUserOrAdminLoggedIn"
+        class="relative border-t border-gray-100 bg-gradient-to-br from-emerald-50 via-green-50 to-lime-50 p-2.5 sm:p-3"
+        ref="profileCardRef"
+      >
+        <button
+          @click="toggleUserMenu"
+          class="flex w-full items-center gap-3 rounded-xl bg-white p-2.5 shadow-sm ring-1 ring-gray-100 base-trans hover:shadow-md hover:ring-emerald-200 sm:p-3"
+        >
+          <!-- Avatar -->
+          <div class="relative shrink-0">
+            <div
+              v-if="!profilePicture"
+              class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 shadow-sm sm:h-12 sm:w-12"
+            >
+              <svg class="h-5 w-5 text-gray-400 sm:h-6 sm:w-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+              </svg>
+            </div>
+            <img
+              v-else
+              :src="profilePicture"
+              alt="user_profile_picture"
+              class="h-10 w-10 rounded-xl object-cover shadow-sm ring-2 ring-white sm:h-12 sm:w-12"
+            />
+            <!-- Edit Picture -->
+            <button
+              @click.stop="profilePictureModal = !profilePictureModal"
+              class="absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-600 text-white shadow-md base-trans hover:bg-emerald-700 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-emerald-500/25 sm:h-7 sm:w-7"
+              aria-label="Change profile picture"
+            >
+              <svg class="h-3 w-3 sm:h-3.5 sm:w-3.5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Info -->
+          <div class="min-w-0 flex-1 text-left">
+            <p class="truncate text-sm font-bold text-gray-800">{{ displayName }}</p>
+            <p class="truncate text-xs font-medium text-emerald-600">{{ portalLabel }}</p>
+          </div>
+
+          <!-- Chevron -->
+          <svg
+            class="h-5 w-5 shrink-0 text-gray-400 base-trans"
+            :class="{ 'rotate-180': isUserMenuOpen }"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        <!-- Upward Dropdown -->
+        <Transition name="pop-up">
+          <div
+            v-if="isUserMenuOpen"
+            class="absolute bottom-full left-2.5 right-2.5 mb-2 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl sm:left-3 sm:right-3"
+          >
+            <!-- Dropdown Header -->
+            <div class="border-b border-gray-100 bg-gray-50 px-4 py-2.5">
+              <p class="text-xs font-semibold text-gray-500">Account Actions</p>
+            </div>
+
+            <!-- Logout -->
+            <button
+              @click="handleLogout"
+              class="group flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 base-trans hover:bg-red-50 hover:text-red-600"
+            >
+              <svg
+                class="h-5 w-5 text-gray-400 group-hover:text-red-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+              <span>Log Out</span>
+            </button>
+          </div>
+        </Transition>
       </div>
     </aside>
   </section>
 
   <ProfilePictureUploadModal v-model:is-modal-open="profilePictureModal" />
 </template>
+
 <script setup>
   import SideBarItems from "~/components/Sidebar/SideBarItems.vue";
 
+  const emit = defineEmits(["close"]);
+
   // Stores
   const menuStore = useMenuStore();
-  const sideBarStore = useSideBarStore();
-  // Student Stores
-  const studentInfoStore = useStudentInfoStore();
-  const studentAuthInfoStore = useStudentAuthInfoStore();
-  // Admin Stores
-  const adminInfoStore = useAdminInfoStore();
-  const adminAuthInfoStore = useAdminAuthInfoStore();
+
+  // Shared composable
+  const { displayName, profilePicture, portalLabel, syncUserInfo, isUserOrAdminLoggedIn } = useUserPortal();
+  const { logOut } = useAuthLogout();
 
   // States
-  let profilePictureModal = ref(false);
-  let portal = ref("");
+  const profilePictureModal = ref(false);
+  const isUserMenuOpen = ref(false);
+  const profileCardRef = ref(null);
 
-  async function syncUserInfo() {
-    try {
-      if (studentAuthInfoStore.isStudentLoggedIn) {
-        await studentInfoStore.fetchUserProfile();
-        let user = {
-          name: studentInfoStore.user?.name_en || "Welcome User",
-          profile_picture: studentInfoStore.user?.profile_picture || null,
-        };
-        portal.value = "Student Portal";
-        sideBarStore.user = user;
-      } else if (adminAuthInfoStore.isAdminLoggedIn) {
-        await adminInfoStore.fetchAdminProfile();
-        let user = {
-          name: adminInfoStore.admin?.name || "Admin",
-          profile_picture: adminInfoStore.admin?.profile_picture || null,
-        };
+  function toggleUserMenu() {
+    isUserMenuOpen.value = !isUserMenuOpen.value;
+  }
 
-        console.log(adminAuthInfoStore.isAdminLoggedIn);
-        console.log(adminAuthInfoStore.adminRole);
-        switch (adminAuthInfoStore.adminRole) {
-          case 1:
-            portal.value = "Super Admin Portal";
-            break;
-          case 2:
-            portal.value = "Admin Portal";
-            break;
-          case 3:
-            portal.value = "Examiner Portal";
-            break;
-          case 4:
-            portal.value = "Volunteer Portal";
-            break;
-        }
-        sideBarStore.user = user;
-      } else {
-        window.showError("Error!", "You are not logged in", 3000);
-      }
-    } catch (err) {
-      window.showError("Error!", err, 3000);
+  function closeUserMenu() {
+    isUserMenuOpen.value = false;
+  }
+
+  async function handleLogout() {
+    closeUserMenu();
+    emit("close");
+    await logOut();
+  }
+
+  function handleClickOutside(event) {
+    if (
+      isUserMenuOpen.value &&
+      profileCardRef.value &&
+      !profileCardRef.value.contains(event.target)
+    ) {
+      closeUserMenu();
     }
   }
 
+  // Close dropdown on route change
+  const route = useRoute();
+  watch(
+    () => route.fullPath,
+    () => {
+      closeUserMenu();
+      emit("close");
+    }
+  );
+
+  // Split links: navigation items only (logout handled by dropdown)
+  const navLinks = computed(() =>
+    (menuStore.links || []).filter((l) => l && l.link)
+  );
+
   onMounted(async () => {
+    document.addEventListener("click", handleClickOutside);
     await syncUserInfo();
   });
+
+  onBeforeUnmount(() => {
+    document.removeEventListener("click", handleClickOutside);
+  });
 </script>
+
+<style scoped>
+  .pop-up-enter-active,
+  .pop-up-leave-active {
+    transition: all 0.2s ease-out;
+  }
+  .pop-up-enter-from,
+  .pop-up-leave-to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+</style>

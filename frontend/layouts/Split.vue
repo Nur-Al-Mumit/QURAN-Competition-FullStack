@@ -1,14 +1,12 @@
 <template>
-  <section class="bg-gray-100 min-h-screen">
-    <div class="base-width">
-      <div class="pb-10 sm:pb-16">
-        <Navbar />
-      </div>
-      <div class="sm:flex gap-5 justify-center py-7">
-        <aside class="mb-5 sm:mb-0">
+  <section class="min-h-screen bg-gray-100">
+    <Navbar />
+    <div class="w-full px-4 pt-[4.5rem] sm:mx-auto sm:w-[80%] sm:px-6 sm:pt-20 3xl:w-[70%] 4xl:w-[50%]">
+      <div class="flex flex-col gap-4 py-5 sm:flex-row sm:gap-5 sm:py-7">
+        <aside class="hidden w-full sm:block sm:w-auto">
           <SideBar />
         </aside>
-        <div class="w-full scroll-bar-hidden sm:shadow-sm h-fit rounded-2xl">
+        <div class="scroll-bar-hidden w-full h-fit rounded-2xl bg-white shadow-sm">
           <slot />
         </div>
       </div>

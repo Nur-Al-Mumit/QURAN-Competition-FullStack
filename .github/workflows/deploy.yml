@@ -50,6 +50,9 @@ jobs:
           
           # Hot-swap containers seamlessly using your stable host configuration files
           docker compose up -d --no-deps frontend backend nginx
+
+          # 🚀 FORCE Nginx to recreate so it completely flushes its DNS cache
+          docker compose up -d --force-recreate nginx
           
           # 🧼 Security cleanup: Log out after pulling private images
           docker logout
