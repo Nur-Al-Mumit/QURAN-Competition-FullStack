@@ -324,11 +324,9 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-
 /* ---- PAGE ---- */
 .token-page {
-  font-family: 'Noto Sans Bengali', 'Inter', sans-serif;
+  /* font-family: 'Noto Sans Bengali', 'Inter', sans-serif; */
   padding: 2rem 1.5rem;
   min-height: 100vh;
   background-color: #f8fafc;
