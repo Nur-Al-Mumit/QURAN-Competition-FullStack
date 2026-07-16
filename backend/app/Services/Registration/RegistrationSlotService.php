@@ -147,15 +147,88 @@ class RegistrationSlotService
     }
 
     /**
-     * Determine the next registration position (1-indexed) based on the
-     * current number of active forms in the active season. Must be called
-     * inside a transaction with a lock to be concurrency-safe.
+     * Determine the next registration position (1-indexed).
+     *
+     * The position is NOT derived from the current active-form count, because
+     * that regresses when a registration is removed (deactivating/deleting a
+     * user would make the next registrant collide with an already-assigned
+     * serial, e.g. produce a duplicate "C-05").
+     *
+     * Instead we:
+     *   1. Inspect the serials actually held by currently-active forms in the
+     *      active season, decoding them to a 1-indexed round-robin position.
+     *   2. If any position in [1 .. maxPositionUsed] is now vacant (its
+     *      registrant was removed), return the earliest such vacancy so the
+     *      freed serial is reused first ("fill the missing serial").
+     *   3. Otherwise continue on the next round-robin position after the last
+     *      one ever issued ("follow the last created group & time").
+     *
+     * Must be called inside a transaction with a lock to be concurrency-safe.
      */
     public function nextPosition(): int
     {
-        return $this->activeSeasonForms()
-            ->lockForUpdate()
-            ->count() + 1;
+        $examiners = $this->getActiveExaminers();
+        $count = $examiners->count();
+
+        if ($count === 0) {
+            throw new \RuntimeException('No active examiners found to assign groups.');
+        }
+
+        $seasonId = $this->getActiveSeasonId();
+
+        // Lock the active forms for the active season so two concurrent
+        // registrations can't pick the same slot. The COUNT itself is not
+        // used to derive the position; it only forces row-level locks.
+        $this->activeSeasonForms()->lockForUpdate()->count();
+
+        // Serials currently held by active forms in the active season. A
+        // removed registrant either has its form's is_active cleared or its
+        // allocation row deleted, so its serial drops out here and becomes a
+        // fillable vacancy.
+        $allocations = AttendanceAllocation::query()
+            ->where('season_id', $seasonId)
+            ->whereHas('userCompetitionForm', function ($q) {
+                $q->where('is_active', 1);
+            })
+            ->get(['serial']);
+
+        if ($allocations->isEmpty()) {
+            return 1;
+        }
+
+        $groups = range('A', chr(ord('A') + $count - 1));
+
+        $usedSerials = [];
+        $maxSlotIndex = 0;
+
+        foreach ($allocations as $alloc) {
+            $usedSerials[$alloc->serial] = true;
+
+            if (preg_match('/^([A-Z])-(\d+)$/', $alloc->serial, $m)) {
+                $idx = (int) $m[2] - 1;
+                if ($idx > $maxSlotIndex) {
+                    $maxSlotIndex = $idx;
+                }
+            }
+        }
+
+        // 1) Reuse the earliest vacancy within slots already opened. This
+        //    handles the "delete a user, then a new registrant must take that
+        //    freed serial instead of duplicating the last one" case, and the
+        //    "8 or 7 users out of 9 → next registrant fills the missing one"
+        //    case.
+        for ($slotIndex = 0; $slotIndex <= $maxSlotIndex; $slotIndex++) {
+            foreach ($groups as $groupIndex => $group) {
+                $serial = sprintf('%s-%02d', $group, $slotIndex + 1);
+                if (!isset($usedSerials[$serial])) {
+                    return $slotIndex * $count + $groupIndex + 1;
+                }
+            }
+        }
+
+        // 2) No gaps — continue on the next round-robin position after the
+        //    last issued one (e.g. last was C-03 → next is A-04).
+        return ($maxSlotIndex + 1) * $count + 1;
     }
 
     /**
