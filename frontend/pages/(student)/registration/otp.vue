@@ -29,7 +29,8 @@
         </div>
 
         <!-- Instruction Box -->
-        <div v-if="false"
+        <div
+          v-if="false"
           class="bg-emerald-50 border border-emerald-200 text-emerald-900 text-sm p-4 rounded-md mb-6 text-center leading-relaxed"
         >
           <p class="font-semibold mb-1 underline">নির্দেশনা</p>
@@ -60,26 +61,8 @@
 
           <p class="text-center text-emerald-900 text-sm leading-relaxed mb-3">
             প্রিয়
-            <span class="font-bold">{{ useFormStore?.form?.name_bn }}</span
-            >, আপনার লগইন সম্পন্ন করার জন্য নিচের কোডটি ব্যবহার করুন।
-          </p>
-
-          <!-- Animated OTP digits -->
-          <div class="flex justify-center gap-2 sm:gap-3 my-4">
-            <span
-              v-for="(digit, i) in otpDigits"
-              :key="i"
-              class="otp-digit"
-              :style="{ animationDelay: i * 0.12 + 's' }"
-            >
-              {{ digit }}
-            </span>
-          </div>
-
-          <p class="text-center text-emerald-900 text-sm leading-relaxed">
-            নিচের ঘরে এই ৬ সংখ্যার কোডটি লিখে
-            <strong>"সাবমিট করুন"</strong>
-            বাটনে ক্লিক করুন।
+            <span class="font-bold">{{ useFormStore?.form?.name_bn }}</span>
+            , আপনার লগইন সম্পন্ন করার জন্য নিচের কোডটি ব্যবহার করুন।
           </p>
 
           <div
@@ -98,11 +81,29 @@
               />
             </svg>
             <p class="text-xs text-emerald-800 leading-relaxed">
-              <span class="font-bold">গুরুত্বপূর্ণ:</span> এই কোডটি নিরাপদে
-              সংরক্ষণ করুন। ভবিষ্যতে আপনি আপনার মোবাইল নাম্বার এবং এই কোডটি
-              ব্যবহার করেই অ্যাকাউন্টে লগইন করতে পারবেন।
+              <span class="font-bold">গুরুত্বপূর্ণ:</span>
+              এই কোডটি নিরাপদে সংরক্ষণ করুন। ভবিষ্যতে আপনি আপনার মোবাইল নাম্বার
+              এবং এই কোডটি ব্যবহার করেই অ্যাকাউন্টে লগইন করতে পারবেন।
             </p>
           </div>
+          
+          <!-- Animated OTP digits -->
+          <div class="flex justify-center gap-2 sm:gap-3 my-4">
+            <span
+              v-for="(digit, i) in otpDigits"
+              :key="i"
+              class="otp-digit"
+              :style="{ animationDelay: i * 0.12 + 's' }"
+            >
+              {{ digit }}
+            </span>
+          </div>
+
+          <p class="text-center text-emerald-900 text-sm leading-relaxed">
+            নিচের ঘরে এই ৬ সংখ্যার কোডটি লিখে
+            <strong>"সাবমিট করুন"</strong>
+            বাটনে ক্লিক করুন।
+          </p>
         </div>
 
         <div class="relative">
@@ -149,7 +150,7 @@
                       v-html="
                         getIcons(
                           'sppiner',
-                          `w-[20px] transition-transform duration-300`
+                          `w-[20px] transition-transform duration-300`,
                         )
                       "
                     ></span>
@@ -250,7 +251,7 @@
             "Error!",
             "Failed to register form. Please try again" ||
               data?.data?.form_error,
-            2000
+            2000,
           );
         }, 3000);
         navigateTo("/registration");
@@ -263,7 +264,7 @@
         window.showError(
           "Error!",
           error?.response?.data?.message || "Something went wrong",
-          2000
+          2000,
         );
       }
       window.hideLoading();
@@ -295,7 +296,7 @@
       if (otp.value.length === 6) {
         registrationWithOtp(otp.value);
       }
-    }
+    },
   );
 </script>
 
