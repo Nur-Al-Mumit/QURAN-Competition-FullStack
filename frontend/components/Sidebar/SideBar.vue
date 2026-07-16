@@ -209,6 +209,7 @@
 
 <script setup>
   import SideBarItems from "~/components/Sidebar/SideBarItems.vue";
+  import getIcons from "~/assets/icons/Nav/icon";
 
   const emit = defineEmits(["close"]);
 
