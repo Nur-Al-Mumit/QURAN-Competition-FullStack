@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-white rounded-2xl shadow-xl">
+  <div>
     <!-- Header with Notification Banner -->
     <div>
       <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white">
