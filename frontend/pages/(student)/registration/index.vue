@@ -56,7 +56,7 @@
         class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6"
       >
         <div class="flex items-center justify-between mb-2 text-sm">
-          <span class="font-semibold text-gray-700">আসন সংরক্ষিত</span>
+          <span class="font-semibold text-gray-700">আসন সীমিত</span>
           <span
             class="font-bold"
             :class="isRegistrationFull ? 'text-red-600' : 'text-emerald-600'"
