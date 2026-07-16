@@ -35,9 +35,9 @@ jobs:
     - name: Trigger Remote SSH Server Update
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.SERVER_HOST }}
+        host: ${{ secrets.EQS_EC2_IP_HOST }}
         username: ubuntu
-        key: ${{ secrets.SERVER_SSH_KEY }}
+        key: ${{ secrets.EQS_EC2_SERVER_SSH_KEY }}
         script: |
           cd /home/ubuntu/eqs-app
           
