@@ -135,9 +135,9 @@
     </section>
 
     <!-- Registration Section -->
-    <section class="py-16 bg-gradient-to-r from-emerald-500 to-emerald-600">
+    <section class="py-10 bg-gradient-to-r from-emerald-500 to-emerald-600">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-white rounded-3xl shadow-2xl p-8 lg:p-12 text-center">
+        <div class="bg-white rounded-3xl shadow-2xl p-3 lg:p-12 text-center">
           <div
             class="inline-flex items-center justify-center w-20 h-20 bg-emerald-100 rounded-full mb-6"
           >
@@ -172,7 +172,7 @@
               @click="() => navigateTo('/registration')"
               class="group relative inline-flex items-center justify-center px-8 py-4 sm:text-xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 shine-sweep-effect"
             >
-              <span class="relative flex items-center">
+              <span class="relative flex items-center whitespace-nowrap">
                 <svg
                   class="w-6 h-6 mr-2"
                   fill="none"
@@ -191,12 +191,12 @@
             </button>
           </div>
 
-          <p class="text-sm text-gray-500 mt-6">
+          <a href="/registration" class="text-[13px] text-gray-500 mt-6">
             রেজিস্ট্রেশন লিংক:
             <span class="text-emerald-600 font-medium">
               competition.eshoquranshikhi.org/registration
             </span>
-          </p>
+          </a>
         </div>
       </div>
     </section>
@@ -415,7 +415,8 @@
                     ২০শে জুলাই রাত ১২:০০ টার মধ্যে ওয়েবসাইটে
                     <span class="font-semibold">
                       (competition.eshoquranshikhi.org/
-                      <br class="sm:hidden" />registration)
+                      <br class="sm:hidden" />
+                      registration)
                     </span>
                     রেজিস্ট্রেশন সম্পন্ন করতে হবে।
                   </p>

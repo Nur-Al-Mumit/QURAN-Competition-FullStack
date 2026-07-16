@@ -3,7 +3,7 @@
     <div class="sm:max-w-3xl mx-auto">
       <!-- Header -->
       <div
-        class="relative overflow-hidden rounded-2xl shadow-xl bg-gradient-to-br from-emerald-700 to-emerald-900 text-white px-6 py-8 sm:px-10 sm:py-10 text-center mb-6"
+        class="relative overflow-hidden rounded-2xl shadow-xl bg-gradient-to-br from-emerald-700 to-emerald-900 text-white px-3 py-8 sm:px-10 sm:py-10 text-center mb-6"
       >
         <!-- decorative pattern -->
         <div
@@ -19,12 +19,12 @@
         ></div>
         <div class="relative">
           <h1
-            class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight"
+            class="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight"
           >
             বিশুদ্ধ কুরআনপাঠ প্রতিযোগিতা
           </h1>
           <h1
-            class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight"
+            class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white tracking-tight leading-tight"
           >
             ১৪৪৮ হিজরী
           </h1>
@@ -81,7 +81,7 @@
         class="bg-white rounded-2xl shadow-xl overflow-hidden"
       >
         <!-- Section: Personal Information -->
-        <div class="p-6 sm:p-8 border-b border-gray-100">
+        <div class="p-4 sm:p-8 border-b border-gray-100">
           <div class="flex items-center gap-3 mb-6">
             <span
               class="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 shrink-0"
@@ -157,7 +157,7 @@
         </div>
 
         <!-- Section: Education -->
-        <div class="p-6 sm:p-8 border-b border-gray-100">
+        <div class="p-4 sm:p-8 border-b border-gray-100">
           <div class="flex items-center gap-3 mb-6">
             <span
               class="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 shrink-0"
@@ -271,7 +271,7 @@
         </div>
 
         <!-- Section: Participation -->
-        <div class="p-6 sm:p-8 border-b border-gray-100">
+        <div class="p-4 sm:p-8 border-b border-gray-100">
           <div class="flex items-center gap-3 mb-6">
             <span
               class="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 shrink-0"
@@ -358,7 +358,7 @@
         </div>
 
         <!-- Section: Rules -->
-        <div class="p-6 sm:p-8">
+        <div class="p-4 sm:p-8">
           <div class="flex items-center gap-3 mb-6">
             <span
               class="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 shrink-0"
@@ -486,8 +486,8 @@
         <template #body>
           <div class="p-5">
             <h1 class="text-red-600 font-semibold leading-relaxed text-center">
-              তাজবিদ বা উচ্চারণে সীমিত ভুল গ্রহণযোগ্য হলেও, দেখে কুরআন তিলাওয়াত করতে না
-              পারলে প্রাথমিক বাছাই পর্বে নির্বাচিত করা সম্ভব হবে না।
+              তাজবিদ বা উচ্চারণে সীমিত ভুল গ্রহণযোগ্য হলেও, দেখে কুরআন তিলাওয়াত
+              করতে না পারলে প্রাথমিক বাছাই পর্বে নির্বাচিত করা সম্ভব হবে না।
             </h1>
 
             <div class="flex justify-center mt-6">
@@ -589,7 +589,7 @@
 
       <modal :is-open="isDisclaimerModalOpen">
         <template #body>
-          <div class="p-3 sm:p-6 mx-auto w-[90vw] sm:w-full">
+          <div class="p-3 sm:p-6 mx-auto w-[95vw] sm:w-full">
             <!-- Warning Icon -->
             <div class="flex justify-center mb-4">
               <svg
@@ -655,10 +655,12 @@
             </div>
 
             <!-- Detailed Rules Link -->
-            <div class="text-center mb-6 border-emerald-ripple w-fit mx-auto">
+            <div
+              class="text-center mb-6 border-emerald-ripple w-fit mx-auto whitespace-nowrap"
+            >
               <a
                 href="/competition-rules"
-                class="group relative inline-flex items-center justify-center px-8 py-4 sm:text-xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 shine-sweep-effect z-50"
+                class="group relative inline-flex items-center justify-center px-4 py-4 sm:text-xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 shine-sweep-effect z-50"
               >
                 <span class="relative flex items-center gap-2">
                   <svg

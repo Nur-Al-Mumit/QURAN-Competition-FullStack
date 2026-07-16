@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="flex flex-wrap gap-2">
+    <div class="flex flex-wrap justify-center gap-2">
       <label v-for="option in options" :key="option.id" class="cursor-pointer">
         <input
           type="radio"
