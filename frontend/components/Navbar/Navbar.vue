@@ -66,7 +66,8 @@
         >
           <button
             @click="toggleProfileMenu"
-            class="flex items-center gap-2 rounded-full p-1 base-trans hover:bg-gray-100 sm:pr-2 lg:pr-3"
+            @mouseenter="toggleProfileMenu"
+            class="flex items-center gap-2 rounded-full p-1 base-trans hover:bg-gray-100 sm:pr-2 lg:pr-3 border"
           >
             <div class="relative">
               <span
@@ -150,7 +151,7 @@
         <button
           v-if="isUserOrAdminLoggedIn"
           @click="openMobileMenu"
-          class="relative rounded-full p-1 base-trans hover:bg-gray-100 sm:hidden"
+          class="relative rounded-full p-1 base-trans hover:bg-gray-100 sm:hidden flex items-center gap-2 border px-2"
           aria-label="Open account menu"
         >
           <span
@@ -164,8 +165,24 @@
             class="h-8 w-8 rounded-full object-cover ring-2 ring-emerald-100"
           />
           <span
-            class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white"
-          ></span>
+              class="sm:hidden max-w-[110px] truncate text-sm font-medium text-gray-700"
+            >
+              {{ displayName }}
+            </span>
+            <svg
+              class="sm:hidden h-4 w-4 text-gray-400 base-trans"
+              :class="{ 'rotate-180': isProfileMenuOpen }"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
         </button>
 
         <!-- Guest: Hamburger (mobile only) — opens unified drawer -->
