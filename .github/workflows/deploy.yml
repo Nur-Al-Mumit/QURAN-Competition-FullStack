@@ -38,11 +38,18 @@ jobs:
         host: ${{ secrets.EQS_EC2_IP_HOST }}
         username: ubuntu
         key: ${{ secrets.EQS_EC2_SERVER_SSH_KEY }}
+        script_stop: true
         script: |
           cd /home/ubuntu/eqs-app
+          
+          # 🔐 Log into Docker Hub directly on the EC2 host using your existing secrets
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           
           # Pull down only the fresh application logic images built by GitHub
           docker compose pull frontend backend
           
           # Hot-swap containers seamlessly using your stable host configuration files
           docker compose up -d --no-deps frontend backend
+          
+          # 🧼 Security cleanup: Log out after pulling private images
+          docker logout
