@@ -127,7 +127,7 @@
                 <span class="text-emerald-600 font-bold">•</span> <span class="font-extrabold text-emerald-950">নগদ ৭,০০০/-</span>
               </li>
             </ul>
-            <p class="text-[10px] text-gray-500 border-t border-emerald-100 pt-2">(সাথে ইসলামিক বই এবং বিশেষ ব্যাজিয়া, ইত্যাদি)</p>
+            <p class="text-[10px] text-gray-500 border-t border-emerald-100 pt-2">(সাথে ইসলামিক বই এবং বিশেষ হাদিয়া, ইত্যাদি)</p>
           </div>
 
           <!-- 2nd Prize -->
@@ -142,7 +142,7 @@
                 <span class="text-emerald-600 font-bold">•</span> <span class="font-extrabold text-emerald-950">নগদ ৫,০০০/-</span>
               </li>
             </ul>
-            <p class="text-[10px] text-gray-500 border-t border-emerald-100 pt-2">(সাথে ইসলামিক বই এবং বিশেষ ব্যাজিয়া, ইত্যাদি)</p>
+            <p class="text-[10px] text-gray-500 border-t border-emerald-100 pt-2">(সাথে ইসলামিক বই এবং বিশেষ হাদিয়া, ইত্যাদি)</p>
           </div>
 
           <!-- 3rd Prize -->
@@ -157,7 +157,7 @@
                 <span class="text-emerald-600 font-bold">•</span> <span class="font-extrabold text-emerald-950">নগদ ৩,০০০/-</span>
               </li>
             </ul>
-            <p class="text-[10px] text-gray-500 border-t border-emerald-100 pt-2">(সাথে ইসলামিক বই এবং বিশেষ ব্যাজিয়া, ইত্যাদি)</p>
+            <p class="text-[10px] text-gray-500 border-t border-emerald-100 pt-2">(সাথে ইসলামিক বই এবং বিশেষ হাদিয়া, ইত্যাদি)</p>
           </div>
         </div>
 
