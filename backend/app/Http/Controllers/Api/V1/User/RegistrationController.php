@@ -38,16 +38,22 @@ class RegistrationController extends Controller
 
     public function completeRegistration(Request $request)
     {
-        // return;
         $request->validate([
             'phone' => 'required|digits:11|regex:/^01[0-9]{9}$/',
             'otp' => 'required|string',
             'otp_ref' => 'required|string',
+            'competitionForm' => 'required|array',
+            'competitionForm.name_bn' => 'required|string|max:255',
+            'competitionForm.phone' => 'required|digits:11|regex:/^01[0-9]{9}$/',
         ]);
 
         try {
-            // $competitionForm = json_decode($request->competitionForm);
-            $competitionForm = $request->competitionForm;
+            // Always coerce the competition form to a plain array so that
+            // submitOrUpdateForm() can safely use null-coalescing on every key
+            // regardless of the request shape sent by the client.
+            $competitionForm = is_array($request->competitionForm)
+                ? $request->competitionForm
+                : (array) $request->competitionForm;
 
             $data = [
                 'identity' => $request->phone,
@@ -80,7 +86,7 @@ class RegistrationController extends Controller
 
                 return JsonResponse::success($response);
             } else {
-                throw new \Exception($response['message']);
+                throw new \Exception($response['message'] ?? 'Authorization failed.');
             }
 
         } catch (\Throwable $th) {
@@ -102,6 +108,32 @@ class RegistrationController extends Controller
             $seasonId = $userSeason->season_id;
             $userId = $user->id;
 
+            // Normalize the incoming form payload into a plain array so that
+            // every field access below is safe regardless of whether the
+            // caller passed a Request instance (ArrayAccess, forgiving) or a
+            // raw array (throws "Undefined array key" on missing keys in PHP 8).
+            // Using ?? null guarantees we never throw on a missing key — the
+            // database columns are all nullable except the truly required ones,
+            // which are validated upstream in updateForm() / completeRegistration().
+            $form = is_array($competitionForm)
+                ? $competitionForm
+                : (method_exists($competitionForm, 'all') ? $competitionForm->all() : (array) $competitionForm);
+
+            $name_bn = $form['name_bn'] ?? null;
+            $name_en = $form['name_en'] ?? null;
+            $dob = $form['dob'] ?? null;
+            $phone = $form['phone'] ?? null;
+            $address = $form['address'] ?? null;
+            $education_background = $form['education_background'] ?? null;
+            $school_name = $form['school_name'] ?? null;
+            $college_name = $form['college_name'] ?? null;
+            $university_name = $form['university_name'] ?? null;
+            $madrasah_name = $form['madrasah_name'] ?? null;
+            $madrasah_study_details = $form['madrasah_study_details'] ?? null;
+            $occupation = $form['occupation'] ?? null;
+            $is_recitation = $form['is_recitation'] ?? null;
+            $need_training = $form['need_training'] ?? null;
+
             // Check if form already exists
             $form = UserCompetitionForm::where('user_id', $userId)
                 ->where('season_id', $seasonId)
@@ -110,25 +142,25 @@ class RegistrationController extends Controller
             if ($form) {
                 // UPDATE EXISTING FORM
                 $form->update([
-                    'name_bn' => $competitionForm['name_bn'],
-                    'name_en' => $competitionForm['name_en'],
-                    'dob' => $competitionForm['dob'],
-                    'phone' => $competitionForm['phone'],
-                    'address' => $competitionForm['address'],
-                    'education_background' => $competitionForm['education_background'],
-                    'school_name' => $competitionForm['school_name'],
-                    'college_name' => $competitionForm['college_name'],
-                    'university_name' => $competitionForm['university_name'],
-                    'madrasah_name' => $competitionForm['madrasah_name'],
-                    'madrasah_study_details' => $competitionForm['madrasah_study_details'],
-                    'occupation' => $competitionForm['occupation'],
-                    'is_recitation' => $competitionForm['is_recitation'],
-                    'need_training' => $competitionForm['need_training'],
+                    'name_bn' => $name_bn,
+                    'name_en' => $name_en,
+                    'dob' => $dob,
+                    'phone' => $phone,
+                    'address' => $address,
+                    'education_background' => $education_background,
+                    'school_name' => $school_name,
+                    'college_name' => $college_name,
+                    'university_name' => $university_name,
+                    'madrasah_name' => $madrasah_name,
+                    'madrasah_study_details' => $madrasah_study_details,
+                    'occupation' => $occupation,
+                    'is_recitation' => $is_recitation,
+                    'need_training' => $need_training,
                 ]);
 
                 $user->update([
-                    'name_bn' => $competitionForm['name_bn'],
-                    'name_en' => $competitionForm['name_en'],
+                    'name_bn' => $name_bn,
+                    'name_en' => $name_en,
                 ]);
 
                 $allocation = AttendanceAllocation::where('user_competition_form_id', $form->id)->first();
@@ -151,20 +183,20 @@ class RegistrationController extends Controller
                     'season_id' => $seasonId,
                     'reg_no' => $regNo,
 
-                    'name_bn' => $competitionForm['name_bn'],
-                    'name_en' => $competitionForm['name_en'],
-                    'dob' => $competitionForm['dob'],
-                    'phone' => $competitionForm['phone'],
-                    'address' => $competitionForm['address'],
-                    'education_background' => $competitionForm['education_background'],
-                    'school_name' => $competitionForm['school_name'],
-                    'college_name' => $competitionForm['college_name'],
-                    'university_name' => $competitionForm['university_name'],
-                    'madrasah_name' => $competitionForm['madrasah_name'],
-                    'madrasah_study_details' => $competitionForm['madrasah_study_details'],
-                    'occupation' => $competitionForm['occupation'],
-                    'is_recitation' => $competitionForm['is_recitation'],
-                    'need_training' => $competitionForm['need_training'],
+                    'name_bn' => $name_bn,
+                    'name_en' => $name_en,
+                    'dob' => $dob,
+                    'phone' => $phone,
+                    'address' => $address,
+                    'education_background' => $education_background,
+                    'school_name' => $school_name,
+                    'college_name' => $college_name,
+                    'university_name' => $university_name,
+                    'madrasah_name' => $madrasah_name,
+                    'madrasah_study_details' => $madrasah_study_details,
+                    'occupation' => $occupation,
+                    'is_recitation' => $is_recitation,
+                    'need_training' => $need_training,
                 ]);
 
                 // Mark the "competition_registration" progress stage as

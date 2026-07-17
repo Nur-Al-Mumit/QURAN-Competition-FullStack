@@ -257,6 +257,8 @@
         phone: (useFormStore.form.phone || "").trim(),
         otp: code,
         otp_ref: studentAuthStore.formRegistration.uuid,
+        // Send a clean, full-shape form object so the backend never sees a
+        // missing key (which previously caused "Undefined array key" errors).
         competitionForm: useFormStore.form,
       };
 
@@ -283,22 +285,54 @@
 
       // ── Registration form ──
       if (data?.data?.form?.reg_no) {
-        useFormStore.form = data.data.form;
+        useFormStore.ensureFormShape();
+        // Merge the saved form back into the editable store (keeps the
+        // canonical key shape) and mirror it into the other stores.
+        Object.assign(useFormStore.form, data.data.form);
+        useFormStore.ensureFormShape();
+
+        studentInfoStore.form = data.data.form;
         registeredFormStore.registeredForm = data.data.form;
         registeredFormStore.allocation = data.data.allocation || null;
         registeredFormStore.registeredFormLoaded = true;
 
+        // Clear the OTP session — registration is fully complete.
+        studentAuthStore.formRegistration = {
+          otp: null,
+          uuid: "",
+          expires_at: "",
+          attempts: 0,
+        };
+
         window.showSuccess("Success!", "Register Form successfully", 2000);
         navigateTo("/registration/token");
       } else {
+        // ── Recovery path: account created but form creation failed ──
+        // The user is now authenticated (authResponse was set above) but
+        // their competition form was NOT created (backend returned
+        // form_error, or no reg_no). Instead of leaving them stuck on the
+        // OTP page, send them back to the registration form. Because they
+        // are now logged in, the next submit will go through the
+        // authenticated /registration/update endpoint which (with the
+        // backend null-coalescing fix) will reliably create the form.
         window.showError(
           "Error!",
           data?.data?.form_error ||
             "Failed to register form. Please try again.",
-          3000,
+          4000,
         );
-        // Keep user on OTP page so they can retry without re-entering form.
-        isIncorrectOTP.value = true;
+
+        // Force a fresh profile fetch on the registration page so it knows
+        // the account exists but the form does not yet.
+        studentInfoStore.profileLoaded = false;
+        // Clear the OTP session so this page won't loop them back here.
+        studentAuthStore.formRegistration = {
+          otp: null,
+          uuid: "",
+          expires_at: "",
+          attempts: 0,
+        };
+        navigateTo("/registration");
       }
     } catch (error) {
       window.hideLoading();
@@ -326,16 +360,17 @@
     window.showLoading("Resending OTP...");
 
     try {
-      const endpoint = "/auth/resend-otp-for-email";
+      // Correct endpoint is /auth/otp-resend (see backend routes/api/auth/user.php).
+      const endpoint = "/auth/otp-resend";
       const payload = {
-        otp_ref: studentAuthStore.formRegistration?.uuid,
+        uuid: studentAuthStore.formRegistration?.uuid,
       };
 
       const { data } = await useAxios(endpoint, payload, null, "POST");
 
       window.hideLoading();
 
-      if (data?.data) {
+      if (data?.data?.uuid) {
         // Update the OTP reference and display code.
         studentAuthStore.formRegistration = {
           otp: data.data.otp ?? null,
@@ -345,7 +380,11 @@
         };
         window.showSuccess("Success!", "OTP আবার পাঠানো হয়েছে।", 2500);
       } else {
-        window.showError("Error!", "OTP পাঠাতে ব্যর্থ হয়েছে।", 2500);
+        window.showError(
+          "Error!",
+          data?.data?.message || "OTP পাঠাতে ব্যর্থ হয়েছে।",
+          2500,
+        );
       }
     } catch (error) {
       window.hideLoading();

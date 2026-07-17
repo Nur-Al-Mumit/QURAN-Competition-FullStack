@@ -26,7 +26,15 @@ export const useStudentInfoStore = defineStore(
           profileLoaded.value = true;
         }
         if (data.user?.form) {
-          useFormStore.form = data.user?.form;
+          // Merge the server-side form into the reactive store form instead of
+          // replacing the reactive proxy wholesale. Object.assign preserves
+          // reactivity and keeps the canonical key shape. We then call
+          // ensureFormShape() to strip any server-only keys (reg_no, id, ...)
+          // that should not be sent back as part of an update payload and to
+          // guarantee every backend-expected key is present (prevents
+          // "Undefined array key" on the backend).
+          Object.assign(useFormStore.form, data.user.form);
+          useFormStore.ensureFormShape();
           form.value = data.user.form;
         }
         return user.value;

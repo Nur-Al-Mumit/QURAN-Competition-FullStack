@@ -22,11 +22,12 @@ export const useAuthLogout = () => {
         studentInfoStore.profileLoaded = false;
         studentInfoStore.form = null;
         studentInfoStore.user = null;
-        useFormStore.form = {
-          education_background: 1,
-          is_recitation: 1,
-          rulesAgreement: 1,
-        };
+        // Fully reset the competition form to a clean default shape so that
+        // the next user on this same browser (e.g. a family member) does not
+        // inherit the previous user's form data. Using resetForm() guarantees
+        // every backend-expected key is present (prevents "Undefined array
+        // key" errors caused by a partial form object).
+        useFormStore.resetForm();
         clearCookies();
         window.showSuccess("Success!", "Logout successfully", 2000);
         navigateTo("/");

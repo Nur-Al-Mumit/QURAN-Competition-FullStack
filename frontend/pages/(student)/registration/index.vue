@@ -867,7 +867,6 @@
   import getIcons from "~/assets/icons/Utils/icon";
 
   const studentAuthInfoStore = useStudentAuthInfoStore();
-  const { isStudentLoggedIn } = studentAuthInfoStore;
   const registeredFormStore = useRegisteredFormStore();
   const studentInfoStore = useStudentInfoStore();
   const studentAuthStore = useStudentAuthStore();
@@ -1113,9 +1112,57 @@
     return /^01[0-9]{9}$/.test(String(phone || "").trim());
   }
 
+  // ─── Build a clean, backend-ready payload ───────────────────────
+  // We construct the payload explicitly from a fixed list of keys so that:
+  //   1. No `undefined` values ever reach JSON.stringify (which would strip
+  //      them and trigger "Undefined array key" on the backend).
+  //   2. No server-only keys (reg_no, id, season_id, created_at, ...) are
+  //      accidentally sent back.
+  //   3. The payload shape is identical for both the OTP-complete and the
+  //      authenticated-update flows.
+  const FORM_KEYS = [
+    "name_bn",
+    "name_en",
+    "dob",
+    "phone",
+    "email",
+    "address",
+    "education_background",
+    "school_name",
+    "college_name",
+    "university_name",
+    "madrasah_name",
+    "madrasah_study_details",
+    "occupation",
+    "is_recitation",
+    "need_training",
+    "gender",
+    "rulesAgreement",
+  ];
+
+  function buildFormPayload() {
+    // Guarantee every key exists before reading it.
+    useFormStore.ensureFormShape();
+    const payload = {};
+    for (const key of FORM_KEYS) {
+      const value = useFormStore.form[key];
+      // Normalize empty string to null for optional nullable fields so the
+      // backend stores NULL rather than a stray "".
+      payload[key] = value === undefined ? null : value;
+    }
+    // If the user already has a saved form (editing), forward reg_no so the
+    // backend update endpoint can locate the existing record.
+    if (studentInfoStore.form?.reg_no) {
+      payload.reg_no = studentInfoStore.form.reg_no;
+    }
+    return payload;
+  }
+
   // ─── Main form submit (bulletproof) ─────────────────────────────
   async function formSubmit() {
-    // 1. Hard guard: if already submitting, ignore completely.
+    // 1. Hard guard: if already submitting, ignore completely. This also
+    //    covers double-clicks, Enter-key repeats, and any race condition
+    //    where the function is re-entered while a request is in-flight.
     if (isFormSubmit.value) return;
 
     // 2. Show validation errors so user sees what's missing.
@@ -1157,12 +1204,18 @@
       return;
     }
 
-    // 5. Lock the form — no more clicks allowed.
+    // 5. Lock the form — no more clicks allowed. This lock is only released
+    //    in the `finally` block below, so every code path (success, error,
+    //    network failure, unexpected throw) always re-enables the button.
     isFormSubmit.value = true;
 
     try {
       // ── Branch A: Not logged in → send OTP ──
-      if (!isStudentLoggedIn) {
+      // A brand-new visitor (e.g. a family member registering on the same
+      // browser after the previous user logged out) goes through OTP first.
+      // Read the live value from the store (not a destructured snapshot) so
+      // that a state change since page-mount is always respected.
+      if (!studentAuthInfoStore.isStudentLoggedIn) {
         window.showLoading("Sending OTP...");
 
         const payload = {
@@ -1190,17 +1243,24 @@
         } else {
           window.showError(
             "Error!",
-            "OTP পাঠাতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
+            data?.data?.message || "OTP পাঠাতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
             3000,
           );
         }
         return;
       }
 
-      // ── Branch B: Logged in → update registration ──
+      // ── Branch B: Logged in → create / update registration ──
+      // This covers two cases:
+      //   (a) The user already has a form → backend UPDATEs it.
+      //   (b) The user is authenticated but has NO form yet (this happens
+      //       when the OTP-complete step created the account but the form
+      //       creation failed) → backend CREATEs it now. This is the
+      //       automatic recovery path that previously required the user to
+      //       go back and resubmit manually.
       window.showLoading("Submitting Form...");
 
-      const payload = { ...useFormStore.form };
+      const payload = buildFormPayload();
 
       const { data } = await useAuthenticatedAxios(
         "/registration/update",
@@ -1212,15 +1272,18 @@
       window.hideLoading();
 
       if (data?.data?.form?.reg_no) {
+        const savedForm = data.data.form;
+        const savedAllocation = data.data.allocation;
+
         // Update all stores atomically.
-        studentInfoStore.form = data.data.form;
+        studentInfoStore.form = savedForm;
         if (studentInfoStore.user) {
-          studentInfoStore.user.name_bn = data.data.form.name_bn;
-          studentInfoStore.user.name_en = data.data.form.name_en;
+          studentInfoStore.user.name_bn = savedForm.name_bn;
+          studentInfoStore.user.name_en = savedForm.name_en;
         }
 
-        registeredFormStore.registeredForm = data.data.form;
-        registeredFormStore.allocation = data.data.allocation || null;
+        registeredFormStore.registeredForm = savedForm;
+        registeredFormStore.allocation = savedAllocation || null;
         registeredFormStore.registeredFormLoaded = true;
 
         window.showSuccess("Success!", "Form Updated successfully", 3000);
@@ -1229,6 +1292,7 @@
         window.showError(
           "Error!",
           data?.data?.form_error ||
+            data?.message ||
             "ফর্ম সাবমিট করতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
           3000,
         );
@@ -1249,15 +1313,33 @@
   }
 
   // ─── Initialization ─────────────────────────────────────────────
+  // This is the single, deterministic entry point for the page. It must
+  // produce a correct state regardless of how the user arrived:
+  //   - Fresh new visitor (not logged in, no form)
+  //   - Returning visitor refreshing the page mid-registration
+  //   - Authenticated user editing their existing form
+  //   - Authenticated user whose form creation previously failed
+  //   - A different family member on the same browser after a logout
   onMounted(async () => {
     isInitialLoading.value = true;
 
     try {
-      // Always fetch fresh profile data when the page loads.
+      // 1. Guarantee the form object has the complete canonical key shape.
+      //    This is the #1 defence against the "Undefined array key" backend
+      //    error: even if a previous session left a partial form (or the
+      //    persisted state was an older shape), every key now exists.
+      useFormStore.ensureFormShape();
+
+      // 2. Always fetch fresh profile data so we know the true server state.
+      //    updateUserProfile() forces a refetch (does not reuse a stale
+      //    cached profile), which is essential for the recovery case where
+      //    the account exists but the form does not.
       await studentInfoStore.updateUserProfile();
 
+      // 3. Prefill contact info from the authenticated user's profile, but
+      //    only when the form does not already hold a value (so we never
+      //    clobber data the user just typed, e.g. after a refresh).
       if (studentInfoStore.user) {
-        // Only prefill phone/email if the form doesn't already have them.
         if (!useFormStore.form.phone) {
           useFormStore.form.phone = studentInfoStore.user?.phone || "";
         }
@@ -1266,16 +1348,27 @@
         }
       }
 
-      // If the user already has a registered form, load it — but do NOT
-      // overwrite their actual choices (gender, education, etc.).
+      // 4. If the user already has a saved registration form, load it for
+      //    editing. We merge (not replace) so reactivity is preserved and
+      //    ensureFormShape() keeps the canonical key set. The server form
+      //    may include extra keys (reg_no, id, ...) which we route through
+      //    studentInfoStore.form (not the editable form) so the submit
+      //    payload stays clean.
       if (studentInfoStore.form?.reg_no) {
-        useFormStore.form = {
-          ...useFormStore.form, // keep current values as fallback
-          ...studentInfoStore.form, // overlay saved form data
-        };
+        // Keep editable field values from the server form, but don't blow
+        // away anything the user is currently editing.
+        const serverForm = studentInfoStore.form;
+        for (const key of FORM_KEYS) {
+          if (key in serverForm && serverForm[key] !== null && serverForm[key] !== undefined) {
+            useFormStore.form[key] = serverForm[key];
+          }
+        }
+        useFormStore.ensureFormShape();
       }
 
-      // Existing registrants already have a slot; only gate new registrations.
+      // 5. Capacity gate only matters for NEW registrations. Existing
+      //    registrants already have a slot, so skip the check (and avoid
+      //    blocking them with a "full" modal if the season is at capacity).
       if (!studentInfoStore.form?.reg_no) {
         await checkRegistrationCapacity();
       }
