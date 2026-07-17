@@ -41,6 +41,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:9000/api/v1",
+      posthogKey: process.env.NUXT_PUBLIC_POSTHOG_KEY || "phc_xVSV6z5ZLuRPjcC9sQ6xPoyxKr2q5iP8GZ4ixkQHiCNp",
+      posthogHost: process.env.NUXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
     },
   },
   compatibilityDate: "2025-05-03",
