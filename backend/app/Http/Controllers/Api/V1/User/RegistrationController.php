@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class RegistrationController extends Controller
 {
@@ -71,6 +72,10 @@ class RegistrationController extends Controller
 
             $response = $this->authorizeService->authorizeUser($request, $data);
 
+            if ($response instanceof \Illuminate\Http\Response || $response instanceof \Symfony\Component\HttpFoundation\Response) {
+                return $response;
+            }
+
             if (is_array($response) && isset($response['authResponse']) && $response['authResponse']) {
                 try {
                     $submitForm = $this->submitOrUpdateForm($competitionForm, $response['user']);
@@ -86,11 +91,18 @@ class RegistrationController extends Controller
 
                 return JsonResponse::success($response);
             } else {
-                throw new \Exception($response['message'] ?? 'Authorization failed.');
+                $msg = is_array($response) ? ($response['message'] ?? 'Authorization failed.') : 'Authorization failed.';
+                throw new \Exception($msg);
             }
 
         } catch (\Throwable $th) {
-            return JsonResponse::error($th);
+            Log::error($th);
+
+            $message = config('app.debug')
+                ? $th->getMessage() . ' in ' . $th->getFile() . ':' . $th->getLine()
+                : 'Something went wrong during registration. Please try again.';
+
+            return JsonResponse::error($message, 500);
         }
     }
 
