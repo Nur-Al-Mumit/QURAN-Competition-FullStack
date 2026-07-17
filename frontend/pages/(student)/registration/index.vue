@@ -80,6 +80,18 @@
         @submit.prevent="formSubmit"
         class="bg-white rounded-2xl shadow-xl overflow-hidden"
       >
+        <!-- Initial loading overlay -->
+        <div
+          v-if="isInitialLoading"
+          class="absolute inset-0 z-10 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-2xl"
+        >
+          <div class="flex flex-col items-center gap-3">
+            <div
+              class="w-10 h-10 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"
+            ></div>
+            <p class="text-sm text-gray-600 font-medium">তথ্য লোড হচ্ছে...</p>
+          </div>
+        </div>
         <!-- Section: Personal Information -->
         <div class="p-4 sm:p-8 border-b border-gray-100">
           <div class="flex items-center gap-3 mb-6">
@@ -854,7 +866,8 @@
 <script setup>
   import getIcons from "~/assets/icons/Utils/icon";
 
-  const { isStudentLoggedIn } = useStudentAuthInfoStore();
+  const studentAuthInfoStore = useStudentAuthInfoStore();
+  const { isStudentLoggedIn } = studentAuthInfoStore;
   const registeredFormStore = useRegisteredFormStore();
   const studentInfoStore = useStudentInfoStore();
   const studentAuthStore = useStudentAuthStore();
@@ -882,28 +895,50 @@
     { id: 2, name: "না, আমি সম্মত নই" },
   ];
 
-  // Modals state
-  let isModalOpen = ref(false);
-  let isGenderModalOpen = ref(false);
-  let isTrainingModalOpen = ref(false);
-  let isRegCloseModalOpen = ref(false);
-  let isDisclaimerModalOpen = ref(true);
-  let isRecitationModalOpen = ref(false);
+  // ─── Modals state ───────────────────────────────────────────────
+  const isModalOpen = ref(false);
+  const isGenderModalOpen = ref(false);
+  const isTrainingModalOpen = ref(false);
+  const isRegCloseModalOpen = ref(false);
+  const isDisclaimerModalOpen = ref(true);
+  const isRecitationModalOpen = ref(false);
 
-  let isDisable = ref(false);
-  let isFormSubmit = ref(false);
+  // ─── Submission / loading state ─────────────────────────────────
+  // Single source of truth for whether a request is in-flight.
+  // Prevents double-submit, shows spinner, disables button.
+  const isFormSubmit = ref(false);
+  const isInitialLoading = ref(true);
 
-  // Registration capacity (auto-assigned slots, capped at max on backend)
-  let isRegistrationFull = ref(false);
-  let capacityLoaded = ref(false);
-  let registrationInfo = ref({ count: 0, max: 50, remaining: 50 });
+  // ─── Registration capacity ──────────────────────────────────────
+  const isRegistrationFull = ref(false);
+  const capacityLoaded = ref(false);
+  const registrationInfo = ref({ count: 0, max: 50, remaining: 50 });
 
-  // Wishlist (waitlist) form state
-  let wishlistPhone = ref("");
-  let wishlistName = ref("");
-  let isWishlistSubmitting = ref(false);
-  let isWishlistSubmitted = ref(false);
+  // ─── Wishlist (waitlist) form state ─────────────────────────────
+  const wishlistPhone = ref("");
+  const wishlistName = ref("");
+  const isWishlistSubmitting = ref(false);
+  const isWishlistSubmitted = ref(false);
 
+  // ─── beforeunload guard ─────────────────────────────────────────
+  // Warn the user if they try to leave/close the tab while submitting.
+  function handleBeforeUnload(e) {
+    if (isFormSubmit.value) {
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    }
+  }
+
+  onMounted(() => {
+    window.addEventListener("beforeunload", handleBeforeUnload);
+  });
+
+  onBeforeUnmount(() => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  });
+
+  // ─── Capacity check ─────────────────────────────────────────────
   async function checkRegistrationCapacity() {
     try {
       const { data } = await useAxios(
@@ -930,12 +965,16 @@
     }
   }
 
+  // ─── Wishlist submit ────────────────────────────────────────────
   async function submitWishlist() {
+    // Guard against double-click
+    if (isWishlistSubmitting.value) return;
+
     const phone = (wishlistPhone.value || "").trim();
     if (!/^01[0-9]{9}$/.test(phone)) {
       window.showError(
         "Error!",
-        "দয়া করে একটি সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন",
+        "দয়া করে একটি সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন",
         3000,
       );
       return;
@@ -953,7 +992,7 @@
       isWishlistSubmitted.value = true;
       window.showSuccess(
         "Success!",
-        "আপনাকে ওয়েটলিস্টে যুক্ত করা হয়েছে। পরবর্তী সেশনে ইনশাআল্লাহ আমরা জানাব।",
+        "আপনাকে ওয়েটলিস্টে যুক্ত করা হয়েছে। পরবর্তী সেশনে ইনশাআল্লাহ আমরা জানাব।",
         4000,
       );
     } catch (error) {
@@ -968,6 +1007,7 @@
     }
   }
 
+  // ─── Date of birth validation ───────────────────────────────────
   // Compute max date for 16 years old as of July 22, 2025
   const maxDob = computed(() => {
     const date = new Date("2025-07-21");
@@ -990,6 +1030,7 @@
     return Math.min(100, Math.round((count / max) * 100));
   });
 
+  // ─── Validation ─────────────────────────────────────────────────
   const missingRequiredFields = computed(() => {
     const missing = [];
     if (
@@ -1007,22 +1048,21 @@
     return missing;
   });
 
-  let showValidationErrors = ref(false);
+  const showValidationErrors = ref(false);
 
   const invalidFields = computed(() => {
     if (!showValidationErrors.value) return [];
     return missingRequiredFields.value;
   });
 
+  // The button is only hard-disabled while submitting or during initial load.
+  // Validation errors are shown on click (not used to disable) so the user
+  // can always click and see *what* is wrong.
   const isFormDisabled = computed(() => {
-    return (
-      dobError.value ||
-      useFormStore.form.gender === 2 ||
-      useFormStore.form.rulesAgreement !== 1 ||
-      missingRequiredFields.value.length > 0
-    );
+    return isFormSubmit.value || isInitialLoading.value;
   });
 
+  // ─── Watchers for contextual modals ─────────────────────────────
   watch(
     () => useFormStore.form.education_background,
     (newValue) => {
@@ -1068,159 +1108,181 @@
     },
   );
 
+  // ─── Phone validation helper ────────────────────────────────────
+  function validatePhone(phone) {
+    return /^01[0-9]{9}$/.test(String(phone || "").trim());
+  }
+
+  // ─── Main form submit (bulletproof) ─────────────────────────────
   async function formSubmit() {
+    // 1. Hard guard: if already submitting, ignore completely.
+    if (isFormSubmit.value) return;
+
+    // 2. Show validation errors so user sees what's missing.
     showValidationErrors.value = true;
+
+    // 3. Block conditions that should show a modal instead of submitting.
     if (isRegistrationFull.value) {
       isRegCloseModalOpen.value = true;
       return;
     }
-    // isRegCloseModalOpen.value = true;
-    // return;
     if (useFormStore.form.gender === 2) {
       isGenderModalOpen.value = true;
       return;
     }
-    if (isFormDisabled.value) {
+
+    // 4. Validate all required fields before any network call.
+    if (dobError.value) {
+      window.showError(
+        "Error!",
+        "দয়া করে সঠিক জন্ম তারিখ দিন।",
+        3000,
+      );
       return;
     }
-    // if (dobError.value) {
-    //   return;
-    // }
+    if (missingRequiredFields.value.length > 0) {
+      window.showError(
+        "Error!",
+        "দয়া করে সকল বাধ্যতামূলক তথ্য পূরণ করুন।",
+        3000,
+      );
+      return;
+    }
+    if (!validatePhone(useFormStore.form.phone)) {
+      window.showError(
+        "Error!",
+        "দয়া করে একটি সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন।",
+        3000,
+      );
+      return;
+    }
 
-    let endPoint = ref("");
-    let payload = ref(null);
+    // 5. Lock the form — no more clicks allowed.
+    isFormSubmit.value = true;
 
-    if (!isStudentLoggedIn) {
-      window.showLoading("Sending OTP...");
+    try {
+      // ── Branch A: Not logged in → send OTP ──
+      if (!isStudentLoggedIn) {
+        window.showLoading("Sending OTP...");
 
-      endPoint.value = "/auth/send-otp";
-      payload.value = {
-        phone: useFormStore.form.phone,
-      };
+        const payload = {
+          phone: (useFormStore.form.phone || "").trim(),
+        };
 
-      try {
         const { data } = await useAxios(
-          endPoint.value,
-          payload.value,
+          "/auth/send-otp",
+          payload,
           null,
           "POST",
         );
 
         window.hideLoading();
-        window.showSuccess("Success!", "OTP sent successfully", 3000);
 
-        if (data?.data) {
+        if (data?.data?.uuid) {
           studentAuthStore.formRegistration = {
             otp: data.data.otp ?? null,
             uuid: data.data.uuid,
             expires_at: data.data.expires_at,
             attempts: 0,
           };
+          window.showSuccess("Success!", "OTP sent successfully", 3000);
           navigateTo("/registration/otp");
+        } else {
+          window.showError(
+            "Error!",
+            "OTP পাঠাতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
+            3000,
+          );
         }
-      } catch (error) {
-        window.hideLoading();
-        window.showError(
-          "Error!",
-          error?.response?.data?.message || "Something went wrong",
-          3000,
-        );
+        return;
       }
-    } else if (!studentInfoStore.form?.reg_no) {
+
+      // ── Branch B: Logged in → update registration ──
       window.showLoading("Submitting Form...");
 
-      endPoint.value = "/registration/update";
-      payload.value = {
-        ...useFormStore.form,
-      };
+      const payload = { ...useFormStore.form };
 
-      try {
-        const { data } = await useAuthenticatedAxios(
-          endPoint.value,
-          payload.value,
-          null,
-          "POST",
-        );
+      const { data } = await useAuthenticatedAxios(
+        "/registration/update",
+        payload,
+        null,
+        "POST",
+      );
 
-        if (data?.data?.form?.reg_no) {
-          window.hideLoading();
-          window.showSuccess("Success!", "Form Updated successfully", 3000);
+      window.hideLoading();
 
-          studentInfoStore.form = data.data.form;
+      if (data?.data?.form?.reg_no) {
+        // Update all stores atomically.
+        studentInfoStore.form = data.data.form;
+        if (studentInfoStore.user) {
           studentInfoStore.user.name_bn = data.data.form.name_bn;
           studentInfoStore.user.name_en = data.data.form.name_en;
-
-          registeredFormStore.registeredForm = data.data.form;
-          registeredFormStore.allocation = data.data.allocation || null;
-          navigateTo("/registration/token");
         }
 
-        console.log(data);
-      } catch (error) {
-        window.hideLoading();
+        registeredFormStore.registeredForm = data.data.form;
+        registeredFormStore.allocation = data.data.allocation || null;
+        registeredFormStore.registeredFormLoaded = true;
+
+        window.showSuccess("Success!", "Form Updated successfully", 3000);
+        navigateTo("/registration/token");
+      } else {
         window.showError(
           "Error!",
-          error?.response?.data?.message || "Something went wrong",
+          data?.data?.form_error ||
+            "ফর্ম সাবমিট করতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
           3000,
         );
       }
-    } else {
-      window.showLoading("Submitting Form...");
+    } catch (error) {
+      window.hideLoading();
 
-      endPoint.value = "/registration/update";
-      payload.value = {
-        ...useFormStore.form,
-      };
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong. Please try again.";
 
-      try {
-        const { data } = await useAuthenticatedAxios(
-          endPoint.value,
-          payload.value,
-          null,
-          "POST",
-        );
-
-        if (data?.data?.form?.reg_no) {
-          window.hideLoading();
-          window.showSuccess("Success!", "Form Updated successfully", 3000);
-
-          studentInfoStore.form = data.data.form;
-          studentInfoStore.user.name_bn = data.data.form.name_bn;
-          studentInfoStore.user.name_en = data.data.form.name_en;
-
-          registeredFormStore.registeredForm = data.data.form;
-          registeredFormStore.allocation = data.data.allocation || null;
-          navigateTo("/registration/token");
-        }
-      } catch (error) {
-        window.hideLoading();
-        window.showError(
-          "Error!",
-          error?.response?.data?.message || "Something went wrong",
-          3000,
-        );
-      }
+      window.showError("Error!", message, 4000);
+    } finally {
+      // 6. Always unlock the form, no matter what happened.
+      isFormSubmit.value = false;
     }
   }
 
+  // ─── Initialization ─────────────────────────────────────────────
   onMounted(async () => {
-    await studentInfoStore.fetchUserProfile();
+    isInitialLoading.value = true;
 
-    if (studentInfoStore.user) {
-      useFormStore.form.phone = studentInfoStore.user?.phone;
-      useFormStore.form.email = studentInfoStore.user?.email;
-    }
+    try {
+      // Always fetch fresh profile data when the page loads.
+      await studentInfoStore.updateUserProfile();
 
-    if (studentInfoStore.form?.reg_no) {
-      useFormStore.form = studentInfoStore.form;
-      useFormStore.form.gender = 1;
-      useFormStore.form.rulesAgreement = 1;
-      useFormStore.form.education_background = 1;
-    }
+      if (studentInfoStore.user) {
+        // Only prefill phone/email if the form doesn't already have them.
+        if (!useFormStore.form.phone) {
+          useFormStore.form.phone = studentInfoStore.user?.phone || "";
+        }
+        if (!useFormStore.form.email) {
+          useFormStore.form.email = studentInfoStore.user?.email || "";
+        }
+      }
 
-    // Existing registrants already have a slot; only gate new registrations
-    if (!studentInfoStore.form?.reg_no) {
-      await checkRegistrationCapacity();
+      // If the user already has a registered form, load it — but do NOT
+      // overwrite their actual choices (gender, education, etc.).
+      if (studentInfoStore.form?.reg_no) {
+        useFormStore.form = {
+          ...useFormStore.form, // keep current values as fallback
+          ...studentInfoStore.form, // overlay saved form data
+        };
+      }
+
+      // Existing registrants already have a slot; only gate new registrations.
+      if (!studentInfoStore.form?.reg_no) {
+        await checkRegistrationCapacity();
+      }
+    } catch (error) {
+      console.error("Error during registration page init:", error);
+    } finally {
+      isInitialLoading.value = false;
     }
   });
 </script>

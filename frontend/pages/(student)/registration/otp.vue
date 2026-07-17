@@ -86,7 +86,7 @@
               এবং এই কোডটি ব্যবহার করেই অ্যাকাউন্টে লগইন করতে পারবেন।
             </p>
           </div>
-          
+
           <!-- Animated OTP digits -->
           <div class="flex justify-center gap-2 sm:gap-3 my-4">
             <span
@@ -108,7 +108,7 @@
 
         <div class="relative">
           <div>
-            <form @submit.prevent="matchOTP">
+            <form @submit.prevent="registrationWithOtp(otp)">
               <div>
                 <p
                   class="text-center font-bold text-[22px] leading-[24px] mb-4 sm:mb-5"
@@ -124,12 +124,12 @@
               <div class="text-center mt-8">
                 <button
                   type="submit"
-                  :disabled="isDisable"
-                  class="inline-flex justify-center items-center px-6 py-3 border border-emerald-800 text-base font-bold rounded-md text-emerald-700 bg-white hover:bg-primary hover:text-white transition-colors duration-200 group relative cursor-pointer w-full"
+                  :disabled="isOtpSend"
+                  class="inline-flex justify-center items-center px-6 py-3 border border-emerald-800 text-base font-bold rounded-md text-emerald-700 bg-white hover:bg-primary hover:text-white transition-colors duration-200 group relative cursor-pointer w-full disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <span>সাবমিট করুন</span>
                   <div class="absolute right-5">
-                    <span v-if="!isDisable">
+                    <span v-if="!isOtpSend">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="h-5 w-5 ml-2 group-hover:translate-x-1 base-trans"
@@ -161,9 +161,10 @@
               <div class="my-3 text-center hover:text-black base-trans">
                 <a
                   @click="resend"
+                  :class="{ 'pointer-events-none opacity-50': isResending }"
                   class="cursor-pointer hover:text-primary base-trans hover:underline"
                 >
-                  কোডটি পাইনি? আবার পাঠান
+                  {{ isResending ? "পাঠানো হচ্ছে..." : "কোডটি পাইনি? আবার পাঠান" }}
                 </a>
               </div>
             </form>
@@ -183,10 +184,10 @@
   const registeredFormStore = useRegisteredFormStore();
   const studentAuthInfoStore = useStudentAuthInfoStore();
 
-  let otp = ref(null);
-  let isIncorrectOTP = ref(false);
-  let isDisable = ref(false);
-  let isOtpSend = ref(false);
+  const otp = ref(null);
+  const isIncorrectOTP = ref(false);
+  const isOtpSend = ref(false);
+  const isResending = ref(false);
 
   // OTP returned from the send-otp response (frontend display only)
   const displayOtp = computed(() => studentAuthStore.formRegistration?.otp);
@@ -198,103 +199,173 @@
     return String(code).split("");
   });
 
-  const registrationWithOtp = async (otp) => {
+  // ─── beforeunload guard ─────────────────────────────────────────
+  function handleBeforeUnload(e) {
+    if (isOtpSend.value) {
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    }
+  }
+
+  onMounted(() => {
+    window.addEventListener("beforeunload", handleBeforeUnload);
+  });
+
+  onBeforeUnmount(() => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  });
+
+  // ─── Guard: redirect to registration if no OTP ref exists ───────
+  onMounted(() => {
+    if (!studentAuthStore.formRegistration?.uuid) {
+      navigateTo("/registration");
+    }
+  });
+
+  // ─── Complete registration with OTP ─────────────────────────────
+  async function registrationWithOtp(otpCode) {
+    // Hard guard against double-submit.
     if (isOtpSend.value) return;
-    window.showLoading("OTP Matching...");
+
+    // Validate OTP length before any network call.
+    const code = String(otpCode || "").trim();
+    if (code.length !== 6) {
+      isIncorrectOTP.value = true;
+      window.showError("Error!", "দয়া করে ৬ সংখ্যার সঠিক কোড দিন।", 2500);
+      return;
+    }
+
+    // Validate that we have an OTP reference.
+    if (!studentAuthStore.formRegistration?.uuid) {
+      window.showError(
+        "Error!",
+        "OTP সেশন মেয়াদোত্তীর্ণ। আবার চেষ্টা করুন।",
+        3000,
+      );
+      navigateTo("/registration");
+      return;
+    }
+
     isOtpSend.value = true;
+    isIncorrectOTP.value = false;
+    window.showLoading("OTP Matching...");
 
     try {
       const endpoint = "/registration/complete";
       const payload = {
-        phone: useFormStore.form.phone,
-        otp: otp,
+        phone: (useFormStore.form.phone || "").trim(),
+        otp: code,
         otp_ref: studentAuthStore.formRegistration.uuid,
         competitionForm: useFormStore.form,
       };
 
       const { data } = await useAxios(endpoint, payload, null, "POST");
 
+      window.hideLoading();
+
+      // ── Auth response ──
       if (data?.data?.authResponse) {
-        window.showSuccess("Success!", "User Created successfully", 2000);
         studentAuthInfoStore.isStudentLoggedIn = true;
         studentAuthInfoStore.loggedInData = data.data.authResponse;
-
-        //
-        window.hideLoading();
-        isOtpSend.value = false;
-        isIncorrectOTP.value = false;
         useSetMenuLinks(5);
       } else {
-        window.showError("Error!", "Failed to create user", 2000);
-        isOtpSend.value = false;
+        window.showError("Error!", "Failed to create user", 2500);
         isIncorrectOTP.value = true;
+        return;
       }
 
+      // ── User profile ──
       if (data?.data?.user) {
         studentInfoStore.user = data.data.user;
         studentInfoStore.profileLoaded = true;
       }
 
+      // ── Registration form ──
       if (data?.data?.form?.reg_no) {
         useFormStore.form = data.data.form;
         registeredFormStore.registeredForm = data.data.form;
         registeredFormStore.allocation = data.data.allocation || null;
         registeredFormStore.registeredFormLoaded = true;
-        navigateTo("/registration/token");
-        setTimeout(() => {
-          window.showSuccess("Success!", "Register Form successfully", 2000);
-        }, 3000);
-      } else {
-        window.hideLoading();
-        setTimeout(() => {
-          window.showError(
-            "Error!",
-            "Failed to register form. Please try again" ||
-              data?.data?.form_error,
-            2000,
-          );
-        }, 3000);
-        navigateTo("/registration");
-      }
-    } catch (error) {
-      isOtpSend.value = false;
 
-      if (error?.response?.data?.message === "Invalid OTP") {
-        isIncorrectOTP.value = true;
+        window.showSuccess("Success!", "Register Form successfully", 2000);
+        navigateTo("/registration/token");
+      } else {
         window.showError(
           "Error!",
-          error?.response?.data?.message || "Something went wrong",
-          2000,
+          data?.data?.form_error ||
+            "Failed to register form. Please try again.",
+          3000,
         );
+        // Keep user on OTP page so they can retry without re-entering form.
+        isIncorrectOTP.value = true;
       }
+    } catch (error) {
       window.hideLoading();
+
+      const message =
+        error?.response?.data?.message || "Something went wrong";
+
+      if (message === "Invalid OTP") {
+        isIncorrectOTP.value = true;
+        window.showError("Error!", "ভুল OTP। আবার চেষ্টা করুন।", 2500);
+      } else {
+        window.showError("Error!", message, 3000);
+      }
+    } finally {
+      // Always unlock so the user can retry.
+      isOtpSend.value = false;
     }
-  };
-
-  async function resend() {
-    // isDisable.value = true;
-    const endpoint = "/auth/resend-otp-for-email";
-    const payload = {
-      otp_ref: studentAuthStore.otp_ref,
-    };
-
-    const { data } = await callAxios(endpoint, payload);
-
-    if (data?.data) {
-      studentAuthStore.otp_ref = data.data.uuid;
-      studentAuthStore.resend_time = data.data.resend_time;
-      // studentAuthStore.stage = 3;
-      alert("OTP Resend success");
-    }
-    isDisable.value = false;
   }
 
+  // ─── Resend OTP ─────────────────────────────────────────────────
+  async function resend() {
+    if (isResending.value) return;
+
+    isResending.value = true;
+    window.showLoading("Resending OTP...");
+
+    try {
+      const endpoint = "/auth/resend-otp-for-email";
+      const payload = {
+        otp_ref: studentAuthStore.formRegistration?.uuid,
+      };
+
+      const { data } = await useAxios(endpoint, payload, null, "POST");
+
+      window.hideLoading();
+
+      if (data?.data) {
+        // Update the OTP reference and display code.
+        studentAuthStore.formRegistration = {
+          otp: data.data.otp ?? null,
+          uuid: data.data.uuid,
+          expires_at: data.data.expires_at,
+          attempts: 0,
+        };
+        window.showSuccess("Success!", "OTP আবার পাঠানো হয়েছে।", 2500);
+      } else {
+        window.showError("Error!", "OTP পাঠাতে ব্যর্থ হয়েছে।", 2500);
+      }
+    } catch (error) {
+      window.hideLoading();
+      window.showError(
+        "Error!",
+        error?.response?.data?.message || "Something went wrong",
+        3000,
+      );
+    } finally {
+      isResending.value = false;
+    }
+  }
+
+  // ─── Watcher: auto-submit when 6 digits entered ─────────────────
   watch(
     () => otp.value,
-    () => {
+    (newValue) => {
       isIncorrectOTP.value = false;
-      if (otp.value.length === 6) {
-        registrationWithOtp(otp.value);
+      if (newValue && String(newValue).length === 6) {
+        registrationWithOtp(newValue);
       }
     },
   );
