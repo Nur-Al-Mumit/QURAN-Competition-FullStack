@@ -741,7 +741,7 @@
           class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 lg:p-12 text-center"
         >
           <h2 class="text-2xl sm:text-3xl font-bold text-white mb-8">
-            আয়োজনে: এশো কুরআন শিখি
+            আয়োজনে: এসো কুরআন শিখি
           </h2>
 
           <div class="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-8">

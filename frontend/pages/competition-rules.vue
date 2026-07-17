@@ -301,7 +301,7 @@
         <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 20px 20px;"></div>
         
         <div class="relative z-10">
-          <h2 class="text-xl sm:text-2xl font-bold mb-3">আয়োজনে: এশো কুরআন শিখি</h2>
+          <h2 class="text-xl sm:text-2xl font-bold mb-3">আয়োজনে: এসো কুরআন শিখি</h2>
           <p class="text-emerald-100 text-sm sm:text-base mb-6">রেজিস্ট্রেশন সহ যেকোনো প্রয়োজনে সরাসরি নিচের নাম্বারে যোগাযোগ করুন</p>
           
           <div class="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 border border-white/20 transition duration-300 hover:scale-105 mb-8">
