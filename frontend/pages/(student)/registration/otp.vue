@@ -158,7 +158,7 @@
                 </button>
               </div>
 
-              <div class="my-3 text-center hover:text-black base-trans">
+              <div v-if="false" class="my-3 text-center hover:text-black base-trans">
                 <a
                   @click="resend"
                   :class="{ 'pointer-events-none opacity-50': isResending }"

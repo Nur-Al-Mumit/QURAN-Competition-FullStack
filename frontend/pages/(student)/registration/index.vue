@@ -1112,14 +1112,6 @@
     return /^01[0-9]{9}$/.test(String(phone || "").trim());
   }
 
-  // ─── Build a clean, backend-ready payload ───────────────────────
-  // We construct the payload explicitly from a fixed list of keys so that:
-  //   1. No `undefined` values ever reach JSON.stringify (which would strip
-  //      them and trigger "Undefined array key" on the backend).
-  //   2. No server-only keys (reg_no, id, season_id, created_at, ...) are
-  //      accidentally sent back.
-  //   3. The payload shape is identical for both the OTP-complete and the
-  //      authenticated-update flows.
   const FORM_KEYS = [
     "name_bn",
     "name_en",
@@ -1141,17 +1133,12 @@
   ];
 
   function buildFormPayload() {
-    // Guarantee every key exists before reading it.
     useFormStore.ensureFormShape();
     const payload = {};
     for (const key of FORM_KEYS) {
       const value = useFormStore.form[key];
-      // Normalize empty string to null for optional nullable fields so the
-      // backend stores NULL rather than a stray "".
       payload[key] = value === undefined ? null : value;
     }
-    // If the user already has a saved form (editing), forward reg_no so the
-    // backend update endpoint can locate the existing record.
     if (studentInfoStore.form?.reg_no) {
       payload.reg_no = studentInfoStore.form.reg_no;
     }
@@ -1160,9 +1147,6 @@
 
   // ─── Main form submit (bulletproof) ─────────────────────────────
   async function formSubmit() {
-    // 1. Hard guard: if already submitting, ignore completely. This also
-    //    covers double-clicks, Enter-key repeats, and any race condition
-    //    where the function is re-entered while a request is in-flight.
     if (isFormSubmit.value) return;
 
     // 2. Show validation errors so user sees what's missing.
@@ -1204,22 +1188,16 @@
       return;
     }
 
-    // 5. Lock the form — no more clicks allowed. This lock is only released
-    //    in the `finally` block below, so every code path (success, error,
-    //    network failure, unexpected throw) always re-enables the button.
     isFormSubmit.value = true;
 
     try {
-      // ── Branch A: Not logged in → send OTP ──
-      // A brand-new visitor (e.g. a family member registering on the same
-      // browser after the previous user logged out) goes through OTP first.
-      // Read the live value from the store (not a destructured snapshot) so
-      // that a state change since page-mount is always respected.
       if (!studentAuthInfoStore.isStudentLoggedIn) {
-        window.showLoading("Sending OTP...");
+        // window.showLoading("Sending OTP...");
+        window.showLoading("Creating Your Password...");
 
         const payload = {
           phone: (useFormStore.form.phone || "").trim(),
+          email: (useFormStore.form.email || "").trim() || null,
         };
 
         const { data } = await useAxios(
@@ -1238,7 +1216,8 @@
             expires_at: data.data.expires_at,
             attempts: 0,
           };
-          window.showSuccess("Success!", "OTP sent successfully", 3000);
+          // window.showSuccess("Success!", "OTP sent successfully", 3000);
+          window.showSuccess("Success!", "Password created successfully", 3000);
           navigateTo("/registration/otp");
         } else {
           window.showError(

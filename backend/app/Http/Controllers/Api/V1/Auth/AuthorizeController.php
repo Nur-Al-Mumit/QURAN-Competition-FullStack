@@ -51,7 +51,7 @@ class AuthorizeController extends Controller
     public function sendOtp(Request $request)
     {
         $request->validate([
-            // 'email' => 'required|string|email',
+            'email' => 'nullable|email|max:255|unique:users,email',
             'phone' => 'required|string|unique:users,phone|regex:/^01[0-9]{9}$/',
         ]);
         $user = User::where('phone', $request->phone)->first();
