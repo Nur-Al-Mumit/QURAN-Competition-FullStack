@@ -41,6 +41,7 @@ class RegistrationController extends Controller
     {
         $request->validate([
             'phone' => 'required|digits:11|regex:/^01[0-9]{9}$/',
+            'email' => 'nullable|email|max:255|unique:users,email',
             'otp' => 'required|string',
             'otp_ref' => 'required|string',
             'competitionForm' => 'required|array',
