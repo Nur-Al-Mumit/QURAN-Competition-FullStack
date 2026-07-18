@@ -687,6 +687,219 @@ onMounted(async () => {
   animation: spin 0.7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- RESPONSIVE (screen only — print layout unchanged) ---- */
+@media screen and (max-width: 768px) {
+  .token-page {
+    padding: 1rem 0.75rem;
+  }
+
+  .action-bar {
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+  }
+  .action-inner {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .action-msg {
+    justify-content: center;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+  .action-btns {
+    justify-content: center;
+  }
+  .btn {
+    width: 100%;
+    padding: 0.65rem 1rem;
+  }
+
+  .card {
+    border-radius: 10px;
+  }
+
+  .hdr {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1rem;
+    padding: 1rem 1rem 0.85rem;
+  }
+  .hdr-logo {
+    width: 52px;
+    height: 52px;
+  }
+  .hdr-center {
+    flex: 1 1 100%;
+    order: 3;
+  }
+  .hdr-org {
+    font-size: 1.2rem;
+  }
+  .hdr-comp {
+    font-size: 0.78rem;
+  }
+  .qr {
+    width: 52px !important;
+    height: 52px !important;
+  }
+
+  .title-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    padding: 0.55rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .body {
+    grid-template-columns: 1fr;
+  }
+  .col {
+    padding: 0.85rem 1rem;
+  }
+  .col:first-child {
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .lbl {
+    width: 88px;
+    font-size: 0.72rem;
+  }
+  .info-table td {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.75rem;
+  }
+  .val-name {
+    font-size: 0.82rem;
+  }
+
+  .reg-val {
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+
+  .alloc {
+    gap: 0.4rem;
+    padding: 0.5rem 0.7rem 0.6rem;
+  }
+  .alloc-val {
+    font-size: 1rem;
+  }
+
+  .instructions-wrap {
+    padding: 0 1rem 1rem;
+  }
+
+  .ftr {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.65rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .token-page {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .action-bar {
+    padding: 0.75rem 0.85rem;
+  }
+  .action-msg {
+    font-size: 0.78rem;
+  }
+
+  .hdr {
+    padding: 0.85rem 0.75rem;
+    gap: 0.6rem;
+  }
+  .hdr-logo {
+    width: 44px;
+    height: 44px;
+  }
+  .hdr-org {
+    font-size: 1.05rem;
+  }
+  .hdr-comp {
+    font-size: 0.72rem;
+  }
+  .qr {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .title-strip {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+  .title-strip strong {
+    font-size: 0.85rem;
+  }
+
+  .col {
+    padding: 0.75rem 0.75rem;
+    gap: 0.65rem;
+  }
+
+  .sec-title {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.7rem;
+  }
+
+  .lbl {
+    width: 78px;
+    white-space: normal;
+  }
+  .info-table td {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.72rem;
+    word-break: break-word;
+  }
+
+  .reg-box {
+    margin: 0.5rem 0.65rem;
+    padding: 0.5rem 0.65rem;
+  }
+  .reg-val {
+    font-size: 1.1rem;
+  }
+
+  .alloc {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.3rem;
+    padding: 0.45rem 0.55rem 0.55rem;
+  }
+  .alloc-item {
+    padding: 0.3rem 0.15rem;
+  }
+  .alloc-lbl {
+    font-size: 0.5rem;
+  }
+  .alloc-val {
+    font-size: 0.9rem;
+  }
+
+  .instructions-wrap {
+    padding: 0 0.75rem 0.85rem;
+  }
+  .note-list {
+    padding: 0.45rem 0.65rem 0.55rem 1.25rem;
+  }
+  .note-list li {
+    font-size: 0.68rem;
+  }
+
+  .ftr {
+    padding: 0.55rem 0.75rem;
+    font-size: 0.6rem;
+  }
+}
 </style>
 
 <style>
@@ -778,6 +991,63 @@ onMounted(async () => {
     box-shadow: none !important;
     width: 100% !important;
     page-break-inside: avoid !important;
+  }
+
+  /* Lock desktop card geometry for print (ignore screen breakpoints) */
+  #registration-card .hdr {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 1.5rem !important;
+    padding: 1.25rem 1.75rem !important;
+  }
+  #registration-card .hdr-logo {
+    width: 65px !important;
+    height: 65px !important;
+  }
+  #registration-card .hdr-center {
+    flex: 1 !important;
+    order: 0 !important;
+    text-align: center !important;
+  }
+  #registration-card .hdr-org {
+    font-size: 1.5rem !important;
+  }
+  #registration-card .hdr-comp {
+    font-size: 0.85rem !important;
+  }
+  #registration-card .qr {
+    width: 65px !important;
+    height: 65px !important;
+  }
+  #registration-card .title-strip {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0.5rem 1.75rem !important;
+    font-size: 0.85rem !important;
+  }
+  #registration-card .body {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+  #registration-card .col {
+    padding: 1rem 1.25rem !important;
+  }
+  #registration-card .col:first-child {
+    border-right: 1px solid #e2e8f0 !important;
+    border-bottom: none !important;
+  }
+  #registration-card .instructions-wrap {
+    grid-column: 1 / -1 !important;
+    padding: 0 1.25rem 1rem 1.25rem !important;
+  }
+  #registration-card .ftr {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0.6rem 1.75rem !important;
+    font-size: 0.68rem !important;
   }
 
   @page {
