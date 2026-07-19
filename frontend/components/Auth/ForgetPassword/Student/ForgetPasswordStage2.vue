@@ -3,7 +3,7 @@
     <p class="text-center mb-8">Enter Your OTP</p>
 
     <form @submit.prevent="matchOTP" class="mt-[48px] px-5">
-      <InputsOTP v-model="otp" :isIncorrectOTP="isIncorrectOTP" />
+      <InputsOTP v-model="otp" :isIncorrectOTP="isIncorrectOTP" :digits="6" />
     </form>
     <!-- <p
       class="mt-10 text-[15px] leading-[24px] text-center font-sans font-normal"
@@ -16,8 +16,8 @@
       class="mt-10 text-[15px] leading-[24px] text-center font-sans font-normal"
     >
       Didn’t get the OTP?
-      <br />
-      Check your spam.
+      <!-- <br />
+      Check your spam. -->
     </p>
     <div class="grid place-content-center pt-2">
       <button
@@ -94,6 +94,6 @@
       if (otp.value.length === 4) {
         matchOTP();
       }
-    }
+    },
   );
 </script>
