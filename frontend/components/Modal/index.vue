@@ -2,7 +2,7 @@
   <Teleport to="body">
     <div
       v-if="isModalOpen"
-      class="fixed inset-0 z-[9999] flex items-center justify-center px-2 sm:px-0 pointer-events-auto"
+      class="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 pointer-events-auto overflow-y-auto"
     >
       <ModalBackdrop
         :isAnimating="isAnimating"

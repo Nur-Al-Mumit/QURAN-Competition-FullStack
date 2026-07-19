@@ -605,7 +605,7 @@
 
       <modal :is-open="isDisclaimerModalOpen">
         <template #body>
-          <div class="p-3 sm:p-6 mx-auto w-[95vw] sm:w-full">
+          <div class="p-3 sm:p-6 mx-auto w-full">
             <!-- Warning Icon -->
             <div class="flex justify-center mb-4">
               <svg
