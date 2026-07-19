@@ -10,10 +10,10 @@ use App\Models\Season;
 use App\Models\RegistrationWishlist;
 use App\Models\SmsLog;
 use App\Models\UserCompetitionForm;
-use App\Models\userSeason;
 use App\Services\Auth\AuthorizeService;
 use App\Services\Dashboard\ProgressStageService;
 use App\Services\Registration\RegistrationSlotService;
+use App\Services\Registration\ReturningUserService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +25,7 @@ class RegistrationController extends Controller
 {
     protected AuthorizeService $authorizeService;
     protected RegistrationSlotService $slotService;
+    protected ReturningUserService $returningUserService;
 
     public function __construct()
     {
@@ -34,6 +35,7 @@ class RegistrationController extends Controller
         // Initialize AuthorizeService
         $this->authorizeService = new AuthorizeService($provider, $scope);
         $this->slotService = new RegistrationSlotService();
+        $this->returningUserService = new ReturningUserService();
 
     }
 
@@ -112,13 +114,12 @@ class RegistrationController extends Controller
         DB::beginTransaction();
 
         try {
-            $userSeason = userSeason::where('user_id', $user->id)->latest()->first();
-
-            if (!$userSeason) {
-                throw new \Exception("User season record not found.");
+            $activeSeason = $this->returningUserService->getActiveSeason();
+            if (!$activeSeason) {
+                throw new \Exception("No active season found.");
             }
 
-            $seasonId = $userSeason->season_id;
+            $seasonId = $activeSeason->id;
             $userId = $user->id;
 
             // Normalize the incoming form payload into a plain array so that
@@ -147,36 +148,79 @@ class RegistrationController extends Controller
             $is_recitation = $form['is_recitation'] ?? null;
             $need_training = $form['need_training'] ?? null;
 
-            // Check if form already exists
-            $form = UserCompetitionForm::where('user_id', $userId)
+            $formFields = [
+                'name_bn' => $name_bn,
+                'name_en' => $name_en,
+                'dob' => $dob,
+                'phone' => $phone,
+                'address' => $address,
+                'education_background' => $education_background,
+                'school_name' => $school_name,
+                'college_name' => $college_name,
+                'university_name' => $university_name,
+                'madrasah_name' => $madrasah_name,
+                'madrasah_study_details' => $madrasah_study_details,
+                'occupation' => $occupation,
+                'is_recitation' => $is_recitation,
+                'need_training' => $need_training,
+            ];
+
+            // Prefer the active-season form; otherwise reuse the user's latest
+            // form from a previous season (returning competitor).
+            $existingForm = UserCompetitionForm::where('user_id', $userId)
                 ->where('season_id', $seasonId)
                 ->first();
 
-            if ($form) {
-                // UPDATE EXISTING FORM
-                $form->update([
-                    'name_bn' => $name_bn,
-                    'name_en' => $name_en,
-                    'dob' => $dob,
-                    'phone' => $phone,
-                    'address' => $address,
-                    'education_background' => $education_background,
-                    'school_name' => $school_name,
-                    'college_name' => $college_name,
-                    'university_name' => $university_name,
-                    'madrasah_name' => $madrasah_name,
-                    'madrasah_study_details' => $madrasah_study_details,
-                    'occupation' => $occupation,
-                    'is_recitation' => $is_recitation,
-                    'need_training' => $need_training,
-                ]);
+            $isReturningSeasonEntry = false;
+
+            if (!$existingForm) {
+                $existingForm = UserCompetitionForm::where('user_id', $userId)
+                    ->latest()
+                    ->first();
+
+                if ($existingForm && (int) $existingForm->season_id !== (int) $seasonId) {
+                    $isReturningSeasonEntry = true;
+
+                    if (!$this->returningUserService->isEligibleForNewSeason($user, $activeSeason)) {
+                        throw new \Exception(
+                            'আন্তরিকভাবে দুঃখিত, এই প্রতিযোগিতায় আপনার নতুন করে নিবন্ধন করার সুযোগ নেই। আমাদের নিয়ম অনুযায়ী, যারা গত প্রতিযোগিতার ফাইনাল পর্বে অংশগ্রহণ করেছিলেন, তারা এবারের প্রতিযোগিতায় অংশ নিতে পারবেন না। আপনার আগ্রহের জন্য অসংখ্য ধন্যবাদ, জাজাকাল্লাহু খাইরান।'
+                        );
+                    }
+                }
+            }
+
+            if ($existingForm) {
+                // UPDATE EXISTING FORM (same season, or promote previous-season form)
+                $updatePayload = $formFields;
+                if ($isReturningSeasonEntry) {
+                    $updatePayload['season_id'] = $seasonId;
+                }
+
+                $existingForm->update($updatePayload);
+                $form = $existingForm->fresh();
 
                 $user->update([
                     'name_bn' => $name_bn,
                     'name_en' => $name_en,
+                    'season_id' => $seasonId,
                 ]);
 
-                $allocation = AttendanceAllocation::where('user_competition_form_id', $form->id)->first();
+                // Returning users need a fresh attendance_allocation for the
+                // new season; same-season updates reuse the existing one.
+                $allocation = AttendanceAllocation::where('user_id', $form->user_id)
+                    ->where('season_id', $seasonId)
+                    ->first();
+
+                if (!$allocation) {
+                    $max = $this->slotService->getMaxRegistrations();
+                    $position = $this->slotService->nextPosition();
+
+                    if ($position > $max) {
+                        throw new \Exception("Registration is closed. All {$max} seats are already full.");
+                    }
+
+                    $allocation = $this->slotService->assignToForm($form, $position);
+                }
             } else {
                 // CREATE NEW FORM
                 $max = $this->slotService->getMaxRegistrations();
@@ -191,25 +235,16 @@ class RegistrationController extends Controller
                     $regNo = 'RC' . $seasonId . $userId . $randomDigits;
                 } while (UserCompetitionForm::where('reg_no', $regNo)->exists());
 
-                $form = UserCompetitionForm::create([
+                $form = UserCompetitionForm::create(array_merge($formFields, [
                     'user_id' => $userId,
                     'season_id' => $seasonId,
                     'reg_no' => $regNo,
+                ]));
 
+                $user->update([
                     'name_bn' => $name_bn,
                     'name_en' => $name_en,
-                    'dob' => $dob,
-                    'phone' => $phone,
-                    'address' => $address,
-                    'education_background' => $education_background,
-                    'school_name' => $school_name,
-                    'college_name' => $college_name,
-                    'university_name' => $university_name,
-                    'madrasah_name' => $madrasah_name,
-                    'madrasah_study_details' => $madrasah_study_details,
-                    'occupation' => $occupation,
-                    'is_recitation' => $is_recitation,
-                    'need_training' => $need_training,
+                    'season_id' => $seasonId,
                 ]);
 
                 // Mark the "competition_registration" progress stage as
@@ -263,7 +298,17 @@ class RegistrationController extends Controller
                 return JsonResponse::error('Registration form not found', 404);
             }
 
-            $allocation = AttendanceAllocation::where('user_competition_form_id', $form->id)->first();
+            $allocation = null;
+            if ($activeSeason) {
+                $allocation = AttendanceAllocation::where('user_competition_form_id', $form->id)
+                    ->where('season_id', $activeSeason->id)
+                    ->first();
+            }
+            if (!$allocation) {
+                $allocation = AttendanceAllocation::where('user_competition_form_id', $form->id)
+                    ->latest()
+                    ->first();
+            }
 
             return JsonResponse::success([
                 'form' => $form,
@@ -320,13 +365,25 @@ class RegistrationController extends Controller
 
 
         if ($request->reg_no) {
+            // Allow updating the active-season form OR a previous-season form
+            // that a returning user is about to promote into the new season.
             $form = UserCompetitionForm::where('user_id', $user->id)
-                ->where('season_id', $season_id)
                 ->where('reg_no', $request->reg_no)
                 ->first();
 
             if (!$form) {
                 return JsonResponse::error('Registration form not found', 404);
+            }
+
+            if ((int) $form->season_id !== (int) $season_id) {
+                $returning = $this->returningUserService;
+                if (!$returning->isEligibleForNewSeason($user)) {
+                    return JsonResponse::error(
+                        'দুঃখিত, এই প্রতিযোগিতায় আপনার অংশগ্রহণের করার সুযোগ নেই',
+                        403,
+                        [403]
+                    );
+                }
             }
         }
 

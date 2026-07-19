@@ -5,7 +5,6 @@ namespace App\Services\Auth;
 use App\Lib\JsonResponse;
 use App\Models\Season;
 use App\Models\User;
-use App\Models\userSeason;
 use App\Services\Dashboard\ProgressStageService;
 use Laravel\Passport\Client;
 use App\Lib\AuthTokenClient;
@@ -77,13 +76,6 @@ class AuthorizeService
                 'phone_verified_at' => now(),
                 'season_id' => $season->id,
                 'registered_season_id' => $season->id,
-            ]);
-
-            userSeason::create([
-                'user_id' => $user->id,
-                'season_id' => $season->id,
-                'registered_season_id' => $season->id,
-                'registered_at' => now()
             ]);
 
             // Mark the "account_created" progress stage as completed for

@@ -27,6 +27,8 @@ class User extends Authenticatable
         'password',
         'gender',
         'phone_verified_at',
+        'season_id',
+        'registered_season_id',
     ];
 
     /**
@@ -80,5 +82,20 @@ class User extends Authenticatable
     public function form()
     {
         return $this->hasOne(UserCompetitionForm::class);
+    }
+
+    public function season()
+    {
+        return $this->belongsTo(Season::class, 'season_id');
+    }
+
+    public function registeredSeason()
+    {
+        return $this->belongsTo(Season::class, 'registered_season_id');
+    }
+
+    public function trainingAttendances()
+    {
+        return $this->hasMany(UserTrainingAttendance::class);
     }
 }

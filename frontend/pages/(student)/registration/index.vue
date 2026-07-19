@@ -427,10 +427,14 @@
         </div>
 
         <!-- Submit -->
-        <div class="px-6 sm:px-8 py-6 bg-gray-50/70 border-t border-gray-100">
+        <div
+          class="px-6 sm:px-8 py-6 bg-gray-50/70 border-t border-gray-100 space-y-3"
+        >
           <button
+            type="submit"
             :disabled="isFormDisabled"
-            class="inline-flex justify-center items-center px-6 py-3.5 rounded-xl text-base font-bold w-full transition-all duration-200 group relative cursor-pointer text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:shadow-none"
+            class="inline-flex justify-center items-center px-6 py-3.5 rounded-xl text-base font-bold w-full transition-all duration-200 group relative cursor-pointer text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/30"
+            :class="[isFormDisabled === true ? 'opacity-50 cursor-not-allowed bg-gray-300 shadow-none':'']"
           >
             <span v-if="useFormStore.form?.reg_no">আপডেট করুন</span>
             <span v-else>সাবমিট করুন</span>
@@ -663,6 +667,36 @@
                     নারী (শুধুমাত্র পুরুষ প্রতিযোগীদের জন্য উন্মুক্ত)
                   </span>
                 </div>
+              </div>
+            </div>
+
+            <!-- Returning participants note -->
+            <div
+              class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-5"
+            >
+              <h3 class="text-amber-800 font-semibold mb-3 flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-amber-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                পূর্ববর্তী বছরের প্রতিযোগীদের জন্য
+              </h3>
+              <div class="space-y-2 text-[13px] text-amber-900">
+                <p>
+                  গত বছর রেজিস্ট্রেশন করে থাকলে এবং
+                  <span class="font-semibold">
+                    চূড়ান্ত পর্বে অংশগ্রহণ না করে থাকলে
+                  </span>
+                  ঐ একই নম্বর ও কোড দিয়ে সাইন ইন করে ফর্ম আপডেট করুন এবং নতুন
+                  রেজিস্ট্রেশন টোকেন সংগ্রহ করুন।
+                </p>
               </div>
             </div>
 
@@ -901,6 +935,7 @@
   const isRegCloseModalOpen = ref(false);
   const isDisclaimerModalOpen = ref(true);
   const isRecitationModalOpen = ref(false);
+  const isAlreadyRegisteredModalOpen = ref(false);
 
   // ─── Submission / loading state ─────────────────────────────────
   // Single source of truth for whether a request is in-flight.
@@ -1164,11 +1199,7 @@
 
     // 4. Validate all required fields before any network call.
     if (dobError.value) {
-      window.showError(
-        "Error!",
-        "দয়া করে সঠিক জন্ম তারিখ দিন।",
-        3000,
-      );
+      window.showError("Error!", "দয়া করে সঠিক জন্ম তারিখ দিন।", 3000);
       return;
     }
     if (missingRequiredFields.value.length > 0) {
@@ -1222,7 +1253,8 @@
         } else {
           window.showError(
             "Error!",
-            data?.data?.message || "OTP পাঠাতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
+            data?.data?.message ||
+              "OTP পাঠাতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
             3000,
           );
         }
@@ -1279,12 +1311,23 @@
     } catch (error) {
       window.hideLoading();
 
+      const responseData = error?.response?.data;
+      const errorCode = responseData?.data?.code;
       const message =
-        error?.response?.data?.message ||
+        responseData?.message ||
         error?.message ||
         "Something went wrong. Please try again.";
 
-      window.showError("Error!", message, 4000);
+      // Existing account — show instruction modal instead of a dead-end error.
+      if (
+        errorCode === "ALREADY_REGISTERED_ELIGIBLE" ||
+        errorCode === "ALREADY_REGISTERED_INELIGIBLE" ||
+        error?.response?.status === 409
+      ) {
+        window.showError("Notice!", message, 5000);
+      } else {
+        window.showError("Error!", message, 4000);
+      }
     } finally {
       // 6. Always unlock the form, no matter what happened.
       isFormSubmit.value = false;
@@ -1338,7 +1381,11 @@
         // away anything the user is currently editing.
         const serverForm = studentInfoStore.form;
         for (const key of FORM_KEYS) {
-          if (key in serverForm && serverForm[key] !== null && serverForm[key] !== undefined) {
+          if (
+            key in serverForm &&
+            serverForm[key] !== null &&
+            serverForm[key] !== undefined
+          ) {
             useFormStore.form[key] = serverForm[key];
           }
         }

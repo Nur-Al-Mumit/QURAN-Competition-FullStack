@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
-use App\Models\Season;
 use App\Models\User;
 use App\Lib\JsonResponse;
 use App\Lib\AuthTokenClient;
-use App\Models\userSeason;
 use App\Services\Auth\AuthorizeService;
 use App\Services\Dashboard\ProgressStageService;
+use App\Services\Registration\ReturningUserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\Client;
 use App\Services\Auth\OtpService;
-use App\Services\Auth\LoginLogService;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -51,16 +49,29 @@ class AuthorizeController extends Controller
     public function sendOtp(Request $request)
     {
         $request->validate([
-            'email' => 'nullable|email|max:255|unique:users,email',
-            'phone' => 'required|string|unique:users,phone|regex:/^01[0-9]{9}$/',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'required|string|regex:/^01[0-9]{9}$/',
         ]);
-        $user = User::where('phone', $request->phone)->first();
-        if ($user) {
-            return JsonResponse::error('User already exists', 400);
+
+        $phone = $request->phone;
+        $email = $request->filled('email') ? trim($request->email) : null;
+
+        // Check existing accounts BEFORE creating/sending any OTP so returning
+        // users never receive a login SMS after a confusing "already taken" error.
+        $existingByPhone = User::where('phone', $phone)->first();
+        if ($existingByPhone) {
+            return $this->existingUserRegistrationResponse($existingByPhone);
+        }
+
+        if ($email) {
+            $existingByEmail = User::where('email', $email)->first();
+            if ($existingByEmail) {
+                return $this->existingUserRegistrationResponse($existingByEmail, 'email');
+            }
         }
 
         try {
-            $otp = $this->otpService->createOtp(['phone' => $request->phone]);
+            $otp = $this->otpService->createOtp(['phone' => $phone]);
 
             return JsonResponse::success([
                 'otp' => $otp['code'],
@@ -71,6 +82,40 @@ class AuthorizeController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    /**
+     * Friendly response for users who already have an account (typically from
+     * a previous season). Never sends an OTP.
+     */
+    private function existingUserRegistrationResponse(User $user, string $matchedBy = 'phone')
+    {
+        $returning = new ReturningUserService();
+        $activeSeason = $returning->getActiveSeason();
+        $eligible = $returning->isEligibleForNewSeason($user, $activeSeason);
+        $onActiveSeason = $returning->isOnActiveSeason($user, $activeSeason);
+
+        $code = $eligible
+            ? 'ALREADY_REGISTERED_ELIGIBLE'
+            : 'ALREADY_REGISTERED_INELIGIBLE';
+
+        if ($onActiveSeason) {
+            $message = $matchedBy === 'email'
+                ? 'এই ইমেইল দিয়ে ইতোমধ্যে একটি অ্যাকাউন্ট আছে। সাইন ইন করে আপনার রেজিস্ট্রেশন দেখুন বা আপডেট করুন।'
+                : 'এই মোবাইল নম্বর দিয়ে ইতোমধ্যে একটি অ্যাকাউন্ট আছে। সাইন ইন করে আপনার রেজিস্ট্রেশন দেখুন বা আপডেট করুন।';
+        } elseif ($eligible) {
+            $message = 'আপনি পূর্ববর্তী সিজনের নিবন্ধিত প্রতিযোগী। নতুন করে রেজিস্ট্রেশন করার প্রয়োজন নেই — সাইন ইন করে ফর্ম আপডেট করুন এবং অবশ্যই নতুন রেজিস্ট্রেশন টোকেন ডাউনলোড করুন।';
+        } else {
+            $message = 'আন্তরিকভাবে দুঃখিত, এই প্রতিযোগিতায় আপনার নতুন করে নিবন্ধন করার সুযোগ নেই। আমাদের নিয়ম অনুযায়ী, যারা গত প্রতিযোগিতার ফাইনাল পর্বে অংশগ্রহণ করেছিলেন, তারা এবারের প্রতিযোগিতায় অংশ নিতে পারবেন না। আপনার আগ্রহের জন্য অসংখ্য ধন্যবাদ, জাজাকাল্লাহু খাইরান।';
+        }
+
+        return JsonResponse::error($message, 409, [409], [
+            'code' => $code,
+            'eligible' => $eligible,
+            'on_active_season' => $onActiveSeason,
+            'matched_by' => $matchedBy,
+            'redirect' => '/sign-in',
+        ]);
     }
 
     public function resendOtp(Request $request)
