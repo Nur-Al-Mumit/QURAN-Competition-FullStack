@@ -106,7 +106,7 @@
                 </div>
               </form>
 
-              <div class="mt-2 sm:mt-4 relative">
+              <div v-if="false" class="mt-2 sm:mt-4 relative">
                 <div class="absolute inset-0 flex items-center">
                   <div class="w-full border-t border-gray-200"></div>
                 </div>
@@ -115,7 +115,7 @@
                 </div>
               </div>
 
-              <div class="mt-2 sm:mt-4 text-center">
+              <div v-if="false" class="mt-2 sm:mt-4 text-center">
                 <p class="text-sm text-gray-600 mb-3">
                   Don't have an account yet?
                 </p>
