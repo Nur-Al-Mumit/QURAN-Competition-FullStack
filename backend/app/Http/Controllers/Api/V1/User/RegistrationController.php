@@ -10,6 +10,7 @@ use App\Models\Season;
 use App\Models\RegistrationWishlist;
 use App\Models\SmsLog;
 use App\Models\UserCompetitionForm;
+use App\Models\UserFinalAttendance;
 use App\Services\Auth\AuthorizeService;
 use App\Services\Dashboard\ProgressStageService;
 use App\Services\Registration\RegistrationSlotService;
@@ -205,13 +206,29 @@ class RegistrationController extends Controller
                     'season_id' => $seasonId,
                 ]);
 
-                // Returning users need a fresh attendance_allocation for the
-                // new season; same-season updates reuse the existing one.
+                // Direct-final experts bypass viva/primary this season and
+                // therefore get NO new attendance_allocation. Eligibility
+                // (mirrors ProfileController::isDirectFinal):
+                //   • criteria_id == 1 (Expert, set after last year's viva),
+                //   • DID have a previous-season attendance_allocation (the
+                //     canonical "returning expert" signal — they went through
+                //     viva last year and were promoted),
+                //   • did NOT reach the final last year (no final attendance).
+                // Everyone else needs a fresh allocation for the new season
+                // (same-season updates reuse the existing one).
+                $isDirectFinal = (int) ($form->criteria_id ?? 0) === 1
+                    && AttendanceAllocation::where('user_id', $form->user_id)
+                        ->where('season_id', '!=', $seasonId)
+                        ->exists()
+                    && !UserFinalAttendance::where('user_id', $form->user_id)
+                        ->where('season_id', '!=', $seasonId)
+                        ->exists();
+
                 $allocation = AttendanceAllocation::where('user_id', $form->user_id)
                     ->where('season_id', $seasonId)
                     ->first();
 
-                if (!$allocation) {
+                if (!$allocation && !$isDirectFinal) {
                     $max = $this->slotService->getMaxRegistrations();
                     $position = $this->slotService->nextPosition();
 
@@ -304,7 +321,27 @@ class RegistrationController extends Controller
                     ->where('season_id', $activeSeason->id)
                     ->first();
             }
-            if (!$allocation) {
+
+            // Direct-final experts skip viva/primary this season. Eligibility
+            // (mirrors ProfileController::isDirectFinal — keep them in sync):
+            //   • criteria_id == 1 (Expert, set after last year's viva result),
+            //   • has a previous-season attendance_allocation (did viva last
+            //     year — the canonical "returning expert" signal),
+            //   • has NO previous-season final attendance (didn't reach final).
+            $isDirectFinal = $activeSeason
+                && (int) ($form->criteria_id ?? 0) === 1
+                && AttendanceAllocation::where('user_id', $user->id)
+                    ->where('season_id', '!=', $activeSeason->id)
+                    ->exists()
+                && !UserFinalAttendance::where('user_id', $user->id)
+                    ->where('season_id', '!=', $activeSeason->id)
+                    ->exists();
+
+            // For non-direct-final users only, fall back to a previous-season
+            // allocation so they still see their card. Direct-final users get
+            // a null allocation so the pass-token card renders on the frontend
+            // instead of the standard exam/allocation card.
+            if (!$allocation && !$isDirectFinal) {
                 $allocation = AttendanceAllocation::where('user_competition_form_id', $form->id)
                     ->latest()
                     ->first();
@@ -313,6 +350,8 @@ class RegistrationController extends Controller
             return JsonResponse::success([
                 'form' => $form,
                 'allocation' => $allocation,
+                // Drives the pass-token card on the frontend token page.
+                'is_direct_final' => $isDirectFinal,
             ]);
         } catch (\Throwable $th) {
             throw $th;
