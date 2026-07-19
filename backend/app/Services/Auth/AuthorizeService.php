@@ -63,6 +63,10 @@ class AuthorizeService
         try {
             $season = Season::where('is_active', 1)->first();
 
+            if (!$season) {
+                throw new \RuntimeException('No active season found.');
+            }
+
             $user = User::create([
                 'phone' => $userInfo['phone'],
                 'email' => $userInfo['email'],
@@ -71,6 +75,8 @@ class AuthorizeService
                 'password' => $userInfo['password'],
                 'gender' => $userInfo['gender'],
                 'phone_verified_at' => now(),
+                'season_id' => $season->id,
+                'registered_season_id' => $season->id,
             ]);
 
             userSeason::create([
