@@ -8,6 +8,10 @@ export const useRegisteredFormStore = defineStore("RegisteredForm", () => {
   let registeredForm = ref(null);
   let allocation = ref(null);
   let registeredFormLoaded = ref(false);
+  // True for returning Expert-group competitors who skip viva/primary this
+  // season (no attendance_allocation). Drives the pass-token card branch on
+  // the token page. Sourced from /registration/get-form.
+  let isDirectFinal = ref(false);
 
   async function _fetchRegisteredForm() {
     isLoading.value = true;
@@ -21,6 +25,7 @@ export const useRegisteredFormStore = defineStore("RegisteredForm", () => {
       if (data?.form) {
         registeredForm.value = data.form;
         allocation.value = data.allocation || null;
+        isDirectFinal.value = !!data.is_direct_final;
         registeredFormLoaded.value = true;
         // competitionFormStore.form = data.form;
 
@@ -59,6 +64,7 @@ export const useRegisteredFormStore = defineStore("RegisteredForm", () => {
     isLoading,
     registeredForm,
     allocation,
+    isDirectFinal,
     fetchRegisteredForm,
     registeredFormLoaded,
     updateRegisteredForm,

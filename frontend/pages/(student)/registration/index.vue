@@ -436,8 +436,7 @@
             class="inline-flex justify-center items-center px-6 py-3.5 rounded-xl text-base font-bold w-full transition-all duration-200 group relative cursor-pointer text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/30"
             :class="[isFormDisabled === true ? 'opacity-50 cursor-not-allowed bg-gray-300 shadow-none':'']"
           >
-            <span v-if="useFormStore.form?.reg_no">আপডেট করুন</span>
-            <span v-else>সাবমিট করুন</span>
+            <span>{{ submitButtonLabel }}</span>
             <div class="absolute right-6">
               <span v-if="!isFormSubmit">
                 <svg
@@ -943,6 +942,37 @@
   const isFormSubmit = ref(false);
   const isInitialLoading = ref(true);
 
+  // ─── Direct-final / returning-user context ──────────────────────
+  // A returning Expert-group (criteria_id == 1) competitor this season
+  // bypasses viva/primary and goes straight to the final. Drives the
+  // dynamic submit-button copy and the pass-token card on /registration/token.
+  const isDirectFinal = computed(
+    () =>
+      !!studentInfoStore.seasonStatus?.is_direct_final ||
+      studentInfoStore.form?.criteria_id === 1,
+  );
+
+  const isReturningForNewSeason = computed(() => {
+    const s = studentInfoStore.seasonStatus;
+    return !!s?.is_eligible_for_new_season && !s?.on_active_season;
+  });
+
+  // Submit-button label reflects the user's situation:
+  //  • direct-final expert → "Update & go straight to the final"
+  //  • returning eligible  → "Update & join this season"
+  //  • already registered  → "Update" (existing copy)
+  //  • new registration    → "Submit" (existing copy)
+  const submitButtonLabel = computed(() => {
+    const hasRegNo = !!useFormStore.form?.reg_no;
+    if (isDirectFinal.value && (hasRegNo || isReturningForNewSeason.value)) {
+      return "আপডেট করুন ও সরাসরি ফাইনালে অংশ নিন";
+    }
+    if (isReturningForNewSeason.value) {
+      return "আপডেট করুন ও এবারের সিজনে অংশ নিন";
+    }
+    return hasRegNo ? "আপডেট করুন" : "সাবমিট করুন";
+  });
+
   // ─── Registration capacity ──────────────────────────────────────
   const isRegistrationFull = ref(false);
   const capacityLoaded = ref(false);
@@ -1296,6 +1326,12 @@
         registeredFormStore.registeredForm = savedForm;
         registeredFormStore.allocation = savedAllocation || null;
         registeredFormStore.registeredFormLoaded = true;
+
+        // Force-refetch the profile so the computed season_status snapshot
+        // (on_active_season, is_direct_final, ...) is up to date. Without this
+        // the dashboard's SeasonUpdateBanner would keep showing until a manual
+        // refresh, since it derives visibility from season_status.
+        await studentInfoStore.updateUserProfile();
 
         window.showSuccess("Success!", "Form Updated successfully", 3000);
         navigateTo("/registration/token");

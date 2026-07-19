@@ -15,8 +15,11 @@
       </div>
     </div>
 
-    <!-- ==================== CARD ==================== -->
-    <div class="card-outer" v-if="registeredFormStore.registeredForm?.phone">
+    <!-- ==================== STANDARD REGISTRATION CARD ==================== -->
+    <div
+      class="card-outer"
+      v-if="!isDirectFinal && registeredFormStore.registeredForm?.phone"
+    >
       <div id="registration-card" class="card">
 
         <!-- Top accent -->
@@ -199,6 +202,97 @@
       </div>
     </div>
 
+    <!-- ==================== DIRECT-FINAL PASS-TOKEN ID CARD ==================== -->
+    <!--
+      Shown to returning Expert-group (criteria_id == 1) competitors who, this
+      season only, are admitted straight to the final without viva/primary.
+      They have no attendance_allocation, so the standard exam card above is
+      irrelevant. Reuses id="registration-card" so the existing
+      downloadCard() / printCard() plumbing works unchanged.
+    -->
+    <div
+      v-else-if="isDirectFinal && registeredFormStore.registeredForm?.phone"
+      class="card-outer"
+    >
+      <div id="registration-card" class="pass-card">
+        <!-- Gold top accent -->
+        <div class="pass-accent"></div>
+
+        <!-- Header band: logo + two-line competition title -->
+        <div class="pass-hdr">
+          <img
+            src="~/assets/imgs/logo.png"
+            alt="Logo"
+            class="pass-logo"
+          />
+          <div class="pass-titles">
+            <h1 class="pass-org">এসো কুরআন শিখি</h1>
+            <p class="pass-comp">
+              বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা ১৪৪৮ হিজরি
+            </p>
+          </div>
+        </div>
+
+        <!-- Status strip: pass label + direct-final pill -->
+        <div class="pass-strip">
+          <span class="pass-strip-lbl">প্রতিযোগিতার পাস</span>
+          <span class="pass-pill">✦ সরাসরি ফাইনাল</span>
+        </div>
+
+        <!-- Body: details (left) + QR (right) -->
+        <div class="pass-body">
+          <div class="pass-details">
+            <div class="pass-row">
+              <span class="pass-lbl">নাম</span>
+              <span class="pass-val pass-val-name">{{
+                registeredFormStore.registeredForm.name_bn
+              }}</span>
+            </div>
+            <div class="pass-row">
+              <span class="pass-lbl">রেজি. নম্বর</span>
+              <span class="pass-val pass-val-reg">{{
+                registeredFormStore.registeredForm.reg_no
+              }}</span>
+            </div>
+            <div class="pass-row">
+              <span class="pass-lbl">মোবাইল</span>
+              <span class="pass-val">{{
+                registeredFormStore.registeredForm.phone
+              }}</span>
+            </div>
+            <div class="pass-row">
+              <span class="pass-lbl">জন্ম তারিখ</span>
+              <span class="pass-val">{{
+                formatDate(registeredFormStore.registeredForm.dob)
+              }}</span>
+            </div>
+          </div>
+
+          <div class="pass-qr-wrap">
+            <canvas
+              v-if="registeredFormStore.registeredForm?.reg_no"
+              ref="passQrCanvas"
+              class="pass-qr"
+            ></canvas>
+            <span class="pass-qr-caption">স্ক্যান করে যাচাই করুন</span>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="pass-ftr">
+          <span class="pass-ftr-note"
+            >⚠ প্রতিযোগিতার দিন এই কার্ডটি অবশ্যই সাথে আনবেন</span
+          >
+          <span class="pass-contact"
+            >📞 +880 1805 777 332 &nbsp;·&nbsp; 🌐 eshoquranshikhi.org</span
+          >
+        </div>
+
+        <!-- Gold bottom accent -->
+        <div class="pass-accent pass-accent-bot"></div>
+      </div>
+    </div>
+
     <!-- Empty -->
     <div v-else-if="!registeredFormStore.isLoading" class="empty">
       <p>কোনো রেজিস্ট্রেশন তথ্য পাওয়া যায়নি।</p>
@@ -220,7 +314,19 @@ definePageMeta({
 
 const registeredFormStore = useRegisteredFormStore();
 const qrCanvas = ref(null);
+const passQrCanvas = ref(null);
 const downloading = ref(false);
+
+// Direct-final participants (returning Expert-group, criteria_id == 1) skip
+// viva/primary this season and have no attendance_allocation. Flag is sourced
+// from /registration/get-form (see registeredForm store). Fallback to
+// allocation-absence + criteria_id == 1 for safety.
+const isDirectFinal = computed(
+  () =>
+    !!registeredFormStore.isDirectFinal ||
+    (registeredFormStore.allocation === null &&
+      registeredFormStore.registeredForm?.criteria_id === 1),
+);
 
 const examTime = computed(() => {
   return (
@@ -230,11 +336,12 @@ const examTime = computed(() => {
   );
 });
 
-const generateQRCode = async (content) => {
-  if (qrCanvas.value) {
+const generateQRCode = async (content, canvasRef = qrCanvas) => {
+  const target = canvasRef?.value;
+  if (target) {
     try {
-      await QRCode.toCanvas(qrCanvas.value, content, {
-        width: 80,
+      await QRCode.toCanvas(target, content, {
+        width: canvasRef === passQrCanvas ? 110 : 80,
         margin: 1,
         color: { dark: "#1a1a1a", light: "#FFFFFF" },
       });
@@ -316,7 +423,15 @@ onMounted(async () => {
   await registeredFormStore.fetchRegisteredForm();
   if (registeredFormStore.registeredForm?.reg_no) {
     await nextTick();
-    await generateQRCode(registeredFormStore.registeredForm.reg_no);
+    if (isDirectFinal.value) {
+      // Pass-token card uses its own larger centered QR canvas.
+      await generateQRCode(
+        registeredFormStore.registeredForm.reg_no,
+        passQrCanvas,
+      );
+    } else {
+      await generateQRCode(registeredFormStore.registeredForm.reg_no);
+    }
     // Auto-save image after fonts/logo load
     setTimeout(() => downloadCard(true), 1500);
   }
@@ -898,6 +1013,219 @@ onMounted(async () => {
   .ftr {
     padding: 0.55rem 0.75rem;
     font-size: 0.6rem;
+  }
+}
+
+/* ==================== DIRECT-FINAL PASS-TOKEN ID CARD ==================== */
+/* Compact, professional ID-card layout. Two-column body: details | QR. */
+.pass-card {
+  max-width: 460px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px -12px rgba(11, 60, 45, 0.28);
+  border: 1px solid #e3ece8;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Thin gold accent bars at top & bottom */
+.pass-accent {
+  height: 5px;
+  background: linear-gradient(90deg, #c9a227 0%, #e8c45a 50%, #c9a227 100%);
+  flex-shrink: 0;
+}
+.pass-accent-bot {
+  order: 99;
+}
+
+/* Header: deep-emerald band, logo + titles */
+.pass-hdr {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1.1rem;
+  background: linear-gradient(135deg, #0b3c2d 0%, #134d3a 100%);
+  color: #ffffff;
+}
+.pass-logo {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 2px;
+}
+.pass-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+}
+.pass-org {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+}
+.pass-comp {
+  font-size: 0.76rem;
+  font-weight: 500;
+  margin: 0;
+  opacity: 0.9;
+  line-height: 1.25;
+}
+
+/* Status strip: label left, direct-final pill right */
+.pass-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 1.1rem;
+  background: #f6f8f7;
+  border-bottom: 1px solid #e3ece8;
+}
+.pass-strip-lbl {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.pass-pill {
+  padding: 0.22rem 0.7rem;
+  background: #c9a227;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 1px 3px rgba(201, 162, 39, 0.4);
+}
+
+/* Body: details column + QR column */
+.pass-body {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  align-items: stretch;
+}
+
+/* Details — left, takes available space */
+.pass-details {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+.pass-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+.pass-lbl {
+  font-size: 0.62rem;
+  color: #9ca3af;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.pass-val {
+  font-size: 0.88rem;
+  color: #111827;
+  font-weight: 600;
+  line-height: 1.25;
+  word-break: break-word;
+}
+.pass-val-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0b3c2d;
+}
+.pass-val-reg {
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.04em;
+  color: #b8860b;
+  font-weight: 700;
+}
+
+/* QR — right, fixed compact size */
+.pass-qr-wrap {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding-left: 0.75rem;
+  border-left: 1px dashed #d6deda;
+}
+.pass-qr {
+  border: 4px solid #0b3c2d;
+  border-radius: 8px;
+  background: #ffffff;
+  display: block;
+}
+.pass-qr-caption {
+  font-size: 0.58rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+/* Footer */
+.pass-ftr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.7rem 1.1rem 0.85rem;
+  background: #f6f8f7;
+  border-top: 1px solid #e3ece8;
+  text-align: center;
+}
+.pass-ftr-note {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #b45309;
+}
+.pass-contact {
+  font-size: 0.62rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Responsive: stack columns on very narrow screens */
+@media (max-width: 380px) {
+  .pass-body {
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .pass-qr-wrap {
+    border-left: none;
+    border-top: 1px dashed #d6deda;
+    padding-left: 0;
+    padding-top: 0.75rem;
+    flex-direction: row;
+    justify-content: center;
+  }
+  .pass-qr-caption {
+    font-size: 0.62rem;
+  }
+}
+
+/* Print: lock pass-token card to a centered layout on A4 */
+@media print {
+  .pass-card {
+    max-width: 16cm;
+    margin: 2cm auto;
+    box-shadow: none;
+    border: 1px solid #d6deda;
   }
 }
 </style>

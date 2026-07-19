@@ -1,5 +1,8 @@
 <template>
   <div>
+    <!-- Returning-user "update for new season" warning (self-guards visibility) -->
+    <DashboardSeasonUpdateBanner />
+
     <!-- Header with Notification Banner -->
     <div>
       <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white">

@@ -60,12 +60,18 @@ export const useStudentInfoStore = defineStore(
       return result;
     }
 
+    // Convenience accessor for the season/eligibility snapshot the backend
+    // attaches to the profile response (see ProfileController::getProfile).
+    // Null until the profile has been fetched.
+    const seasonStatus = computed(() => user.value?.season_status ?? null);
+
     return {
       user,
       form,
       error,
       isLoading,
       profileLoaded,
+      seasonStatus,
       fetchUserProfile,
       updateUserProfile,
     };
