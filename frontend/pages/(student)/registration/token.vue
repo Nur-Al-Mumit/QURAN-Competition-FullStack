@@ -44,7 +44,7 @@
         <!-- TITLE STRIP -->
         <div class="title-strip">
           <span>রেজিস্ট্রেশন কার্ড</span>
-          <span>নং: <strong>{{ registeredFormStore.registeredForm.reg_no }}</strong></span>
+          <span>রেজিস্ট্রেশন নং: <strong>{{ registeredFormStore.registeredForm.reg_no }}</strong></span>
         </div>
 
         <!-- BODY -->
@@ -230,8 +230,8 @@
 
         <!-- TITLE STRIP (same class; different label) -->
         <div class="title-strip">
-          <span>প্রতিযোগিতার পাস</span>
-          <span>নং: <strong>{{ registeredFormStore.registeredForm.reg_no }}</strong></span>
+          <span>রেজিস্ট্রেশন কার্ড</span>
+          <span>রেজিস্ট্রেশন নং: <strong>{{ registeredFormStore.registeredForm.reg_no }}</strong></span>
         </div>
 
         <!-- BODY (mirrors standard card layout) -->
@@ -372,7 +372,8 @@
               <ul class="note-list">
                 <li>প্রতিযোগিতার দিন এই কার্ড অবশ্যই সাথে আনতে হবে।</li>
                 <li>কার্ড ছাড়া প্রতিযোগিতায় অংশগ্রহণ করা যাবে না।</li>
-                <li>নির্ধারিত সময়ের ১৫ মিনিট পূর্বে উপস্থিত থাকুন।</li>
+                <li>প্রতিযোগিতার সময় পরবর্তীতে ওয়েবসাইট/এসএমএস এর মাধ্যমে জানানো হবে।</li>
+                <li>নির্ধারিত সময়ের ১৫ মিনিট পূর্বে উপস্থিত থাকতে হবে।</li>
               </ul>
             </div>
           </div>
