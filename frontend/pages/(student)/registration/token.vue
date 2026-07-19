@@ -407,19 +407,23 @@ import QRCode from "qrcode";
 definePageMeta({
   layout: "split",
   middleware: [
-    // Returning competitors who are eligible for the new season but haven't
-    // updated yet (the dashboard warning-banner audience) must NOT reach the
-    // token page — they have no current-season registration to show. Bounce
-    // them to /registration so they complete the update first.
+    // Two categories of returning competitor must NOT reach the token page
+    // (neither has a current-season registration to show):
+    //   1. Ineligible (e.g. reached last year's final) → /dashboard, where the
+    //      red "not eligible" banner explains why.
+    //   2. Eligible but hasn't updated yet → /registration, to complete the
+    //      update first.
     async () => {
       if (!process.client) return;
       const studentInfoStore = useStudentInfoStore();
       // Cached fetch — returns immediately if the profile is already loaded.
       await studentInfoStore.fetchUserProfile();
       const s = studentInfoStore.seasonStatus;
-      if (s?.has_active_season && s?.is_eligible_for_new_season && !s?.on_active_season) {
-        return navigateTo("/registration");
+      if (!s?.has_active_season || s?.on_active_season) return;
+      if (!s?.is_eligible_for_new_season) {
+        return navigateTo("/dashboard");
       }
+      return navigateTo("/registration");
     },
   ],
 });

@@ -906,6 +906,30 @@
 <script setup>
   import getIcons from "~/assets/icons/Utils/icon";
 
+  definePageMeta({
+    // Ineligible returning competitors (e.g. those who reached last year's
+    // final) cannot register for the current season. Bounce them to the
+    // dashboard, where the red "not eligible" banner explains why. The guard
+    // only fires for authenticated users with a profile loaded; guests go
+    // through the normal OTP registration flow.
+    middleware: [
+      async () => {
+        if (!process.client) return;
+        const studentInfoStore = useStudentInfoStore();
+        if (!useStudentAuthInfoStore().isStudentLoggedIn) return;
+        await studentInfoStore.fetchUserProfile();
+        const s = studentInfoStore.seasonStatus;
+        if (
+          s?.has_active_season &&
+          !s?.is_eligible_for_new_season &&
+          !s?.on_active_season
+        ) {
+          return navigateTo("/dashboard");
+        }
+      },
+    ],
+  });
+
   const studentAuthInfoStore = useStudentAuthInfoStore();
   const registeredFormStore = useRegisteredFormStore();
   const studentInfoStore = useStudentInfoStore();

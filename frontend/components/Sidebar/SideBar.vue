@@ -22,7 +22,7 @@
 
       <!-- Middle: Navigation Menu -->
       <nav
-        v-if="isUserOrAdminLoggedIn"
+        v-if="isLoggedInClient"
         class="flex-1 overflow-y-auto p-2 sm:p-3"
       >
         <p
@@ -35,7 +35,7 @@
 
       <!-- Unlogged-in: Sign Up / Sign In CTA -->
       <div
-        v-else
+        v-else-if="mounted"
         class="flex flex-1 flex-col items-center justify-center gap-3 p-5 text-center"
       >
         <div
@@ -91,7 +91,7 @@
 
       <!-- Bottom: User Profile (click to open upward dropdown) -->
       <div
-        v-if="isUserOrAdminLoggedIn"
+        v-if="isLoggedInClient"
         class="relative border-t border-gray-100 bg-gradient-to-br from-emerald-50 via-green-50 to-lime-50 p-2.5 sm:p-3"
         ref="profileCardRef"
       >
@@ -231,6 +231,15 @@
   const isUserMenuOpen = ref(false);
   const profileCardRef = ref(null);
 
+  // Avoid SSR/client hydration mismatch: auth and user-profile state is
+  // only fully resolved on the client (cookie/localStorage + onMounted
+  // fetch). Render a neutral placeholder during SSR and the very first
+  // client paint, then reveal the real UI once mounted.
+  const mounted = ref(false);
+  const isLoggedInClient = computed(
+    () => mounted.value && isUserOrAdminLoggedIn.value,
+  );
+
   function toggleUserMenu() {
     isUserMenuOpen.value = !isUserMenuOpen.value;
   }
@@ -272,6 +281,7 @@
 
   onMounted(async () => {
     document.addEventListener("click", handleClickOutside);
+    mounted.value = true;
     await syncUserInfo();
   });
 

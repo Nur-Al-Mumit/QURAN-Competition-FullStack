@@ -30,7 +30,7 @@
       <div class="flex items-center gap-1.5 sm:gap-2 lg:gap-3">
         <!-- Registration CTA (only when not logged in) -->
         <NuxtLink
-          v-if="!isUserOrAdminLoggedIn"
+          v-if="!isLoggedInClient"
           to="/registration"
           class="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-white shadow-sm base-trans hover:bg-primary-hover hover:shadow-md sm:px-4 lg:px-5 lg:py-2.5 lg:text-base"
         >
@@ -50,7 +50,7 @@
           <span class="whitespace-nowrap">Registration</span>
         </NuxtLink>
         <NuxtLink
-          v-if="!isUserOrAdminLoggedIn"
+          v-if="!isLoggedInClient"
           to="/sign-in"
           class="items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-white shadow-sm base-trans hover:bg-primary-hover hover:shadow-md sm:px-4 lg:px-5 lg:py-2.5 lg:text-base hidden sm:flex"
         >
@@ -60,7 +60,7 @@
 
         <!-- Logged In: Profile Dropdown (desktop only) -->
         <div
-          v-if="isUserOrAdminLoggedIn"
+          v-if="isLoggedInClient"
           class="relative hidden sm:block"
           ref="profileDropdownRef"
         >
@@ -149,7 +149,7 @@
 
         <!-- Logged In: Profile Icon (mobile) — opens unified drawer -->
         <button
-          v-if="isUserOrAdminLoggedIn"
+          v-if="isLoggedInClient"
           @click="openMobileMenu"
           class="relative rounded-full p-1 base-trans hover:bg-gray-100 sm:hidden flex items-center gap-2 border px-2"
           aria-label="Open account menu"
@@ -187,7 +187,7 @@
 
         <!-- Guest: Hamburger (mobile only) — opens unified drawer -->
         <button
-          v-if="!isUserOrAdminLoggedIn"
+          v-if="!isLoggedInClient"
           @click="openMobileMenu"
           class="rounded-lg p-2 base-trans hover:bg-gray-100 sm:hidden"
           aria-label="Open menu"
@@ -237,7 +237,7 @@
                     alt=""
                   />
                   <span class="font-semibold text-white">
-                    {{ isUserOrAdminLoggedIn ? portalLabel : "Menu" }}
+                    {{ isLoggedInClient ? portalLabel : "Menu" }}
                   </span>
                 </div>
                 <button
@@ -276,7 +276,7 @@
                 </div>
 
                 <!-- Account Section (logged-in): nav links only -->
-                <div v-if="isUserOrAdminLoggedIn" class="flex-1 p-3">
+                <div v-if="isLoggedInClient" class="flex-1 p-3">
                   <p
                     class="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-gray-400"
                   >
@@ -325,7 +325,7 @@
 
               <!-- Bottom: User Profile with dropup logout (logged-in only) -->
               <div
-                v-if="isUserOrAdminLoggedIn"
+                v-if="isLoggedInClient"
                 ref="userMenuCardRef"
                 class="relative border-t border-gray-100 bg-gradient-to-br from-emerald-50 via-green-50 to-lime-50 p-2.5"
               >
@@ -434,6 +434,15 @@
 
   const { logOut } = useAuthLogout();
 
+  // Avoid SSR/client hydration mismatch: auth and user-profile state is
+  // only fully resolved on the client (cookie/localStorage + onMounted
+  // fetch). Gate all auth-dependent UI behind `mounted` so SSR and the
+  // first client paint produce identical markup.
+  const mounted = ref(false);
+  const isLoggedInClient = computed(
+    () => mounted.value && isUserOrAdminLoggedIn.value,
+  );
+
   // States
   const isProfileMenuOpen = ref(false);
   const isMobileMenuOpen = ref(false);
@@ -526,6 +535,7 @@
   onMounted(async () => {
     navOnScroll();
     document.addEventListener("click", handleClickOutside);
+    mounted.value = true;
     if (isUserOrAdminLoggedIn.value) {
       await syncUserInfo();
     }
