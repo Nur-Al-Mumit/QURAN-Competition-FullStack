@@ -433,27 +433,34 @@
           <button
             type="submit"
             :disabled="isFormDisabled"
-            class="inline-flex justify-center items-center px-6 py-3.5 rounded-xl text-base font-bold w-full transition-all duration-200 group relative cursor-pointer text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/30"
-            :class="[isFormDisabled === true ? 'opacity-50 cursor-not-allowed bg-gray-300 shadow-none':'']"
+            class="inline-flex justify-center items-center gap-2 px-5 sm:px-6 py-3.5 rounded-xl text-sm sm:text-base font-bold w-full transition-all duration-200 group cursor-pointer text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/30"
+            :class="[
+              isFormDisabled === true
+                ? 'opacity-50 cursor-not-allowed bg-gray-300 shadow-none'
+                : '',
+            ]"
           >
-            <span>{{ submitButtonLabel }}</span>
-            <div class="absolute right-6">
-              <span v-if="!isFormSubmit">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 ml-2 group-hover:translate-x-1 base-trans"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </span>
-              <span v-else v-html="getIcons('sppiner', `w-[20px]`)"></span>
-            </div>
+            <span class="leading-snug text-center whitespace-nowrap">
+              {{ submitButtonLabel }}
+            </span>
+            <span v-if="!isFormSubmit" class="flex-shrink-0">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 group-hover:translate-x-1 base-trans"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </span>
+            <span
+              v-else
+              v-html="getIcons('sppiner', `w-[20px] flex-shrink-0`)"
+            ></span>
           </button>
         </div>
       </form>

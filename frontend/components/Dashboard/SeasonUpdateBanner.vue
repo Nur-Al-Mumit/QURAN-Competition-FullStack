@@ -15,7 +15,7 @@
     class="bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md"
   >
     <div class="max-w-6xl mx-auto px-4 py-4 sm:py-5">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-center sm:text-left">
         <div class="flex items-start gap-3">
           <svg
             class="w-6 h-6 mt-0.5 flex-shrink-0"
@@ -47,11 +47,11 @@
 
         <button
           @click="() => navigateTo('/registration')"
-          class="flex-shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white text-amber-700 font-semibold shadow-sm hover:bg-amber-50 transition-colors cursor-pointer"
+          class="w-full sm:w-auto flex-shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white text-amber-700 font-semibold shadow-sm hover:bg-amber-50 transition-colors cursor-pointer text-center whitespace-nowrap"
         >
-          নতুন সিজনের জন্য রেজিস্ট্রেশন আপডেট করুন
+          <span class="leading-snug">নতুন সিজনের জন্য রেজিস্ট্রেশন আপডেট করুন</span>
           <svg
-            class="w-4 h-4"
+            class="w-4 h-4 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

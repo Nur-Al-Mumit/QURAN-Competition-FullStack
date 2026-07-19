@@ -203,93 +203,189 @@
     </div>
 
     <!-- ==================== DIRECT-FINAL PASS-TOKEN ID CARD ==================== -->
-    <!--
-      Shown to returning Expert-group (criteria_id == 1) competitors who, this
-      season only, are admitted straight to the final without viva/primary.
-      They have no attendance_allocation, so the standard exam card above is
-      irrelevant. Reuses id="registration-card" so the existing
-      downloadCard() / printCard() plumbing works unchanged.
-    -->
     <div
       v-else-if="isDirectFinal && registeredFormStore.registeredForm?.phone"
       class="card-outer"
     >
-      <div id="registration-card" class="pass-card">
-        <!-- Gold top accent -->
-        <div class="pass-accent"></div>
+      <div id="registration-card" class="card">
 
-        <!-- Header band: logo + two-line competition title -->
-        <div class="pass-hdr">
-          <img
-            src="~/assets/imgs/logo.png"
-            alt="Logo"
-            class="pass-logo"
-          />
-          <div class="pass-titles">
-            <h1 class="pass-org">এসো কুরআন শিখি</h1>
-            <p class="pass-comp">
-              বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা ১৪৪৮ হিজরি
-            </p>
+        <!-- Top accent -->
+        <div class="accent-top"></div>
+
+        <!-- HEADER (identical to standard card) -->
+        <div class="hdr">
+          <img src="~/assets/imgs/logo.png" alt="Logo" class="hdr-logo" />
+          <div class="hdr-center">
+            <h1 class="hdr-org">এসো কুরআন শিখি</h1>
+            <p class="hdr-comp">বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা ১৪৪৮ হিজরি</p>
           </div>
-        </div>
-
-        <!-- Status strip: pass label + direct-final pill -->
-        <div class="pass-strip">
-          <span class="pass-strip-lbl">প্রতিযোগিতার পাস</span>
-          <span class="pass-pill">✦ সরাসরি ফাইনাল</span>
-        </div>
-
-        <!-- Body: details (left) + QR (right) -->
-        <div class="pass-body">
-          <div class="pass-details">
-            <div class="pass-row">
-              <span class="pass-lbl">নাম</span>
-              <span class="pass-val pass-val-name">{{
-                registeredFormStore.registeredForm.name_bn
-              }}</span>
-            </div>
-            <div class="pass-row">
-              <span class="pass-lbl">রেজি. নম্বর</span>
-              <span class="pass-val pass-val-reg">{{
-                registeredFormStore.registeredForm.reg_no
-              }}</span>
-            </div>
-            <div class="pass-row">
-              <span class="pass-lbl">মোবাইল</span>
-              <span class="pass-val">{{
-                registeredFormStore.registeredForm.phone
-              }}</span>
-            </div>
-            <div class="pass-row">
-              <span class="pass-lbl">জন্ম তারিখ</span>
-              <span class="pass-val">{{
-                formatDate(registeredFormStore.registeredForm.dob)
-              }}</span>
-            </div>
-          </div>
-
-          <div class="pass-qr-wrap">
+          <div class="hdr-qr">
             <canvas
               v-if="registeredFormStore.registeredForm?.reg_no"
               ref="passQrCanvas"
-              class="pass-qr"
+              class="qr"
             ></canvas>
-            <span class="pass-qr-caption">স্ক্যান করে যাচাই করুন</span>
           </div>
         </div>
 
-        <!-- Footer -->
-        <div class="pass-ftr">
-          <span class="pass-ftr-note"
-            >⚠ প্রতিযোগিতার দিন এই কার্ডটি অবশ্যই সাথে আনবেন</span
-          >
-          <span class="pass-contact"
-            >📞 +880 1805 777 332 &nbsp;·&nbsp; 🌐 eshoquranshikhi.org</span
-          >
+        <!-- TITLE STRIP (same class; different label) -->
+        <div class="title-strip">
+          <span>প্রতিযোগিতার পাস</span>
+          <span>নং: <strong>{{ registeredFormStore.registeredForm.reg_no }}</strong></span>
         </div>
 
-        <!-- Gold bottom accent -->
-        <div class="pass-accent pass-accent-bot"></div>
+        <!-- BODY (mirrors standard card layout) -->
+        <div class="body">
+
+          <!-- COL 1 -->
+          <div class="col">
+            <div class="sec">
+              <div class="sec-title">ব্যক্তিগত তথ্য</div>
+              <table class="info-table">
+                <tr>
+                  <td class="lbl">নাম (বাংলা)</td>
+                  <td class="val val-name">{{ registeredFormStore.registeredForm.name_bn }}</td>
+                </tr>
+                <tr>
+                  <td class="lbl">Name (EN)</td>
+                  <td class="val">{{ registeredFormStore.registeredForm.name_en }}</td>
+                </tr>
+                <tr>
+                  <td class="lbl">জন্ম তারিখ</td>
+                  <td class="val">{{ formatDate(registeredFormStore.registeredForm.dob) }}</td>
+                </tr>
+                <tr>
+                  <td class="lbl">মোবাইল</td>
+                  <td class="val">{{ registeredFormStore.registeredForm.phone }}</td>
+                </tr>
+                <tr v-if="registeredFormStore.registeredForm.email">
+                  <td class="lbl">ইমেইল</td>
+                  <td class="val">{{ registeredFormStore.registeredForm.email }}</td>
+                </tr>
+                <tr>
+                  <td class="lbl">পেশা</td>
+                  <td class="val">{{ registeredFormStore.registeredForm.occupation }}</td>
+                </tr>
+                <tr>
+                  <td class="lbl">ঠিকানা</td>
+                  <td class="val">{{ registeredFormStore.registeredForm.address }}</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="sec">
+              <div class="sec-title">শিক্ষাগত তথ্য</div>
+              <table class="info-table">
+                <tr>
+                  <td class="lbl">শিক্ষা ব্যবস্থা</td>
+                  <td class="val">
+                    {{
+                      registeredFormStore.registeredForm.education_background == 1 ? 'সাধারণ (General)'
+                      : registeredFormStore.registeredForm.education_background == 2 ? 'মাদরাসা (Madrasa)'
+                      : registeredFormStore.registeredForm.education_background == 3 ? 'উভয় (General + Madrasa)'
+                      : '—'
+                    }}
+                  </td>
+                </tr>
+                <tr v-if="registeredFormStore.registeredForm.school_name">
+                  <td class="lbl">স্কুল</td>
+                  <td class="val">{{ registeredFormStore.registeredForm.school_name }}</td>
+                </tr>
+                <tr v-if="registeredFormStore.registeredForm.college_name">
+                  <td class="lbl">কলেজ</td>
+                  <td class="val">{{ registeredFormStore.registeredForm.college_name }}</td>
+                </tr>
+                <tr v-if="registeredFormStore.registeredForm.university_name">
+                  <td class="lbl">বিশ্ববিদ্যালয়</td>
+                  <td class="val">{{ registeredFormStore.registeredForm.university_name }}</td>
+                </tr>
+                <tr v-if="registeredFormStore.registeredForm.madrasah_name">
+                  <td class="lbl">মাদরাসা</td>
+                  <td class="val">{{ registeredFormStore.registeredForm.madrasah_name }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <!-- COL 2 -->
+          <div class="col">
+            <div class="sec">
+              <div class="sec-title">রেজিস্ট্রেশন বিবরণ</div>
+              <div class="reg-box">
+                <span class="reg-lbl">রেজিস্ট্রেশন নম্বর</span>
+                <span class="reg-val">{{ registeredFormStore.registeredForm.reg_no }}</span>
+              </div>
+              <table class="info-table">
+                <tr>
+                  <td class="lbl">Season</td>
+                  <td class="val">{{ registeredFormStore.registeredForm.season_id }}</td>
+                </tr>
+                <tr>
+                  <td class="lbl">রেজি. তারিখ</td>
+                  <td class="val">{{ formatDate(registeredFormStore.registeredForm.created_at) }}</td>
+                </tr>
+                <tr>
+                  <td class="lbl">তেলাওয়াত</td>
+                  <td class="val">{{ registeredFormStore.registeredForm.is_recitation ? 'হ্যাঁ' : 'না' }}</td>
+                </tr>
+                <tr>
+                  <td class="lbl">প্রশিক্ষণ</td>
+                  <td class="val">{{ registeredFormStore.registeredForm.need_training ? 'প্রয়োজন' : 'দরকার নেই' }}</td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- Direct-final notice (replaces the exam schedule section) -->
+            <div class="sec sec-exam">
+              <div class="sec-title sec-title-exam">সরাসরি ফাইনাল প্রতিযোগী</div>
+              <table class="info-table">
+                <tr>
+                  <td class="lbl">বিভাগ</td>
+                  <td class="val val-bold">الماهر (Expert)</td>
+                </tr>
+                <tr>
+                  <td class="lbl">স্থান</td>
+                  <td class="val">হেরিটেজ হাইটস এন্ড ব্যাংকুয়েট হল মেট্রোপলিটন মার্কেট (২য় তলা), সুবহানীঘাট, সিলেট</td>
+                </tr>
+              </table>
+              <div class="alloc">
+                <div class="alloc-item">
+                  <span class="alloc-lbl">প্রতিযোগিতা</span>
+                  <span class="alloc-val">ফাইনাল</span>
+                </div>
+                <div class="alloc-item">
+                  <span class="alloc-lbl">ভাইভা</span>
+                  <span class="alloc-val">প্রয়োজন নেই</span>
+                </div>
+                <div class="alloc-item">
+                  <span class="alloc-lbl">প্রাথমিক</span>
+                  <span class="alloc-val">প্রয়োজন নেই</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOTTOM SECTION (FULL WIDTH) -->
+          <div class="instructions-wrap">
+            <div class="sec sec-note">
+              <div class="sec-title">নির্দেশনা</div>
+              <ul class="note-list">
+                <li>প্রতিযোগিতার দিন এই কার্ড অবশ্যই সাথে আনতে হবে।</li>
+                <li>কার্ড ছাড়া প্রতিযোগিতায় অংশগ্রহণ করা যাবে না।</li>
+                <li>নির্ধারিত সময়ের ১৫ মিনিট পূর্বে উপস্থিত থাকুন।</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER (identical to standard card) -->
+        <div class="ftr">
+          <span>📞 +880 1805 777 332 &nbsp;|&nbsp; 🌐 eshoquranshikhi.org</span>
+          <span>মুদ্রণ: {{ formatPrintTime }}</span>
+        </div>
+
+        <!-- Bottom accent -->
+        <div class="accent-bot"></div>
       </div>
     </div>
 
@@ -310,6 +406,22 @@ import QRCode from "qrcode";
 
 definePageMeta({
   layout: "split",
+  middleware: [
+    // Returning competitors who are eligible for the new season but haven't
+    // updated yet (the dashboard warning-banner audience) must NOT reach the
+    // token page — they have no current-season registration to show. Bounce
+    // them to /registration so they complete the update first.
+    async () => {
+      if (!process.client) return;
+      const studentInfoStore = useStudentInfoStore();
+      // Cached fetch — returns immediately if the profile is already loaded.
+      await studentInfoStore.fetchUserProfile();
+      const s = studentInfoStore.seasonStatus;
+      if (s?.has_active_season && s?.is_eligible_for_new_season && !s?.on_active_season) {
+        return navigateTo("/registration");
+      }
+    },
+  ],
 });
 
 const registeredFormStore = useRegisteredFormStore();
@@ -341,7 +453,7 @@ const generateQRCode = async (content, canvasRef = qrCanvas) => {
   if (target) {
     try {
       await QRCode.toCanvas(target, content, {
-        width: canvasRef === passQrCanvas ? 110 : 80,
+        width: 80,
         margin: 1,
         color: { dark: "#1a1a1a", light: "#FFFFFF" },
       });
@@ -732,6 +844,7 @@ onMounted(async () => {
   font-size: 1.15rem;
   font-weight: 800;
   color: #0b3c2d;
+  white-space: nowrap;
 }
 
 /* ---- INSTRUCTIONS WRAP (Full Width) ---- */
@@ -1013,219 +1126,6 @@ onMounted(async () => {
   .ftr {
     padding: 0.55rem 0.75rem;
     font-size: 0.6rem;
-  }
-}
-
-/* ==================== DIRECT-FINAL PASS-TOKEN ID CARD ==================== */
-/* Compact, professional ID-card layout. Two-column body: details | QR. */
-.pass-card {
-  max-width: 460px;
-  margin: 0 auto;
-  background: #ffffff;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 16px 40px -12px rgba(11, 60, 45, 0.28);
-  border: 1px solid #e3ece8;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-/* Thin gold accent bars at top & bottom */
-.pass-accent {
-  height: 5px;
-  background: linear-gradient(90deg, #c9a227 0%, #e8c45a 50%, #c9a227 100%);
-  flex-shrink: 0;
-}
-.pass-accent-bot {
-  order: 99;
-}
-
-/* Header: deep-emerald band, logo + titles */
-.pass-hdr {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  padding: 0.9rem 1.1rem;
-  background: linear-gradient(135deg, #0b3c2d 0%, #134d3a 100%);
-  color: #ffffff;
-}
-.pass-logo {
-  width: 46px;
-  height: 46px;
-  object-fit: contain;
-  flex-shrink: 0;
-  background: #ffffff;
-  border-radius: 50%;
-  padding: 2px;
-}
-.pass-titles {
-  display: flex;
-  flex-direction: column;
-  gap: 0.05rem;
-  min-width: 0;
-}
-.pass-org {
-  font-size: 1.05rem;
-  font-weight: 800;
-  margin: 0;
-  line-height: 1.15;
-  letter-spacing: 0.01em;
-}
-.pass-comp {
-  font-size: 0.76rem;
-  font-weight: 500;
-  margin: 0;
-  opacity: 0.9;
-  line-height: 1.25;
-}
-
-/* Status strip: label left, direct-final pill right */
-.pass-strip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.55rem 1.1rem;
-  background: #f6f8f7;
-  border-bottom: 1px solid #e3ece8;
-}
-.pass-strip-lbl {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #4b5563;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-.pass-pill {
-  padding: 0.22rem 0.7rem;
-  background: #c9a227;
-  color: #ffffff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  border-radius: 999px;
-  letter-spacing: 0.02em;
-  box-shadow: 0 1px 3px rgba(201, 162, 39, 0.4);
-}
-
-/* Body: details column + QR column */
-.pass-body {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem 1.1rem;
-  align-items: stretch;
-}
-
-/* Details — left, takes available space */
-.pass-details {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0.55rem;
-  min-width: 0;
-}
-.pass-row {
-  display: flex;
-  flex-direction: column;
-  gap: 0.05rem;
-}
-.pass-lbl {
-  font-size: 0.62rem;
-  color: #9ca3af;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.pass-val {
-  font-size: 0.88rem;
-  color: #111827;
-  font-weight: 600;
-  line-height: 1.25;
-  word-break: break-word;
-}
-.pass-val-name {
-  font-size: 1rem;
-  font-weight: 800;
-  color: #0b3c2d;
-}
-.pass-val-reg {
-  font-family: "Courier New", monospace;
-  letter-spacing: 0.04em;
-  color: #b8860b;
-  font-weight: 700;
-}
-
-/* QR — right, fixed compact size */
-.pass-qr-wrap {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-  padding-left: 0.75rem;
-  border-left: 1px dashed #d6deda;
-}
-.pass-qr {
-  border: 4px solid #0b3c2d;
-  border-radius: 8px;
-  background: #ffffff;
-  display: block;
-}
-.pass-qr-caption {
-  font-size: 0.58rem;
-  color: #9ca3af;
-  font-weight: 500;
-}
-
-/* Footer */
-.pass-ftr {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.2rem;
-  padding: 0.7rem 1.1rem 0.85rem;
-  background: #f6f8f7;
-  border-top: 1px solid #e3ece8;
-  text-align: center;
-}
-.pass-ftr-note {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #b45309;
-}
-.pass-contact {
-  font-size: 0.62rem;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-/* Responsive: stack columns on very narrow screens */
-@media (max-width: 380px) {
-  .pass-body {
-    flex-direction: column;
-    gap: 0.85rem;
-  }
-  .pass-qr-wrap {
-    border-left: none;
-    border-top: 1px dashed #d6deda;
-    padding-left: 0;
-    padding-top: 0.75rem;
-    flex-direction: row;
-    justify-content: center;
-  }
-  .pass-qr-caption {
-    font-size: 0.62rem;
-  }
-}
-
-/* Print: lock pass-token card to a centered layout on A4 */
-@media print {
-  .pass-card {
-    max-width: 16cm;
-    margin: 2cm auto;
-    box-shadow: none;
-    border: 1px solid #d6deda;
   }
 }
 </style>
