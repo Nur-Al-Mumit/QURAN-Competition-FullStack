@@ -52,7 +52,7 @@
 
       <div class="my-6 flex justify-center space-x-2">
         <div
-          v-for="n in 2"
+          v-for="n in 3"
           :key="n"
           class="h-1.5 w-1.5 rounded-full"
           :class="{
@@ -70,11 +70,13 @@
   import { useStudentAuthStore } from "~/stores/studentAuth";
   import ForgetPasswordStage1 from "~/components/Auth/ForgetPassword/Student/ForgetPasswordStage1.vue";
   import ForgetPasswordStage2 from "~/components/Auth/ForgetPassword/Student/ForgetPasswordStage2.vue";
+  import ForgetPasswordStage3 from "~/components/Auth/ForgetPassword/Student/ForgetPasswordStage3.vue";
 
   const studentAuthStore = useStudentAuthStore();
   const ForgetPasswordStages = {
     ForgetPasswordStage1,
     ForgetPasswordStage2,
+    ForgetPasswordStage3,
   };
 
   function handleNavigation() {

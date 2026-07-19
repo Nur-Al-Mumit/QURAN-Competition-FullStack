@@ -57,11 +57,22 @@ class OtpService
         return $otp;
     }
 
-    public function createOtp($user)
+    public function createOtp($user, ?string $scope = null)
     {
-        $otp = $this->generateOTP($user);
-        $this->notify($user['phone'], $otp['code']);
-        return $otp;
+        // Allow overriding the scope per call (e.g. "password_reset") without
+        // affecting other OTP flows that rely on the constructor default.
+        $previous = $this->scope;
+        if ($scope !== null) {
+            $this->scope = $scope;
+        }
+
+        try {
+            $otp = $this->generateOTP($user);
+            $this->notify($user['phone'], $otp['code']);
+            return $otp;
+        } finally {
+            $this->scope = $previous;
+        }
     }
 
     public function resendOtp($uuid)
@@ -99,7 +110,14 @@ class OtpService
         ]);
 
         try {
+            // Use the record's own scope so the SMS wording matches the flow
+            // (e.g. password reset vs. login).
+            $previous = $this->scope;
+            $this->scope = $otpRecord->scope ?? $previous;
+
             $this->notify($otpRecord->identity, $newCode);
+
+            $this->scope = $previous;
 
             return [
                 'uuid' => $otpRecord->uuid,
@@ -177,7 +195,7 @@ class OtpService
     {
 
         try {
-            $message = "আসসালামু আলাইকুম,\nআপনার লগইন কোড:{$otp}। পরবর্তীতে লগইনের জন্য কোডটি সংরক্ষণ করুন।\n\nজাযাকাল্লাহু খইরন(আল্লাহ আপনাকে উত্তম প্রতিদান দিন)।\n\n— বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা টিম";
+            $message = $this->buildMessage($otp);
 
             $response = Http::get('http://api.boom-cast.com/boomcast/WebFramework/boomCastWebService/externalApiSendTextMessage.php', [
                 'masking' => 'NOMASK',
@@ -194,6 +212,7 @@ class OtpService
                 'message' => $message,
                 'response' => json_encode($response->json()),
                 'status' => $response->successful() ? 'success' : 'failed',
+                'reason' => $this->reasonFor(),
                 // 'status' => 'success',
             ]);
 
@@ -203,5 +222,30 @@ class OtpService
         } catch (\Exception $e) {
             throw new \Exception("Couldn't send the OTP, Please try again. Error: " . $e->getMessage());
         }
+    }
+
+    /**
+     * Build the SMS body based on the current OTP scope so each flow gets its
+     * own wording (e.g. password reset vs. login).
+     */
+    private function buildMessage(string $otp): string
+    {
+        return match ($this->scope) {
+            'password_reset' => "আপনার পাসওয়ার্ড রিসেট কোড: {$otp}",
+            default => "আসসালামু আলাইকুম,\nআপনার লগইন কোড:{$otp}। পরবর্তীতে লগইনের জন্য কোডটি সংরক্ষণ করুন।\n\nজাযাকাল্লাহু খইরন(আল্লাহ আপনাকে উত্তম প্রতিদান দিন)।\n\n— বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা টিম",
+        };
+    }
+
+    /**
+     * Human-readable reason for the SMS, derived from the current OTP scope,
+     * so each sms_logs row records why it was sent.
+     */
+    private function reasonFor(): string
+    {
+        return match ($this->scope) {
+            'password_reset' => 'Password reset OTP',
+            'phone_verified' => 'Login / registration OTP',
+            default => 'OTP',
+        };
     }
 }

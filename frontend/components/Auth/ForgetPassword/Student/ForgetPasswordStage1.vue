@@ -45,17 +45,6 @@
                   </button>
                 </div>
               </form>
-
-              <section v-if="resetLinkSent" class="mt-6">
-                <div
-                  class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded"
-                >
-                  <p>
-                    Password reset link has been sent to your email if an
-                    account exists.
-                  </p>
-                </div>
-              </section>
             </div>
           </div>
         </section>
@@ -74,7 +63,6 @@
   // States
   let isLoading = ref(false);
   let isDisable = ref(false);
-  let resetLinkSent = ref(false);
   let studentData = ref({
     phone: null,
   });
@@ -84,15 +72,34 @@
       isDisable.value = true;
       isLoading.value = true;
 
-      setTimeout(() => {
-        isDisable.value = false;
-        isLoading.value = false;
-        studentAuthStore.forgetPasswordStage = 2;
-      }, 1200);
+      const endpoint = "/auth/password/reset-send-otp";
+      const payload = { phone: studentData.value.phone };
+
+      const { data } = await useAxios(endpoint, payload, null, "POST");
+
+      // uuid is null when no account exists for the phone — the backend
+      // returns a success-shaped response without revealing that, so the UI
+      // still advances without leaking account existence.
+      studentAuthStore.forgetPassword.phone = studentData.value.phone;
+      studentAuthStore.forgetPassword.otp_ref = data?.data?.uuid || "";
+      studentAuthStore.forgetPassword.reset_ref = "";
+
+      window.showSuccess(
+        "Success!",
+        "If an account exists for this phone, an OTP has been sent.",
+        2500
+      );
+
+      studentAuthStore.forgetPasswordStage = 2;
     } catch (error) {
-      console.error("Error sending reset link:", error);
-      isLoading.value = false;
+      window.showError(
+        "Error!",
+        error?.response?.data?.message || "Something went wrong",
+        3000
+      );
+    } finally {
       isDisable.value = false;
+      isLoading.value = false;
     }
   }
 </script>

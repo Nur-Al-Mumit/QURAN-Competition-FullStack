@@ -29,10 +29,9 @@ export const useStudentAuthStore = defineStore(
     });
 
     let forgetPassword = ref({
-      email: "",
-      token: "",
-      password: "",
-      password_confirmation: "",
+      phone: null,
+      otp_ref: "",
+      reset_ref: "",
     });
 
     // Stages for SignIn, SignUp and Forget Password
