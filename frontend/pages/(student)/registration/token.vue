@@ -495,7 +495,7 @@ const printCard = () => {
 const downloadCard = async (auto = false) => {
   if (!auto) downloading.value = true;
   try {
-    const { default: html2canvas } = await import("html2canvas");
+    const { default: html2canvas } = await import("html2canvas-pro");
     const card = document.getElementById("registration-card");
     if (!card) return;
     const canvas = await html2canvas(card, {

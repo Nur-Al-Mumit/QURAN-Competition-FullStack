@@ -9,6 +9,7 @@ class UserAttendance extends Model
     protected $fillable = [
         'user_id',
         'user_competition_form_id',
+        'attendance_allocation_id',
         'season_id',
         'attendance_status',
         'updated_by'
@@ -25,6 +26,11 @@ class UserAttendance extends Model
     public function competitionForm()
     {
         return $this->belongsTo(UserCompetitionForm::class, 'user_competition_form_id');
+    }
+
+    public function attendanceAllocation()
+    {
+        return $this->belongsTo(AttendanceAllocation::class, 'attendance_allocation_id');
     }
 
     public function season()

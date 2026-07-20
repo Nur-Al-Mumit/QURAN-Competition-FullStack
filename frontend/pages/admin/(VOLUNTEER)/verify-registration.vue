@@ -1,162 +1,102 @@
 <template>
-  <section
-    class="min-h-screen bg-gradient-to-br from-emerald-50 to-emerald-100"
-  >
+  <section class="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
     <div class="container mx-auto px-4 py-8 max-w-md">
       <!-- Header -->
-      <div class="text-center mb-8">
+      <div class="text-center mb-6">
         <div
-          class="inline-flex items-center justify-center w-16 h-16 bg-emerald-500 rounded-full mb-4 shadow-lg"
+          class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-2xl mb-3 shadow-lg shadow-emerald-500/30"
         >
-          <svg
-            class="w-8 h-8 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
             ></path>
           </svg>
         </div>
-        <h1 class="text-2xl font-bold text-emerald-900 mb-2">
+        <h1 class="text-2xl font-extrabold text-emerald-900 tracking-tight">
           Registration Verification
         </h1>
-        <p class="text-emerald-600">Enter or scan your registration code</p>
+        <p class="text-emerald-600 text-sm mt-1">
+          Enter or scan a participant's registration code
+        </p>
       </div>
 
-      <div id="qr-reader" class="relative"></div>
-
-      <!-- Input Card (Shown only if no participant data) -->
-      <div
-        v-if="!participant"
-        class="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-emerald-100"
-      >
-        <label class="block text-sm font-semibold text-emerald-700 mb-3">
-          Registration Code
-        </label>
-        <div class="relative">
-          <input
-            v-model="regCode"
-            type="text"
-            placeholder="Enter your registration code"
-            class="w-full px-4 py-4 border-2 border-emerald-200 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all duration-200 text-gray-800 font-medium placeholder-emerald-300"
-          />
-          <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <svg
-              v-if="regCode.trim()"
-              class="w-5 h-5 text-emerald-500"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- Action Buttons (Shown only if no participant data) -->
-      <div v-if="!participant" class="space-y-4 mb-6">
-        <!-- Scan Button -->
-        <button
-          @click="startScanner"
-          :disabled="isScanning"
-          class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
+      <!-- ============ INPUT STAGE ============ -->
+      <template v-if="!participant">
+        <!-- QR Reader (camera viewport) -->
+        <div
+          v-show="isScanning"
+          class="bg-white rounded-2xl shadow-xl overflow-hidden border border-emerald-100 mb-4"
         >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.99c.28 0 .52-.21.52-.5 0-.28-.24-.5-.52-.5H12v3z"
-            ></path>
-          </svg>
-          {{ isScanning ? "Scanning..." : "Scan QR Code" }}
-        </button>
-
-        <!-- Bottom Buttons Row -->
-        <div class="flex gap-3">
-          <button
-            @click="debouncedVerifyRegistration"
-            :disabled="!regCode.trim() || isVerifying"
-            class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            <svg
-              v-if="isVerifying"
-              class="animate-spin w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              ></circle>
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-            <span>{{ isVerifying ? "Verifying..." : "Submit" }}</span>
-          </button>
-
-          <button
-            @click="clearRegCode"
-            :disabled="!regCode.trim()"
-            class="flex-shrink-0 bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 disabled:bg-gray-200 disabled:cursor-not-allowed"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-              ></path>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- QR Reader Container -->
-      <div
-        v-if="!participant"
-        v-show="isScanning"
-        class="bg-white rounded-2xl shadow-xl overflow-hidden border border-emerald-100"
-      >
-        <div class="bg-emerald-50 px-4 py-3 border-b border-emerald-100">
-          <div class="flex items-center justify-between">
-            <span class="text-emerald-700 font-semibold">QR Code Scanner</span>
-            <button
-              @click="stopScanner"
-              class="text-emerald-600 hover:text-emerald-800 transition-colors"
-            >
-              <svg
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 8V6a2 2 0 012-2h2M4 16v2a2 2 0 002 2h2m8-16h2a2 2 0 012 2v2m-4 12h2a2 2 0 002-2v-2"
+                  ></path>
+                </svg>
+                <span class="font-semibold text-sm">QR Code Scanner</span>
+              </div>
+              <button
+                @click="stopScanner"
+                class="text-white/80 hover:text-white hover:bg-white/20 rounded-lg p-1 transition-colors"
+                aria-label="Close scanner"
               >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="qr-reader" class="relative w-full aspect-square bg-black/90"></div>
+          <p class="text-center text-xs text-gray-500 py-2 bg-emerald-50/50">
+            Align the QR code within the camera frame
+          </p>
+        </div>
+
+        <!-- Input Card -->
+        <div
+          class="bg-white rounded-2xl shadow-xl p-6 mb-4 border border-emerald-100"
+        >
+          <label class="block text-sm font-semibold text-emerald-700 mb-2">
+            Registration Code
+          </label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 5l-7 7m0 0l7 7m-7-7h12"
+                ></path>
+              </svg>
+            </span>
+            <input
+              v-model="regCode"
+              type="text"
+              placeholder="e.g. QURAN-2026-0001"
+              class="w-full pl-11 pr-10 py-3.5 border-2 border-emerald-200 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all duration-200 text-gray-800 font-medium placeholder-gray-300 outline-none"
+            />
+            <button
+              v-if="regCode.trim()"
+              @click="clearRegCode"
+              type="button"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-red-500 transition-colors"
+              aria-label="Clear"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -167,97 +107,39 @@
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- Participant Details Card (Shown after successful verification) -->
-      <div
-        v-if="participant"
-        class="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-emerald-100"
-      >
-        <div class="text-center mb-4">
-          <h2 class="text-xl font-bold text-emerald-900">
-            Participant Details
-          </h2>
-        </div>
+        <!-- Action Buttons -->
         <div class="space-y-3">
-          <div class="flex justify-between">
-            <span class="text-sm font-semibold text-emerald-700">
-              Name (EN):
-            </span>
-            <span class="text-sm text-gray-800">{{ participant.name_en }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-sm font-semibold text-emerald-700">
-              Name (BN):
-            </span>
-            <span class="text-sm text-gray-800">{{ participant.name_bn }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-sm font-semibold text-emerald-700">
-              Registration No:
-            </span>
-            <span class="text-sm text-gray-800">{{ participant.reg_no }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-sm font-semibold text-emerald-700">
-              Date of Birth:
-            </span>
-            <span class="text-sm text-gray-800">
-              {{ formatDate(participant.dob) }}
-            </span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-sm font-semibold text-emerald-700">Phone:</span>
-            <span class="text-sm text-gray-800">{{ participant.phone }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-sm font-semibold text-emerald-700">Room:</span>
-            <span class="text-sm text-gray-800">
-              {{ participant.room_number }}
-            </span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-sm font-semibold text-emerald-700">Serial:</span>
-            <span class="text-sm text-gray-800">{{ participant.serial }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-sm font-semibold text-emerald-700">
-              Exam Time:
-            </span>
-            <span class="text-sm text-gray-800">
-              {{ participant.exam_time }}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Attendance Selection Card (Shown after successful verification) -->
-      <div
-        v-if="participant"
-        class="bg-white rounded-2xl shadow-xl p-6 mb-6 border border-emerald-100"
-      >
-        <label class="block text-sm font-semibold text-emerald-700 mb-3">
-          Attendance Status
-        </label>
-        <div class="flex gap-4 mb-4">
-          <inputs-base-radio
-            :options="attendanceOptions"
-            v-model="attendanceStatus"
-            :required="true"
-            :colors="{
-              2: 'bg-red-500 text-white border-red-500',
-            }"
-          />
-        </div>
-        <div class="flex gap-3">
           <button
-            @click="debouncedSubmitAttendance"
-            :disabled="!attendanceStatus || isSubmitting"
-            class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            @click="startScanner"
+            :disabled="isScanning"
+            class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <svg
-              v-if="isSubmitting"
-              class="animate-spin w-4 h-4"
+              class="w-5 h-5"
+              :class="{ 'animate-pulse': isScanning }"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 8V6a2 2 0 012-2h2M4 16v2a2 2 0 002 2h2m8-16h2a2 2 0 012 2v2m-4 12h2a2 2 0 002-2v-2M9 9h6v6H9V9z"
+              ></path>
+            </svg>
+            {{ isScanning ? "Scanning..." : "Scan QR Code" }}
+          </button>
+
+          <button
+            @click="debouncedVerifyRegistration"
+            :disabled="!regCode.trim() || isVerifying"
+            class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3.5 px-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:from-gray-300 disabled:to-gray-300 flex items-center justify-center gap-2"
+          >
+            <svg
+              v-if="isVerifying"
+              class="animate-spin w-5 h-5"
               fill="none"
               viewBox="0 0 24 24"
             >
@@ -272,18 +154,11 @@
               <path
                 class="opacity-75"
                 fill="currentColor"
-                d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
               ></path>
             </svg>
-            <span>
-              {{ isSubmitting ? "Submitting..." : "Submit Attendance" }}
-            </span>
-          </button>
-          <button
-            @click="clearParticipant"
-            class="flex-shrink-0 bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
-          >
             <svg
+              v-else
               class="w-5 h-5"
               fill="none"
               stroke="currentColor"
@@ -293,26 +168,202 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                d="M5 13l4 4L19 7"
               ></path>
             </svg>
+            <span>{{ isVerifying ? "Verifying..." : "Verify Registration" }}</span>
           </button>
         </div>
-      </div>
+      </template>
 
-      <!-- Status Messages -->
-      <div v-if="statusMessage" class="mt-6">
+      <!-- ============ RESULT STAGE ============ -->
+      <template v-if="participant">
+        <!-- Current Status Banner (the key "avoid confusion" feature) -->
         <div
           :class="[
-            'p-4 rounded-xl border shadow-sm',
-            statusType === 'success'
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-              : statusType === 'error'
-              ? 'bg-red-50 border-red-200 text-red-700'
-              : 'bg-blue-50 border-blue-200 text-blue-700',
+            'rounded-2xl shadow-lg p-4 mb-4 border-2 flex items-center gap-3',
+            currentAttendanceBadge.bg,
           ]"
         >
-          <div class="flex items-center gap-3">
+          <div
+            class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+            :class="currentAttendanceBadge.iconBg"
+          >
+            <svg
+              v-if="currentAttendanceBadge.type === 'present'"
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M5 13l4 4L19 7"
+              ></path>
+            </svg>
+            <svg
+              v-else-if="currentAttendanceBadge.type === 'absent'"
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+            <svg
+              v-else
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4m0 4h.01M12 21a9 9 0 100-18 9 9 0 000 18z"
+              ></path>
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold uppercase tracking-wide opacity-80">
+              Current Attendance Status
+            </p>
+            <p class="text-lg font-bold leading-tight">
+              {{ currentAttendanceBadge.label }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Participant Details Card -->
+        <div
+          class="bg-white rounded-2xl shadow-xl overflow-hidden mb-4 border border-emerald-100"
+        >
+          <!-- Card header -->
+          <div
+            class="bg-gradient-to-r from-emerald-500 to-emerald-600 px-5 py-4 flex items-center gap-3"
+          >
+            <div
+              class="w-11 h-11 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold text-lg"
+            >
+              {{ initials }}
+            </div>
+            <div class="text-white min-w-0">
+              <p class="font-bold leading-tight truncate">{{ participant.name_en }}</p>
+              <p class="text-sm text-emerald-50 leading-tight truncate">
+                {{ participant.name_bn }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Detail rows -->
+          <dl class="divide-y divide-gray-100">
+            <div
+              v-for="row in detailRows"
+              :key="row.label"
+              class="flex items-center justify-between px-5 py-3"
+            >
+              <dt class="text-sm font-medium text-gray-500 flex items-center gap-2">
+                <span class="text-emerald-500" v-html="row.icon"></span>
+                {{ row.label }}
+              </dt>
+              <dd class="text-sm font-semibold text-gray-800 text-right">
+                {{ row.value }}
+              </dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Attendance Selection Card -->
+        <div
+          class="bg-white rounded-2xl shadow-xl p-6 mb-4 border border-emerald-100"
+        >
+          <label class="block text-sm font-semibold text-emerald-700 mb-3">
+            Update Attendance Status
+          </label>
+          <inputs-base-radio
+            :options="attendanceOptions"
+            v-model="attendanceStatus"
+            :required="true"
+            :colors="{
+              1: 'bg-emerald-500 text-white border-emerald-500',
+              2: 'bg-red-500 text-white border-red-500',
+            }"
+          />
+
+          <div class="flex gap-3 mt-5">
+            <button
+              @click="debouncedSubmitAttendance"
+              :disabled="!attendanceStatus || isSubmitting"
+              class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 disabled:bg-gray-300 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <svg
+                v-if="isSubmitting"
+                class="animate-spin w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                ></path>
+              </svg>
+              <span>{{ isSubmitting ? "Submitting..." : "Submit Attendance" }}</span>
+            </button>
+            <button
+              @click="clearParticipant"
+              class="flex-shrink-0 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 font-semibold py-3 px-4 rounded-xl transition-all duration-200"
+              aria-label="Clear"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </template>
+
+      <!-- Status Messages -->
+      <transition
+        enter-active-class="transition duration-300 ease-out"
+        enter-from-class="opacity-0 translate-y-2"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition duration-200 ease-in"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 translate-y-2"
+      >
+        <div v-if="statusMessage" class="mt-4">
+          <div
+            :class="[
+              'p-4 rounded-xl border shadow-sm flex items-center gap-3',
+              statusType === 'success'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                : statusType === 'error'
+                ? 'bg-red-50 border-red-200 text-red-700'
+                : 'bg-blue-50 border-blue-200 text-blue-700',
+            ]"
+          >
             <svg
               v-if="statusType === 'success'"
               class="w-5 h-5 flex-shrink-0"
@@ -337,10 +388,10 @@
                 clip-rule="evenodd"
               ></path>
             </svg>
-            <span class="font-medium">{{ statusMessage }}</span>
+            <span class="font-medium text-sm">{{ statusMessage }}</span>
           </div>
         </div>
-      </div>
+      </transition>
     </div>
   </section>
 </template>
@@ -373,18 +424,103 @@
 
   // Reactive state for participant and attendance
   const participant = ref(null);
+  const currentAttendance = ref(null); // existing attendance from server
   const attendanceStatus = ref(null);
   const isSubmitting = ref(false);
 
   // Format date to "M d, Y" (e.g., "Mar 10, 2000")
   const formatDate = (date) => {
-    if (!date) return "";
+    if (!date) return "—";
     return new Date(date).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
     });
   };
+
+  // Initials for the avatar badge
+  const initials = computed(() => {
+    const name = participant.value?.name_en || participant.value?.name_bn || "";
+    return name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0])
+      .join("")
+      .toUpperCase();
+  });
+
+  // Build the participant detail rows
+  const detailRows = computed(() => [
+    {
+      label: "Registration No",
+      value: participant.value?.reg_no || "—",
+      icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"></path></svg>',
+    },
+    {
+      label: "Date of Birth",
+      value: formatDate(participant.value?.dob),
+      icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>',
+    },
+    {
+      label: "Phone",
+      value: participant.value?.phone || "—",
+      icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.95.68l1.5 4.49a1 1 0 01-.5 1.21l-2.26 1.13a11 11 0 005.52 5.52l1.13-2.26a1 1 0 011.21-.5l4.49 1.5a1 1 0 01.68.95V19a2 2 0 01-2 2h-1C9.72 21 3 14.28 3 6V5z"></path></svg>',
+    },
+    {
+      label: "Room",
+      value: participant.value?.room_number || "—",
+      icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>',
+    },
+    {
+      label: "Serial",
+      value: participant.value?.serial ?? "—",
+      icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>',
+    },
+    {
+      label: "Exam Time",
+      value: participant.value?.exam_time || "—",
+      icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
+    },
+  ]);
+
+  // Compute the current attendance badge config — this is what the volunteer
+  // sees immediately after scanning, to avoid confusion on re-scan.
+  const currentAttendanceBadge = computed(() => {
+    const status = currentAttendance.value?.attendance_status;
+    const updatedAt = currentAttendance.value?.updated_at;
+    const time = updatedAt
+      ? new Date(updatedAt).toLocaleString("en-US", {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "";
+
+    if (status === 1 || status === "1") {
+      return {
+        type: "present",
+        label: time ? `Already Present · ${time}` : "Already Present",
+        bg: "bg-emerald-50 border-emerald-300 text-emerald-800",
+        iconBg: "bg-emerald-500",
+      };
+    }
+    if (status === 2 || status === "2") {
+      return {
+        type: "absent",
+        label: time ? `Marked Absent · ${time}` : "Marked Absent",
+        bg: "bg-red-50 border-red-300 text-red-800",
+        iconBg: "bg-red-500",
+      };
+    }
+    return {
+      type: "pending",
+      label: "Not recorded yet",
+      bg: "bg-amber-50 border-amber-300 text-amber-800",
+      iconBg: "bg-amber-500",
+    };
+  });
 
   // Show status message
   const showStatus = (message, type = "info", duration = 5000) => {
@@ -516,18 +652,31 @@
 
       const { data } = await useAdminAuthenticatedAxios(endPoint, payload);
 
-      // Map API response to participant data
+      // Backend returns { allocation: {...}, current_attendance: {...} }
+      const allocation = data.data.allocation || data.data;
+      const fetchedAttendance =
+        data.data.current_attendance ??
+        (data.data.attendance_status !== undefined ? data.data : null);
+
+      const form = allocation.user_competition_form || {};
+
       participant.value = {
-        name_en: data.data.user_competition_form.name_en,
-        name_bn: data.data.user_competition_form.name_bn,
-        reg_no: data.data.user_competition_form.reg_no,
-        dob: data.data.user_competition_form.dob,
-        phone: data.data.user_competition_form.phone,
-        room_number: data.data.room_number,
-        serial: data.data.serial,
-        exam_time: data.data.exam_time,
-        user_competition_form_id: data.data.user_competition_form_id,
+        name_en: form.name_en,
+        name_bn: form.name_bn,
+        reg_no: form.reg_no,
+        dob: form.dob,
+        phone: form.phone,
+        room_number: allocation.room_number,
+        serial: allocation.serial,
+        exam_time: allocation.exam_time,
+        user_competition_form_id: allocation.user_competition_form_id,
       };
+
+      currentAttendance.value = fetchedAttendance;
+      // Pre-select the existing status so volunteers can see what was already chosen
+      attendanceStatus.value = fetchedAttendance?.attendance_status
+        ? parseInt(fetchedAttendance.attendance_status)
+        : null;
 
       showStatus("Registration verified successfully!", "success");
 
@@ -573,7 +722,12 @@
       };
 
       const { data } = await useAdminAuthenticatedAxios(endPoint, payload);
-      console.log(data);
+
+      // Reflect the freshly submitted status in the banner immediately.
+      currentAttendance.value = data?.data ?? {
+        attendance_status: parseInt(attendanceStatus.value),
+        updated_at: new Date().toISOString(),
+      };
 
       showStatus("Attendance submitted successfully!", "success");
 
@@ -581,6 +735,7 @@
       setTimeout(() => {
         participant.value = null;
         attendanceStatus.value = null;
+        currentAttendance.value = null;
       }, 2000);
     } catch (error) {
       console.error("Attendance submission error:", error);
@@ -612,6 +767,7 @@
   const clearParticipant = async () => {
     participant.value = null;
     attendanceStatus.value = null;
+    currentAttendance.value = null;
     await stopScanner();
     showStatus("Form cleared", "info", 2000);
   };

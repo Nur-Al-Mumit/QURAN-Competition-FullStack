@@ -42,9 +42,25 @@ class VolunteerController extends Controller
         $user = AttendanceAllocation::where('user_competition_form_id', $formId)
             ->first();
 
+        if (!$user) {
+            return JsonResponse::error('Allocation not found', 404);
+        }
+
         $user->load('userCompetitionForm');
 
-        return JsonResponse::success($user);
+        // Include the participant's current attendance record (if any) so the
+        // volunteer can see whether attendance was already taken — this avoids
+        // confusion when a QR code is scanned more than once.
+        $currentAttendance = UserAttendance::where('user_id', $user->user_id)
+            ->where('user_competition_form_id', $user->user_competition_form_id)
+            ->where('season_id', $user->season_id)
+            ->orderByDesc('updated_at')
+            ->first();
+
+        return JsonResponse::success([
+            'allocation' => $user,
+            'current_attendance' => $currentAttendance,
+        ]);
     }
 
     public function submitUserAttendance(Request $request)
@@ -67,6 +83,10 @@ class VolunteerController extends Controller
             return JsonResponse::error('Registration not found', 404);
         }
 
+        // Resolve the attendance allocation (room/serial/exam time) this record
+        // belongs to, so we can link the attendance to it.
+        $allocation = AttendanceAllocation::where('user_competition_form_id', $form->id)->first();
+
         try {
             $attendance = UserAttendance::updateOrCreate(
                 [
@@ -75,6 +95,7 @@ class VolunteerController extends Controller
                     'season_id' => $form->season_id,
                 ],
                 [
+                    'attendance_allocation_id' => $allocation?->id,
                     'attendance_status' => $request->input('attendance_status'),
                     'updated_by' => $admin->id,
                 ]
