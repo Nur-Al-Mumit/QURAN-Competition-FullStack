@@ -2,6 +2,55 @@
   <div
     class="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-amber-50"
   >
+    <!-- Initial notice popup — opens on page load. Uses the same -->
+    <!-- <modal :is-open="..."> pattern as the registration disclaimer. -->
+    <modal :is-open="isNoticeModalOpen">
+      <template #body>
+        <div class="p-4 sm:p-6 mx-auto w-full max-w-xl">
+          <!-- Header -->
+          <div class="text-center mb-5">
+            <div
+              class="inline-flex items-center justify-center w-16 h-16 bg-amber-100 rounded-full mb-4"
+            >
+              <svg
+                class="w-8 h-8 text-amber-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                />
+              </svg>
+            </div>
+            <h2 class="text-xl font-bold text-gray-900 mb-2">
+              বিশেষ দ্রষ্টব্য
+            </h2>
+            <div class="w-16 h-1 bg-emerald-500 mx-auto rounded-full"></div>
+          </div>
+
+          <!-- Notice detail (shared with the Mubtadi section detail) -->
+          <div
+            class="text-gray-700 space-y-4"
+            v-html="mubtadiNoteDetail"
+          ></div>
+
+          <!-- Acknowledge button -->
+          <div class="mt-6 text-center">
+            <button
+              @click="() => (isNoticeModalOpen = false)"
+              class="inline-flex items-center justify-center px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow transition-colors"
+            >
+              বুঝেছি
+            </button>
+          </div>
+        </div>
+      </template>
+    </modal>
+
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <!-- Page header -->
       <div class="text-center mb-10">
@@ -213,6 +262,10 @@
   // Client-side search query. Empty by default → the whole list shows.
   const searchQuery = ref("");
 
+  // Initial notice popup — opens automatically on page load, same
+  // pattern as the registration disclaimer modal.
+  const isNoticeModalOpen = ref(true);
+
   // Training notice shown for the Mubtadi (Beginner) section.
   // `note` = short summary always visible under the section header;
   // `noteDetail` = full HTML rendered inside the detail modal.
@@ -221,9 +274,9 @@
 
   const mubtadiNoteDetail = `
     <p><strong>Mubtadi (المبتدئ) — Beginner</strong> ক্যাটাগরিতে যারা সুযোগ পেয়েছেন, তাদের জন্য এই ৫ দিনের ট্রেইনিং সেশনটি <strong>বাধ্যতামূলক</strong> এবং <strong>Mahir (الماهر) — Expert</strong> গ্রুপের জন্য এটি <strong>ঐচ্ছিক (Optional)</strong>।</p>
-    <p>Beginner ক্যাটাগরির বিজয়ী/মনোনীত অংশগ্রহণকারীদের ৫ দিনের ট্রেইনিং সেশনের মধ্যে <strong>ন্যূনতম ৩ দিন</strong> উপস্থিত থাকতে হবে, অন্যথায় প্রতিযোগিতায় অংশগ্রহণের জন্য যোগ্য বলে বিবেচিত হবেন না।</p>
+    <p>Beginner ক্যাটাগরির মনোনীত অংশগ্রহণকারীদের ৫ দিনের ট্রেইনিং সেশনের মধ্যে <strong>ন্যূনতম ৩ দিন</strong> উপস্থিত থাকতে হবে, অন্যথায় প্রতিযোগিতায় অংশগ্রহণের জন্য যোগ্য বলে বিবেচিত হবেন না।</p>
     <div class="rounded-lg bg-emerald-50 border border-emerald-200 p-4 space-y-2">
-      <p><strong>📅 তারিখ ও সময়:</strong> ২২ জুলাই ২০২৬, মাগরিবের সালাতের পর</p>
+      <p><strong>📅 তারিখ ও সময়:</strong> ২২ - ২৭ জুলাই ২০২৬, মাগরিবের সালাতের পর</p>
       <p><strong>📍 স্থান/ভেন্যু:</strong> হেরিটেজ হাইটস এন্ড ব্যাংকুয়েট হল, মেট্রোপলিটন মার্কেট (২য় তলা), সুবহানীঘাট, সিলেট <span class="text-gray-500">(প্রাইমারি রাউন্ড অনুষ্ঠিত হওয়ার স্থান)</span>।</p>
     </div>
     <p class="text-sm text-gray-500 italic">(উল্লেখ্য, অংশগ্রহণকারীরা চাইলে ভেন্যুতে গিয়েও সালাত আদায় করতে পারবেন; সেখানে সালাত আদায়ের সুব্যবস্থা থাকবে।)</p>
