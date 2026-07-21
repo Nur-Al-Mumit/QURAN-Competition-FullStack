@@ -73,24 +73,13 @@ class VivaResultController extends Controller
         $resultCategories = ResultCategory::orderBy('id')
             ->get(['id', 'name']);
 
-        // Active examiners in deterministic order, each tagged with a
-        // serial letter (A, B, C, ...) by position.
+        // Active examiners list (informational; cover lettering comes from
+        // the canonical attendance_allocations.group column, not from here).
         $examiners = Admin::where('assigned_role', 3)
             ->where('is_active', 1)
             ->orderBy('id')
             ->get(['id', 'name', 'phone'])
-            ->values()
-            ->map(function ($admin, $index) {
-                return [
-                    'id'     => $admin->id,
-                    'name'   => $admin->name,
-                    'phone'  => $admin->phone,
-                    'letter' => chr(65 + $index), // A, B, C, ...
-                ];
-            });
-
-        // Map admin_id => letter for quick lookup when building groups.
-        $letterByAdminId = $examiners->pluck('letter', 'id');
+            ->values();
 
         // Attendance allocations + current decision for the season.
         $query = AttendanceAllocation::with([
@@ -103,42 +92,113 @@ class VivaResultController extends Controller
             $query->where('season_id', $seasonId);
         }
 
-        $allocations = $query->get()->groupBy('admin_id');
+        $allocations = $query->get();
+
+        // Resolve the canonical group letter for every allocation. The
+        // `group` column is preferred, but historical rows can have a
+        // null/stale group when the active examiner set changed after
+        // allocation — so we fall back to the serial prefix (e.g. the
+        // "B" in "B-02"), which is always set and consistent. Anything
+        // still unresolved is bucketed under "?".
+        $letterOf = function ($item) {
+            $g = trim((string) ($item->group ?? ''));
+            if ($g !== '') {
+                return strtoupper(substr($g, 0, 1));
+            }
+            if (preg_match('/^\s*([A-Za-z])/', (string) $item->serial, $m)) {
+                return strtoupper($m[1]);
+            }
+            return '?';
+        };
+
+        // Re-key allocations by resolved letter so the cover order is
+        // always A, B, C, ... regardless of data drift. Plain array used
+        // for accumulation to avoid Collection's offsetGet notice when a
+        // letter key is encountered for the first time.
+        $byLetter = [];
+        foreach ($allocations as $item) {
+            $byLetter[$letterOf($item)][] = $item;
+        }
+        ksort($byLetter);
+
+        // If no explicit exam-day event is configured, derive the cover
+        // date / time range from the allocations themselves so the cover
+        // is never empty.
+        $derivedDate = null;
+        $derivedStart = null;
+        $derivedEnd = null;
+        foreach ($allocations as $item) {
+            if (!$item->exam_time) {
+                continue;
+            }
+            $parts = array_map('trim', explode('-', $item->exam_time));
+            if (count($parts) === 2) {
+                $derivedStart = $derivedStart ?? $parts[0];
+                $derivedEnd = $parts[1];
+            }
+            if (!$derivedDate) {
+                $derivedDate = $item->created_at?->toDateString();
+            }
+        }
 
         $groups = [];
-        foreach ($allocations as $adminId => $items) {
-            $admin = $items->first()->admin;
+        foreach ($byLetter as $groupLetter => $items) {
+            $first = collect($items)->first();
+            $admin = $first->admin;
 
-            $students = $items->map(function ($item) {
-                $form = $item->userCompetitionForm;
-                $decision = $item->userPreliminaryResult;
+            $students = collect($items)
+                ->sortBy(function ($item) {
+                    if (preg_match('/(\d+)\s*$/', (string) $item->serial, $m)) {
+                        return (int) $m[1];
+                    }
+                    return (string) $item->serial;
+                })
+                ->map(function ($item) {
+                    $form = $item->userCompetitionForm;
+                    $decision = $item->userPreliminaryResult;
 
-                return [
-                    'serial'                  => $item->serial,
-                    'reg_no'                  => $form->reg_no ?? '',
-                    'name_en'                 => $form->name_en ?? '',
-                    'need_training'           => $form && $form->need_training ? 'Yes' : 'No',
-                    'education_background'    => $this->getEducationType($form->education_background ?? null),
-                    'phone'                   => $form->phone ?? '',
-                    'exam_time'               => $item->exam_time,
-                    'user_id'                 => $item->user_id,
-                    'user_competition_form_id' => $item->user_competition_form_id,
-                    'attendance_allocation_id' => $item->id,
-                    'result_category_id'      => $decision?->result_category_id,
-                    'comment'                 => $decision?->comment,
-                ];
-            })->values();
+                    return [
+                        'serial'                  => $item->serial,
+                        'reg_no'                  => $form->reg_no ?? '',
+                        'name_en'                 => $form->name_en ?? '',
+                        'need_training'           => $form && $form->need_training ? 'Yes' : 'No',
+                        'education_background'    => $this->getEducationType($form->education_background ?? null),
+                        'phone'                   => $form->phone ?? '',
+                        'exam_time'               => $item->exam_time,
+                        'user_id'                 => $item->user_id,
+                        'user_competition_form_id' => $item->user_competition_form_id,
+                        'attendance_allocation_id' => $item->id,
+                        'result_category_id'      => $decision?->result_category_id,
+                        'comment'                 => $decision?->comment,
+                    ];
+                })->values();
 
             $groups[] = [
                 'examiner' => [
-                    'id'          => $admin->id,
-                    'name'        => $admin->name,
-                    'phone'       => $admin->phone,
-                    'room_number' => $items->first()->room_number,
-                    'letter'      => $letterByAdminId[$admin->id] ?? null,
+                    'id'          => $admin?->id,
+                    // Trim stray whitespace/newlines sometimes present in names.
+                    'name'        => $admin ? trim(preg_replace('/\s+/', ' ', $admin->name)) : null,
+                    'phone'       => $admin?->phone,
+                    'room_number' => $first->room_number,
+                    // Canonical letter, resolved from group/serial.
+                    'letter'      => $groupLetter,
                 ],
                 'students' => $students,
             ];
+        }
+
+        // Normalise exam_day: prefer the timeline_events row; otherwise
+        // synthesise one from the allocations so the cover is never empty.
+        if (!$examDay) {
+            $examDay = [
+                'title'      => null,
+                'start_date' => $derivedStart ? ($derivedDate . ' ' . $derivedStart) : null,
+                'end_date'   => $derivedEnd ? ($derivedDate . ' ' . $derivedEnd) : null,
+                'description'=> null,
+            ];
+            if (!$derivedStart && !$derivedEnd) {
+                $examDay = null;
+            }
         }
 
         return JsonResponse::success([

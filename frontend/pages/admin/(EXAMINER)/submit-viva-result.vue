@@ -38,7 +38,7 @@
       <!-- Examiner wise group -->
       <div
         v-for="group in groups"
-        :key="group.examiner.id"
+        :key="group.examiner.letter"
         class="mb-12 examiner-group"
       >
         <!-- Cover Page for Each Examiner -->
@@ -80,6 +80,17 @@
                   </div>
 
                   <div class="flex justify-center gap-12">
+                    <div>
+                      <label
+                        class="text-emerald-700 font-medium text-lg block mb-2"
+                      >
+                        Group:
+                      </label>
+                      <div class="text-6xl font-black text-emerald-800">
+                        {{ group.examiner.letter }}
+                      </div>
+                    </div>
+
                     <div>
                       <label
                         class="text-emerald-700 font-medium text-lg block mb-2"
@@ -238,6 +249,10 @@
   const seasons = ref([]);
   const filters = ref({ season_id: "" });
 
+  // The season id the backend actually resolved for the current view
+  // (defaults to the active season when the filter is "All Seasons").
+  const resolvedSeasonId = ref(null);
+
   const groups = ref([]);
   const examDay = ref(null);
   const resultCategories = ref([]);
@@ -291,9 +306,14 @@
         groups.value = payload.groups || [];
         examDay.value = payload.exam_day || null;
         resultCategories.value = payload.result_categories || [];
+        // Capture the season id the backend actually used (it defaults to
+        // the active season when "All Seasons" is selected). This is what
+        // we send back when persisting decisions.
+        resolvedSeasonId.value = payload.season_id ?? null;
       } else {
         groups.value = [];
         examDay.value = null;
+        resolvedSeasonId.value = null;
       }
     } catch (err) {
       window.showError(
@@ -318,7 +338,7 @@
         {
           user_id: student.user_id,
           user_competition_form_id: student.user_competition_form_id,
-          season_id: filters.value.season_id,
+          season_id: resolvedSeasonId.value,
           attendance_allocation_id: allocationId,
           result_category_id: student.result_category_id,
         },
