@@ -1,5 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-amber-50">
+  <div
+    class="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-amber-50"
+  >
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <!-- Page header -->
       <div class="text-center mb-10">
@@ -123,7 +125,8 @@
             />
           </svg>
           No participant found for
-          <span class="font-semibold">"{{ searchQuery }}"</span>.
+          <span class="font-semibold">"{{ searchQuery }}"</span>
+          .
         </div>
 
         <template v-else>
@@ -149,6 +152,8 @@
             badge-text="Mubtadi"
             badge-tone="emerald"
             :rows="filtered.mubtadi"
+            :note="mubtadiNote"
+            :note-detail="mubtadiNoteDetail"
           />
 
           <!-- Section 3: Fail -->
@@ -177,7 +182,12 @@
 
           <!-- Everything empty but no search (no data at all) -->
           <div
-            v-if="!filtered.mahir.length && !filtered.mubtadi.length && !filtered.other.length && !filtered.absent.length"
+            v-if="
+              !filtered.mahir.length &&
+              !filtered.mubtadi.length &&
+              !filtered.other.length &&
+              !filtered.absent.length
+            "
             class="text-center text-gray-500 bg-white rounded-2xl border border-gray-200 py-16"
           >
             No result data available for this season.
@@ -203,9 +213,30 @@
   // Client-side search query. Empty by default → the whole list shows.
   const searchQuery = ref("");
 
+  // Training notice shown for the Mubtadi (Beginner) section.
+  // `note` = short summary always visible under the section header;
+  // `noteDetail` = full HTML rendered inside the detail modal.
+  const mubtadiNote =
+    "Mubtadi (المبتدئ) — Beginner ক্যাটাগরিতে যারা সুযোগ পেয়েছেন, তাদের জন্য এই ৫ দিনের ট্রেইনিং সেশনটি বাধ্যতামূলক এবং Mahir (الماهر) — Expert গ্রুপের জন্য এটি ঐচ্ছিক (Optional)। বিস্তারিত জানতে নিচের বাটনে ক্লিক করুন।";
+
+  const mubtadiNoteDetail = `
+    <p><strong>Mubtadi (المبتدئ) — Beginner</strong> ক্যাটাগরিতে যারা সুযোগ পেয়েছেন, তাদের জন্য এই ৫ দিনের ট্রেইনিং সেশনটি <strong>বাধ্যতামূলক</strong> এবং <strong>Mahir (الماهر) — Expert</strong> গ্রুপের জন্য এটি <strong>ঐচ্ছিক (Optional)</strong>।</p>
+    <p>Beginner ক্যাটাগরির বিজয়ী/মনোনীত অংশগ্রহণকারীদের ৫ দিনের ট্রেইনিং সেশনের মধ্যে <strong>ন্যূনতম ৩ দিন</strong> উপস্থিত থাকতে হবে, অন্যথায় প্রতিযোগিতায় অংশগ্রহণের জন্য যোগ্য বলে বিবেচিত হবেন না।</p>
+    <div class="rounded-lg bg-emerald-50 border border-emerald-200 p-4 space-y-2">
+      <p><strong>📅 তারিখ ও সময়:</strong> ২২ জুলাই ২০২৬, মাগরিবের সালাতের পর</p>
+      <p><strong>📍 স্থান/ভেন্যু:</strong> হেরিটেজ হাইটস এন্ড ব্যাংকুয়েট হল, মেট্রোপলিটন মার্কেট (২য় তলা), সুবহানীঘাট, সিলেট <span class="text-gray-500">(প্রাইমারি রাউন্ড অনুষ্ঠিত হওয়ার স্থান)</span>।</p>
+    </div>
+    <p class="text-sm text-gray-500 italic">(উল্লেখ্য, অংশগ্রহণকারীরা চাইলে ভেন্যুতে গিয়েও সালাত আদায় করতে পারবেন; সেখানে সালাত আদায়ের সুব্যবস্থা থাকবে।)</p>
+  `;
+
   const fetchSeasons = async () => {
     try {
-      const { data } = await useAxios("/result-card/seasons", null, null, "GET");
+      const { data } = await useAxios(
+        "/result-card/seasons",
+        null,
+        null,
+        "GET",
+      );
       if (data?.data?.seasons) {
         seasons.value = data.data.seasons;
         // Default to the active season so the first load always shows
