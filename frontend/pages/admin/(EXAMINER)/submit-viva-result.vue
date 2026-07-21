@@ -1,5 +1,35 @@
 <template>
   <div class="p-6 bg-gray-50 min-h-screen attendance-sheet print:p-0 print:m-0">
+    <!-- Season filter header (screen only) -->
+    <div class="mb-6 rounded-lg bg-white p-6 shadow-sm print:hidden">
+      <h2 class="mb-4 text-lg font-semibold text-gray-900">Filters</h2>
+      <div
+        class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+      >
+        <!-- Season Filter -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Season
+          </label>
+          <select
+            v-model="filters.season_id"
+            @change="fetchData"
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="">All Seasons</option>
+            <option
+              v-for="season in seasons"
+              :key="season.id"
+              :value="season.id"
+            >
+              {{ season.name }} ({{ season.year }})
+              <template v-if="season.is_active">— Active</template>
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <div v-if="loading" class="text-center text-gray-600">
       Loading attendance data...
     </div>
@@ -7,7 +37,7 @@
     <div v-else>
       <!-- Examiner wise group -->
       <div
-        v-for="group in attendanceData"
+        v-for="group in groups"
         :key="group.examiner.id"
         class="mb-12 examiner-group"
       >
@@ -78,13 +108,13 @@
                     <div class="flex items-center justify-center gap-3">
                       <div>
                         <div class="text-xl font-bold text-emerald-800">
-                          {{ getExamTimeRange(group.students).start }}
+                          {{ examTimeRange.start }}
                         </div>
                       </div>
                       <div class="border-t-3 border-emerald-500 w-8"></div>
                       <div>
                         <div class="text-xl font-bold text-emerald-800">
-                          {{ getExamTimeRange(group.students).end }}
+                          {{ examTimeRange.end }}
                         </div>
                       </div>
                     </div>
@@ -99,7 +129,15 @@
               <p class="text-gray-600 text-lg font-medium">
                 Attendance Sheet & Examination Record
               </p>
-              <p class="text-gray-500 text-sm mt-2">2 August, 2025</p>
+              <p class="text-gray-500 text-sm mt-2">
+                {{ examDayLabel }}
+              </p>
+              <p
+                v-if="group.examiner.letter"
+                class="text-emerald-700 text-sm mt-1 font-semibold"
+              >
+                Group: {{ group.examiner.letter }}
+              </p>
             </div>
           </div>
         </div>
@@ -120,6 +158,7 @@
                   </th>
                   <th class="p-2 border w-30">Exam Time</th>
                   <th class="p-2 border w-64">Comments</th>
+                  <th class="p-2 border w-40">Decision</th>
                 </tr>
               </thead>
               <tbody>
@@ -152,6 +191,25 @@
                     {{ student.exam_time }}
                   </td>
                   <td class="p-2 border align-top h-150px"></td>
+                  <td class="p-2 border align-top">
+                    <select
+                      v-model="student.result_category_id"
+                      :disabled="saving[student.attendance_allocation_id]"
+                      @change="saveDecision(student)"
+                      class="print:hidden w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
+                    >
+                      <option :value="null">—</option>
+                      <option
+                        v-for="cat in resultCategories"
+                        :key="cat.id"
+                        :value="cat.id"
+                      >
+                        {{ cat.name }}
+                      </option>
+                    </select>
+                    <!-- Empty box shown only when printing -->
+                    <span class="hidden print:block">&nbsp;</span>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -177,46 +235,173 @@
     layout: "split",
   });
 
-  const attendanceData = ref([]);
+  const seasons = ref([]);
+  const filters = ref({ season_id: "" });
+
+  const groups = ref([]);
+  const examDay = ref(null);
+  const resultCategories = ref([]);
   const loading = ref(true);
 
-  const fetchAttendanceData = async () => {
+  // Per-row saving flags keyed by attendance_allocation_id
+  const saving = ref({});
+
+  const fetchSeasons = async () => {
     try {
-      const endPoint = "/registration/get-attendance-allocation";
-      const { data } = await useAxios(endPoint, null, null, "POST");
-      attendanceData.value = data.data;
-    } catch (error) {
-      console.error("Error loading attendance data", error);
+      const endPoint = "/admin/viva-result/seasons";
+      const { data } = await useAdminAuthenticatedAxios(
+        endPoint,
+        null,
+        null,
+        "GET",
+      );
+
+      if (data?.data?.seasons) {
+        seasons.value = data.data.seasons;
+        const activeId = data.data.active_season_id;
+        if (activeId && filters.value.season_id === "") {
+          filters.value.season_id = String(activeId);
+        }
+      }
+    } catch (err) {
+      window.showError(
+        "Error!",
+        err?.response?.data?.message || "Failed to load seasons",
+        3000,
+      );
+    }
+  };
+
+  const fetchData = async () => {
+    loading.value = true;
+    try {
+      const query = filters.value.season_id
+        ? `?season_id=${filters.value.season_id}`
+        : "";
+      const endPoint = `/admin/viva-result/data${query}`;
+      const { data } = await useAdminAuthenticatedAxios(
+        endPoint,
+        null,
+        null,
+        "GET",
+      );
+
+      const payload = data?.data;
+      if (payload) {
+        groups.value = payload.groups || [];
+        examDay.value = payload.exam_day || null;
+        resultCategories.value = payload.result_categories || [];
+      } else {
+        groups.value = [];
+        examDay.value = null;
+      }
+    } catch (err) {
+      window.showError(
+        "Error!",
+        err?.response?.data?.message || "Failed to load attendance data",
+        3000,
+      );
     } finally {
       loading.value = false;
     }
   };
 
-  const getExamTimeRange = (students) => {
-    if (!students || students.length === 0) {
-      return { start: "N/A", end: "N/A" };
+  // Auto-save a single student's decision (no Save button).
+  const saveDecision = async (student) => {
+    const allocationId = student.attendance_allocation_id;
+    const previous = student.result_category_id;
+
+    saving.value = { ...saving.value, [allocationId]: true };
+    try {
+      const { data } = await useAdminAuthenticatedAxios(
+        "/admin/viva-result/decision",
+        {
+          user_id: student.user_id,
+          user_competition_form_id: student.user_competition_form_id,
+          season_id: filters.value.season_id,
+          attendance_allocation_id: allocationId,
+          result_category_id: student.result_category_id,
+        },
+        null,
+        "POST",
+      );
+
+      // Sync any server-normalised value back onto the row.
+      if (data?.data?.result_category_id !== undefined) {
+        student.result_category_id = data.data.result_category_id;
+      }
+    } catch (err) {
+      // Revert optimistic change on failure.
+      student.result_category_id = previous;
+      window.showError(
+        "Error!",
+        err?.response?.data?.message || "Failed to save decision",
+        3000,
+      );
+    } finally {
+      saving.value = { ...saving.value, [allocationId]: false };
     }
+  };
 
-    // Find first student with a valid exam_time
-    const firstWithTime = students.find(s => s.exam_time && s.exam_time.includes(" - "));
-    // Find last student with a valid exam_time
-    const lastWithTime = [...students].reverse().find(s => s.exam_time && s.exam_time.includes(" - "));
-
-    if (!firstWithTime || !lastWithTime) {
-      return { start: "N/A", end: "N/A" };
+  // Cover-page exam-time range. Prefers the season's exam-day event;
+  // falls back to deriving from the students' own exam_time values.
+  const examTimeRange = computed(() => {
+    if (examDay.value?.start_date && examDay.value?.end_date) {
+      const fmt = (val) => {
+        const d = new Date(val);
+        return d.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      };
+      return {
+        start: fmt(examDay.value.start_date),
+        end: fmt(examDay.value.end_date),
+      };
     }
+    return derivedExamTimeRange(groups.value);
+  });
 
-    const start = firstWithTime.exam_time.split(" - ")[0];
-    const end = lastWithTime.exam_time.split(" - ")[1];
+  const examDayLabel = computed(() => {
+    if (examDay.value?.start_date) {
+      return new Date(examDay.value.start_date).toLocaleDateString(undefined, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+    }
+    return "";
+  });
 
-    return { start, end };
+  // Fallback time-range computation from student exam_time values,
+  // kept identical to the previous behaviour.
+  const derivedExamTimeRange = (groups) => {
+    const students = (groups || []).flatMap((g) => g.students || []);
+    if (students.length === 0) return { start: "N/A", end: "N/A" };
+
+    const firstWithTime = students.find(
+      (s) => s.exam_time && s.exam_time.includes(" - "),
+    );
+    const lastWithTime = [...students]
+      .reverse()
+      .find((s) => s.exam_time && s.exam_time.includes(" - "));
+
+    if (!firstWithTime || !lastWithTime) return { start: "N/A", end: "N/A" };
+
+    return {
+      start: firstWithTime.exam_time.split(" - ")[0],
+      end: lastWithTime.exam_time.split(" - ")[1],
+    };
   };
 
   const printPage = () => {
     window.print();
   };
 
-  onMounted(fetchAttendanceData);
+  onMounted(async () => {
+    await fetchSeasons();
+    await fetchData();
+  });
 </script>
 
 <style scoped>

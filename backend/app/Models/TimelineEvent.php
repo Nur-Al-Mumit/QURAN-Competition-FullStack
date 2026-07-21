@@ -18,6 +18,8 @@ class TimelineEvent extends Model
         'show_in_timeline',
         'sort_order',
         'is_active',
+        'season_id',
+        'phase',
     ];
 
     protected $casts = [
