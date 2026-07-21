@@ -355,9 +355,9 @@
       background: #fff !important;
     }
 
-    .result-section {
+    /* .result-section {
       page-break-inside: avoid;
-    }
+    } */
 
     .result-table {
       width: 100% !important;

@@ -6,4 +6,5 @@ Route::group(['prefix' => 'v1'], function () {
     include __DIR__ . '/api/admin/api.php';
     include __DIR__ . '/api/auth/api.php';
     include __DIR__ . '/api/user/api.php';
+    include __DIR__ . '/api/public/result.php';
 });

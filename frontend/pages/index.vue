@@ -204,6 +204,72 @@
       </div>
     </section>
 
+    <!-- See Result Section -->
+    <section class="py-10 bg-gradient-to-r from-emerald-500 to-emerald-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-3xl shadow-2xl p-3 lg:p-12 text-center">
+          <div
+            class="inline-flex items-center justify-center w-20 h-20 bg-emerald-100 rounded-full mb-6"
+          >
+            <svg
+              class="w-10 h-10 text-emerald-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              />
+            </svg>
+          </div>
+
+          <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            ফলাফল প্রকাশিত
+          </h2>
+
+          <p class="text-lg text-gray-600 mb-8">
+            অংশগ্রহণকারীদের তালিকা ও ফলাফল দেখুন
+          </p>
+
+          <div class="border-emerald-ripple inline-block">
+            <button
+              @click="() => navigateTo('/results')"
+              class="group relative inline-flex items-center justify-center px-8 py-4 sm:text-xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 shine-sweep-effect"
+            >
+              <span class="relative flex items-center whitespace-nowrap">
+                <svg
+                  class="w-6 h-6 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                  />
+                </svg>
+                ফলাফল দেখুন
+              </span>
+            </button>
+          </div>
+
+          <p class="mt-6">
+            <a href="/results" class="text-[13px] text-gray-500">
+              ফলাফল লিংক:
+              <span class="text-emerald-600 font-medium">
+                competition.eshoquranshikhi.org/results
+              </span>
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+
     <!-- Syllabus Section -->
     <section class="py-20 bg-white">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

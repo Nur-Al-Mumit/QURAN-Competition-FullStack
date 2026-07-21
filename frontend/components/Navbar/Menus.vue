@@ -24,6 +24,7 @@
   const menus = [
     { id: 1, title: "Home", url: "/" },
     { id: 4, title: "Registration", url: "/registration" },
+    { id: 5, title: "Result", url: "/results" },
   ];
 </script>
 
