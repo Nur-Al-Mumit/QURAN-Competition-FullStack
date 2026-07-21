@@ -899,6 +899,68 @@
           </div>
         </template>
       </modal>
+
+      <!-- Registration time-out popup -->
+      <modal :is-open="isRegTimeOutModalOpen">
+        <template #body>
+          <div class="p-5 max-w-md">
+            <div class="flex justify-center mb-4">
+              <div
+                class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center"
+              >
+                <svg
+                  class="w-9 h-9 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <h1
+              class="text-xl text-red-600 font-semibold leading-relaxed text-center"
+            >
+              রেজিস্ট্রেশনের নির্ধারিত সময় শেষ হয়ে গেছে।
+            </h1>
+
+            <p class="text-center text-sm text-gray-600 mt-2 leading-relaxed">
+              এই সেশনের জন্য নতুন রেজিস্ট্রেশন গ্রহণ করা হচ্ছে না। ইনশাআল্লাহ
+              পরবর্তী সেশনে আমাদের সাথে যুক্ত হওয়ার সুযোগ পাবেন। আপনার আগ্রহের
+              জন্য ধন্যবাদ, জাযাকাল্লাহু খাইরান।
+            </p>
+
+            <div class="flex justify-center mt-6">
+              <button
+                @click="() => (isRegTimeOutModalOpen = false)"
+                class="text-red-600 hover:text-red-800 transition cursor-pointer"
+                aria-label="Close"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-10 w-10 md:h-12 md:w-12"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </template>
+      </modal>
     </div>
   </div>
 </template>
@@ -963,6 +1025,7 @@
   const isGenderModalOpen = ref(false);
   const isTrainingModalOpen = ref(false);
   const isRegCloseModalOpen = ref(false);
+  const isRegTimeOutModalOpen = ref(true);
   const isDisclaimerModalOpen = ref(true);
   const isRecitationModalOpen = ref(false);
   const isAlreadyRegisteredModalOpen = ref(false);
@@ -1050,7 +1113,11 @@
         };
         isRegistrationFull.value = !!data.data.is_full;
         capacityLoaded.value = true;
-        if (isRegistrationFull.value) {
+
+        // Registration time-out takes priority over the seats-full modal.
+        if (data.data.is_closed) {
+          isRegTimeOutModalOpen.value = true;
+        } else if (isRegistrationFull.value) {
           isRegCloseModalOpen.value = true;
         }
       }
@@ -1249,6 +1316,9 @@
     showValidationErrors.value = true;
 
     // 3. Block conditions that should show a modal instead of submitting.
+    if (isRegTimeOutModalOpen.value) {
+      return;
+    }
     if (isRegistrationFull.value) {
       isRegCloseModalOpen.value = true;
       return;
@@ -1392,6 +1462,12 @@
         error?.response?.status === 409
       ) {
         window.showError("Notice!", message, 5000);
+      } else if (
+        errorCode === "REGISTRATION_CLOSED" ||
+        error?.response?.status === 403
+      ) {
+        // Registration time-out — show the popup modal, do not retry.
+        isRegTimeOutModalOpen.value = true;
       } else {
         window.showError("Error!", message, 4000);
       }

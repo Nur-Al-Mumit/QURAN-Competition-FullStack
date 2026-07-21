@@ -172,6 +172,70 @@
         </div>
       </div>
     </div>
+
+    <!-- Registration time-out popup (deadline passed mid-flow) -->
+    <client-only>
+      <modal :is-open="isRegTimeOutModalOpen">
+        <template #body>
+          <div class="p-5 max-w-md">
+            <div class="flex justify-center mb-4">
+              <div
+                class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center"
+              >
+                <svg
+                  class="w-9 h-9 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <h1
+              class="text-xl text-red-600 font-semibold leading-relaxed text-center"
+            >
+              রেজিস্ট্রেশনের নির্ধারিত সময় শেষ হয়ে গেছে।
+            </h1>
+
+            <p class="text-center text-sm text-gray-600 mt-2 leading-relaxed">
+              এই সেশনের জন্য নতুন রেজিস্ট্রেশন গ্রহণ করা হচ্ছে না। ইনশাআল্লাহ
+              পরবর্তী সেশনে আমাদের সাথে যুক্ত হওয়ার সুযোগ পাবেন। জাযাকাল্লাহু
+              খাইরান।
+            </p>
+
+            <div class="flex justify-center mt-6">
+              <button
+                @click="() => (isRegTimeOutModalOpen = false)"
+                class="text-red-600 hover:text-red-800 transition cursor-pointer"
+                aria-label="Close"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-10 w-10 md:h-12 md:w-12"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </template>
+      </modal>
+    </client-only>
   </section>
 </template>
 
@@ -188,6 +252,7 @@
   const isIncorrectOTP = ref(false);
   const isOtpSend = ref(false);
   const isResending = ref(false);
+  const isRegTimeOutModalOpen = ref(false);
 
   // OTP returned from the send-otp response (frontend display only)
   const displayOtp = computed(() => studentAuthStore.formRegistration?.otp);
@@ -337,10 +402,15 @@
     } catch (error) {
       window.hideLoading();
 
+      const responseData = error?.response?.data;
+      const errorCode = responseData?.data?.code;
       const message =
-        error?.response?.data?.message || "Something went wrong";
+        responseData?.message || error?.message || "Something went wrong";
 
-      if (message === "Invalid OTP") {
+      if (errorCode === "REGISTRATION_CLOSED" || error?.response?.status === 403) {
+        // Registration time-out — show the popup modal instead of an error toast.
+        isRegTimeOutModalOpen.value = true;
+      } else if (message === "Invalid OTP") {
         isIncorrectOTP.value = true;
         window.showError("Error!", "ভুল OTP। আবার চেষ্টা করুন।", 2500);
       } else {

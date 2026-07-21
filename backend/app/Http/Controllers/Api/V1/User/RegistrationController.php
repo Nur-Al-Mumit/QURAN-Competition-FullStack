@@ -52,6 +52,12 @@ class RegistrationController extends Controller
             'competitionForm.phone' => 'required|digits:11|regex:/^01[0-9]{9}$/',
         ]);
 
+        // Hardcoded time-out: stop new registrations and let the frontend
+        // show the popup modal.
+        if ($this->isRegistrationClosed()) {
+            return $this->registrationClosedResponse();
+        }
+
         try {
             // Always coerce the competition form to a plain array so that
             // submitOrUpdateForm() can safely use null-coalescing on every key
@@ -395,6 +401,12 @@ class RegistrationController extends Controller
             'occupation' => 'required|string|max:255',
         ]);
 
+        // Hardcoded time-out: stop new registrations and let the frontend
+        // show the popup modal.
+        if ($this->isRegistrationClosed()) {
+            return $this->registrationClosedResponse();
+        }
+
         $user = Auth::user();
         if (!$user) {
             return JsonResponse::error('User not authenticated', 401);
@@ -437,15 +449,50 @@ class RegistrationController extends Controller
             $count = $this->slotService->activeSeasonForms()->count();
             $max = $this->slotService->getMaxRegistrations();
 
+            // Hardcoded registration time-out switch. When true, the frontend
+            // shows the "registration closed" popup modal and blocks new
+            // submissions. Flip this back to false to reopen registration.
+            $isClosed = true;
+
             return JsonResponse::success([
                 'registration_count' => $count,
                 'max_registrations' => $max,
                 'remaining' => max(0, $max - $count),
                 'is_full' => $count >= $max,
+                'is_closed' => $isClosed,
             ]);
         } catch (\Throwable $th) {
             return JsonResponse::error($th->getMessage());
         }
+    }
+
+    /**
+     * Hardcoded registration time-out guard. Returns a closed-response when
+     * registration is disabled so the frontend can show the popup modal and
+     * no new registration is processed. Flip the $isClosed flag to reopen.
+     */
+    public function isRegistrationClosedPublic(): bool
+    {
+        return true;
+    }
+
+    protected function isRegistrationClosed(): bool
+    {
+        return $this->isRegistrationClosedPublic();
+    }
+
+    /**
+     * Build the standard "registration closed" error response that the
+     * frontend interprets to open the popup modal.
+     */
+    protected function registrationClosedResponse()
+    {
+        return JsonResponse::error(
+            'রেজিস্ট্রেশনের নির্ধারিত সময় শেষ হয়ে গেছে। নতুন রেজিস্ট্রেশন গ্রহণ করা হচ্ছে না।',
+            403,
+            [403],
+            ['code' => 'REGISTRATION_CLOSED']
+        );
     }
 
     public function storeWishlist(Request $request)

@@ -56,6 +56,18 @@ class AuthorizeController extends Controller
         $phone = $request->phone;
         $email = $request->filled('email') ? trim($request->email) : null;
 
+        // Hardcoded registration time-out: stop new registrations before any
+        // OTP is created. The frontend reads this response and shows the
+        // "registration closed" popup modal.
+        if ((new \App\Http\Controllers\Api\V1\User\RegistrationController())->isRegistrationClosedPublic()) {
+            return JsonResponse::error(
+                'রেজিস্ট্রেশনের নির্ধারিত সময় শেষ হয়ে গেছে। নতুন রেজিস্ট্রেশন গ্রহণ করা হচ্ছে না।',
+                403,
+                [403],
+                ['code' => 'REGISTRATION_CLOSED']
+            );
+        }
+
         // Check existing accounts BEFORE creating/sending any OTP so returning
         // users never receive a login SMS after a confusing "already taken" error.
         $existingByPhone = User::where('phone', $phone)->first();
