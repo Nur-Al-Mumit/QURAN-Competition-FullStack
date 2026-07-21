@@ -168,7 +168,6 @@
                     Education
                   </th>
                   <th class="p-2 border w-30">Exam Time</th>
-                  <th class="p-2 border w-20">Attendance</th>
                   <th class="p-2 border w-64">Comments</th>
                   <th class="p-2 border w-40">Decision</th>
                 </tr>
@@ -201,14 +200,6 @@
                   </td>
                   <td class="p-2 border whitespace-nowrap">
                     {{ student.exam_time }}
-                  </td>
-                  <td class="p-2 border whitespace-nowrap">
-                    <span
-                      :class="attendanceClass(student.attendance_status)"
-                      class="font-semibold"
-                    >
-                      {{ student.attendance_label || "—" }}
-                    </span>
                   </td>
                   <td class="p-2 border align-top h-150px">
                     <textarea
@@ -264,6 +255,18 @@
 <script setup>
   definePageMeta({
     layout: "split",
+  });
+
+  // Inject the landscape @page rule inline into <head>. Some browsers
+  // ignore `size` from async/code-split CSS chunks but reliably honor an
+  // inline <style> in the document head — this guarantees landscape print.
+  useHead({
+    style: [
+      {
+        innerHTML:
+          "@media print{ @page{ size: A4 landscape; margin: 12mm; } }",
+      },
+    ],
   });
 
   const seasons = ref([]);
@@ -461,21 +464,6 @@
     return "";
   });
 
-  // Read-only colour for the exam-day attendance badge.
-  // 1 = Present, 2 = Absent, 3 = Late (matches user_attendances).
-  const attendanceClass = (status) => {
-    switch (Number(status)) {
-      case 1:
-        return "text-emerald-600";
-      case 2:
-        return "text-rose-600";
-      case 3:
-        return "text-amber-600";
-      default:
-        return "text-gray-500";
-    }
-  };
-
   // Fallback time-range computation from student exam_time values,
   // kept identical to the previous behaviour.
   const derivedExamTimeRange = (groups) => {
@@ -507,14 +495,31 @@
   });
 </script>
 
-<style scoped>
-  /* Print-specific CSS for page break */
+<style>
   @media print {
     @page {
-      size: landscape;
-      margin: 0;
-      padding: 30px;
-      /* padding: 30px 0 30px 0; */
+      size: A4 landscape;
+      margin: 12mm;
+    }
+  }
+</style>
+
+<style scoped>
+  @media print {
+    .attendance-sheet,
+    .attendance-sheet * {
+      visibility: visible;
+    }
+
+    .attendance-sheet {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100% !important;
+      max-width: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: #fff !important;
     }
 
     .examiner-group {
@@ -529,21 +534,13 @@
       page-break-after: always;
     }
 
-    .attendance-sheet,
-    .attendance-sheet * {
-      visibility: visible;
-    }
-
-    .attendance-sheet {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100% !important;
-      max-width: none !important;
-    }
-
     .avoid-break {
       page-break-inside: avoid;
+    }
+
+    table {
+      width: 100% !important;
+      table-layout: auto;
     }
   }
 
