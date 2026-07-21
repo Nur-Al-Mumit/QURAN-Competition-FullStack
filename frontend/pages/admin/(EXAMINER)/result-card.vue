@@ -123,10 +123,47 @@
         </table>
       </section>
 
-      <!-- Section 3: Absent -->
+      <!-- Section 3: Fail / Not Selected (present but didn't qualify) -->
+      <section class="mb-10 result-section">
+        <h2 class="section-title section-title--fail">
+          Section 3 — Not Selected
+          <span class="font-normal text-gray-500">({{ other.length }})</span>
+        </h2>
+        <table class="result-table w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-100 text-center">
+              <th class="p-2 border w-12">#</th>
+              <th class="p-2 border w-20">Serial</th>
+              <th class="p-2 border w-28">Reg No</th>
+              <th class="p-2 border">Name</th>
+              <th class="p-2 border w-40">Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="!other.length">
+              <td colspan="5" class="p-3 border text-center text-gray-400">
+                No failed students.
+              </td>
+            </tr>
+            <tr
+              v-for="row in other"
+              :key="'other-' + row.serial"
+              class="text-center avoid-break"
+            >
+              <td class="p-2 border font-semibold">{{ row.sl }}</td>
+              <td class="p-2 border font-semibold whitespace-nowrap">{{ row.serial }}</td>
+              <td class="p-2 border whitespace-nowrap">{{ row.reg_no }}</td>
+              <td class="p-2 border text-left">{{ row.name_en }}</td>
+              <td class="p-2 border text-red-700 font-semibold">Not Selected</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Section 4: Absent -->
       <section class="mb-10 result-section">
         <h2 class="section-title section-title--absent">
-          Section 3 — Absent
+          Section 4 — Absent
           <span class="font-normal text-gray-500">
             ({{ sections.absent.length }})
           </span>
@@ -157,38 +194,6 @@
               <td class="p-2 border whitespace-nowrap">{{ row.reg_no }}</td>
               <td class="p-2 border text-left">{{ row.name_en }}</td>
               <td class="p-2 border text-red-600 font-semibold">Absent</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <!-- Other (present but neither Mahir nor Mubtadi, e.g. Fail) -->
-      <section v-if="other.length" class="mb-10 result-section">
-        <h2 class="section-title section-title--other">
-          Other — Present (other result)
-          <span class="font-normal text-gray-500">({{ other.length }})</span>
-        </h2>
-        <table class="result-table w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-gray-100 text-center">
-              <th class="p-2 border w-12">#</th>
-              <th class="p-2 border w-20">Serial</th>
-              <th class="p-2 border w-28">Reg No</th>
-              <th class="p-2 border">Name</th>
-              <th class="p-2 border w-40">Result</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="row in other"
-              :key="'other-' + row.serial"
-              class="text-center avoid-break"
-            >
-              <td class="p-2 border font-semibold">{{ row.sl }}</td>
-              <td class="p-2 border font-semibold whitespace-nowrap">{{ row.serial }}</td>
-              <td class="p-2 border whitespace-nowrap">{{ row.reg_no }}</td>
-              <td class="p-2 border text-left">{{ row.name_en }}</td>
-              <td class="p-2 border text-amber-700 font-semibold">Other</td>
             </tr>
           </tbody>
         </table>
@@ -328,9 +333,9 @@
     border-left-color: #ef4444;
   }
 
-  .section-title--other {
-    color: #b45309; /* amber-700 */
-    border-left-color: #f59e0b;
+  .section-title--fail {
+    color: #b91c1c; /* red-700 */
+    border-left-color: #ef4444;
   }
 
   @media print {

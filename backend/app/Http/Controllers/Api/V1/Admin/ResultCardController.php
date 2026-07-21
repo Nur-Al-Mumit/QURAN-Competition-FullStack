@@ -63,20 +63,23 @@ class ResultCardController extends Controller
             ? (int) $request->input('season_id')
             : (Season::where('is_active', 1)->latest()->value('id') ?? null);
 
-        // Canonical result-category ids. These come from the seeded
-        // result_categories rows (1=Mahir, 2=Mubtadi, 3=Fail) but we read
-        // them by name so a future re-seed can't silently shift meaning.
-        $mahirId = ResultCategory::whereRaw('LOWER(name) LIKE ?', ['%mahir%'])->value('id') ?? 1;
-        $mubtadiId = ResultCategory::whereRaw('LOWER(name) LIKE ?', ['%mubtadi%'])->value('id') ?? 2;
+        // Canonical result-category ids, hardcoded per the result_categories
+        // table: 1 = Mahir, 2 = Mubtadi, 3 = Fail.
+        $mahirId = 1;
+        $mubtadiId = 2;
 
         $resultCategories = ResultCategory::orderBy('id')
             ->get(['id', 'name']);
 
         // Roster: every allocated seat for the season, with the student's
         // form fields for reg_no / name and the preliminary decision.
+        // NOTE: the eager-load select list MUST include the relation's
+        // foreign key (attendance_allocation_id) — without it Eloquent
+        // cannot stitch the related models back onto their parents and
+        // the relation resolves to null for every row.
         $allocations = AttendanceAllocation::with([
             'userCompetitionForm:id,reg_no,name_en',
-            'userPreliminaryResult:id,user_id,season_id,result_category_id,attendance_status',
+            'userPreliminaryResult:id,user_id,season_id,result_category_id,attendance_status,attendance_allocation_id',
         ])
             ->when($seasonId, fn ($q) => $q->where('season_id', $seasonId))
             ->get();
