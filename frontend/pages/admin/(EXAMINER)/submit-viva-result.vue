@@ -168,6 +168,7 @@
                     Education
                   </th>
                   <th class="p-2 border w-30">Exam Time</th>
+                  <th class="p-2 border w-20">Attendance</th>
                   <th class="p-2 border w-64">Comments</th>
                   <th class="p-2 border w-40">Decision</th>
                 </tr>
@@ -201,7 +202,26 @@
                   <td class="p-2 border whitespace-nowrap">
                     {{ student.exam_time }}
                   </td>
-                  <td class="p-2 border align-top h-150px"></td>
+                  <td class="p-2 border whitespace-nowrap">
+                    <span
+                      :class="attendanceClass(student.attendance_status)"
+                      class="font-semibold"
+                    >
+                      {{ student.attendance_label || "—" }}
+                    </span>
+                  </td>
+                  <td class="p-2 border align-top h-150px">
+                    <textarea
+                      v-model="student.comment"
+                      :disabled="saving[student.attendance_allocation_id]"
+                      @blur="saveComment(student)"
+                      rows="6"
+                      placeholder="—"
+                      class="print:hidden w-full h-full resize-none rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100"
+                    ></textarea>
+                    <!-- Blank when printing (hand-written comments) -->
+                    <span class="hidden print:block">&nbsp;</span>
+                  </td>
                   <td class="p-2 border align-top">
                     <select
                       v-model="student.result_category_id"
@@ -261,6 +281,10 @@
   // Per-row saving flags keyed by attendance_allocation_id
   const saving = ref({});
 
+  // Last successfully persisted value per field per allocation, used to
+  // revert optimistic updates when a save fails.
+  const lastSaved = ref({});
+
   const fetchSeasons = async () => {
     try {
       const endPoint = "/admin/viva-result/seasons";
@@ -310,10 +334,23 @@
         // the active season when "All Seasons" is selected). This is what
         // we send back when persisting decisions.
         resolvedSeasonId.value = payload.season_id ?? null;
+        // Seed the "last saved" snapshot so revert-on-failure has a sane
+        // baseline for every loaded row.
+        const decision = {};
+        const comment = {};
+        for (const g of groups.value) {
+          for (const s of g.students || []) {
+            const id = s.attendance_allocation_id;
+            decision[id] = s.result_category_id ?? null;
+            comment[id] = s.comment ?? null;
+          }
+        }
+        lastSaved.value = { result_category_id: decision, comment };
       } else {
         groups.value = [];
         examDay.value = null;
         resolvedSeasonId.value = null;
+        lastSaved.value = {};
       }
     } catch (err) {
       window.showError(
@@ -326,10 +363,11 @@
     }
   };
 
-  // Auto-save a single student's decision (no Save button).
-  const saveDecision = async (student) => {
+  // Shared auto-save for both the Decision dropdown and the Comment box.
+  // Optimistically saves the given field, reverts on failure.
+  const saveField = async (student, field) => {
     const allocationId = student.attendance_allocation_id;
-    const previous = student.result_category_id;
+    const previous = lastSaved.value[field]?.[allocationId];
 
     saving.value = { ...saving.value, [allocationId]: true };
     try {
@@ -341,26 +379,56 @@
           season_id: resolvedSeasonId.value,
           attendance_allocation_id: allocationId,
           result_category_id: student.result_category_id,
+          comment: student.comment,
         },
         null,
         "POST",
       );
 
-      // Sync any server-normalised value back onto the row.
+      // Track the last persisted values so we can revert cleanly.
+      lastSaved.value = {
+        ...lastSaved.value,
+        [field]: {
+          ...(lastSaved.value[field] || {}),
+          [allocationId]: student[field],
+        },
+      };
+
+      // Sync any server-normalised values back onto the row.
       if (data?.data?.result_category_id !== undefined) {
         student.result_category_id = data.data.result_category_id;
       }
+      if (data?.data?.comment !== undefined) {
+        student.comment = data.data.comment;
+      }
     } catch (err) {
       // Revert optimistic change on failure.
-      student.result_category_id = previous;
+      student[field] = previous ?? null;
       window.showError(
         "Error!",
-        err?.response?.data?.message || "Failed to save decision",
+        err?.response?.data?.message || "Failed to save",
         3000,
       );
     } finally {
       saving.value = { ...saving.value, [allocationId]: false };
     }
+  };
+
+  const saveDecision = (student) => saveField(student, "result_category_id");
+
+  // Debounced comment save so typing doesn't spam the API. Triggers on the
+  // configured idle delay; saveField also runs on @blur to catch the case
+  // where the user tabs away before the timer fires.
+  const commentTimers = {};
+  const saveComment = (student) => {
+    const allocationId = student.attendance_allocation_id;
+    if (commentTimers[allocationId]) {
+      clearTimeout(commentTimers[allocationId]);
+    }
+    commentTimers[allocationId] = setTimeout(() => {
+      saveField(student, "comment");
+      delete commentTimers[allocationId];
+    }, 600);
   };
 
   // Cover-page exam-time range. Prefers the season's exam-day event;
@@ -392,6 +460,21 @@
     }
     return "";
   });
+
+  // Read-only colour for the exam-day attendance badge.
+  // 1 = Present, 2 = Absent, 3 = Late (matches user_attendances).
+  const attendanceClass = (status) => {
+    switch (Number(status)) {
+      case 1:
+        return "text-emerald-600";
+      case 2:
+        return "text-rose-600";
+      case 3:
+        return "text-amber-600";
+      default:
+        return "text-gray-500";
+    }
+  };
 
   // Fallback time-range computation from student exam_time values,
   // kept identical to the previous behaviour.

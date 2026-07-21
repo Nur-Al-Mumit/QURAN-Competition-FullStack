@@ -9,6 +9,7 @@ use App\Models\AttendanceAllocation;
 use App\Models\ResultCategory;
 use App\Models\Season;
 use App\Models\TimelineEvent;
+use App\Models\UserAttendance;
 use App\Models\UserPreliminaryResult;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -142,6 +143,20 @@ class VivaResultController extends Controller
         }
 
         $groups = [];
+
+        // Load exam-day attendance for every student in this season in one
+        // query, keyed by user_id, so each result row can show the status
+        // captured on exam day (Present / Absent / Late). This is the
+        // single source of truth — the viva page reads it, never writes it.
+        $userIds = $allocations->pluck('user_id')->unique()->all();
+        $attendanceByUser = [];
+        if ($userIds) {
+            $attendanceByUser = UserAttendance::whereIn('user_id', $userIds)
+                ->when($seasonId, fn ($q) => $q->where('season_id', $seasonId))
+                ->get()
+                ->keyBy('user_id');
+        }
+
         foreach ($byLetter as $groupLetter => $items) {
             $first = collect($items)->first();
             $admin = $first->admin;
@@ -153,9 +168,11 @@ class VivaResultController extends Controller
                     }
                     return (string) $item->serial;
                 })
-                ->map(function ($item) {
+                ->map(function ($item) use ($attendanceByUser) {
                     $form = $item->userCompetitionForm;
                     $decision = $item->userPreliminaryResult;
+                    $attendance = $attendanceByUser[$item->user_id] ?? null;
+                    $attendanceStatus = $attendance?->attendance_status;
 
                     return [
                         'serial'                  => $item->serial,
@@ -168,6 +185,8 @@ class VivaResultController extends Controller
                         'user_id'                 => $item->user_id,
                         'user_competition_form_id' => $item->user_competition_form_id,
                         'attendance_allocation_id' => $item->id,
+                        'attendance_status'       => $attendanceStatus,
+                        'attendance_label'        => $this->getAttendanceLabel($attendanceStatus),
                         'result_category_id'      => $decision?->result_category_id,
                         'comment'                 => $decision?->comment,
                     ];
@@ -227,6 +246,12 @@ class VivaResultController extends Controller
 
         $admin = Auth::guard('admin-api')->user();
 
+        // Pull the exam-day attendance_status (from user_attendances, the
+        // single source of truth) so the result row stays self-consistent.
+        $attendanceStatus = UserAttendance::where('user_id', $data['user_id'])
+            ->where('season_id', $data['season_id'])
+            ->value('attendance_status');
+
         $row = UserPreliminaryResult::updateOrCreate(
             [
                 'user_id'   => $data['user_id'],
@@ -237,6 +262,7 @@ class VivaResultController extends Controller
                 'attendance_allocation_id' => $data['attendance_allocation_id'] ?? null,
                 'result_category_id'       => $data['result_category_id'] ?? null,
                 'comment'                  => $data['comment'] ?? null,
+                'attendance_status'        => $attendanceStatus ?? 5,
                 'examiner_id'              => $admin?->id,
             ]
         );
@@ -245,6 +271,8 @@ class VivaResultController extends Controller
             'id'                 => $row->id,
             'result_category_id' => $row->result_category_id,
             'comment'            => $row->comment,
+            'attendance_status'  => $row->attendance_status,
+            'attendance_label'   => $this->getAttendanceLabel($row->attendance_status),
             'examiner_id'        => $row->examiner_id,
         ], 'Decision saved');
     }
@@ -260,6 +288,20 @@ class VivaResultController extends Controller
                 return 'Both';
             default:
                 return 'N/A';
+        }
+    }
+
+    private function getAttendanceLabel($value)
+    {
+        switch ((int) $value) {
+            case 1:
+                return 'Present';
+            case 2:
+                return 'Absent';
+            case 3:
+                return 'Late';
+            default:
+                return '—';
         }
     }
 }
