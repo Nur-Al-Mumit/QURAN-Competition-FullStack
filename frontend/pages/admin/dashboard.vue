@@ -487,19 +487,22 @@
       <!-- Pagination -->
       <div
         v-if="totalPages > 1"
-        class="mt-6 flex items-center justify-between"
+        class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
       >
-        <div class="flex items-center">
+        <div class="flex items-center justify-center sm:justify-start">
           <p class="text-sm text-gray-700">
             Page {{ currentPage }} of {{ totalPages }}
           </p>
         </div>
 
-        <nav class="flex items-center space-x-2">
+        <nav
+          class="flex flex-wrap items-center justify-center gap-1 sm:gap-2"
+          aria-label="Pagination"
+        >
           <button
             @click="goToPage(1)"
             :disabled="currentPage === 1 || loading"
-            class="rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="hidden rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed sm:inline-flex"
           >
             First
           </button>
@@ -512,7 +515,7 @@
             Previous
           </button>
 
-          <div class="flex space-x-1">
+          <div class="flex flex-wrap gap-1">
             <button
               v-for="page in visiblePages"
               :key="page"
@@ -539,7 +542,7 @@
           <button
             @click="goToPage(totalPages)"
             :disabled="currentPage === totalPages || loading"
-            class="rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="hidden rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed sm:inline-flex"
           >
             Last
           </button>
