@@ -60,12 +60,13 @@
               <th class="p-2 border w-20">Serial</th>
               <th class="p-2 border w-28">Reg No</th>
               <th class="p-2 border">Name</th>
+              <th class="p-2 border w-40">Phone</th>
               <th class="p-2 border w-40">Result</th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="!sections.mahir.length">
-              <td colspan="5" class="p-3 border text-center text-gray-400">
+              <td colspan="6" class="p-3 border text-center text-gray-400">
                 No Mahir students.
               </td>
             </tr>
@@ -78,6 +79,7 @@
               <td class="p-2 border font-semibold whitespace-nowrap">{{ row.serial }}</td>
               <td class="p-2 border whitespace-nowrap">{{ row.reg_no }}</td>
               <td class="p-2 border text-left">{{ row.name_en }}</td>
+              <td class="p-2 border whitespace-nowrap">{{ row.phone }}</td>
               <td class="p-2 border text-emerald-700 font-semibold">Mahir</td>
             </tr>
           </tbody>
@@ -99,12 +101,13 @@
               <th class="p-2 border w-20">Serial</th>
               <th class="p-2 border w-28">Reg No</th>
               <th class="p-2 border">Name</th>
+              <th class="p-2 border w-40">Phone</th>
               <th class="p-2 border w-40">Result</th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="!sections.mubtadi.length">
-              <td colspan="5" class="p-3 border text-center text-gray-400">
+              <td colspan="6" class="p-3 border text-center text-gray-400">
                 No Mubtadi students.
               </td>
             </tr>
@@ -117,6 +120,7 @@
               <td class="p-2 border font-semibold whitespace-nowrap">{{ row.serial }}</td>
               <td class="p-2 border whitespace-nowrap">{{ row.reg_no }}</td>
               <td class="p-2 border text-left">{{ row.name_en }}</td>
+              <td class="p-2 border whitespace-nowrap">{{ row.phone }}</td>
               <td class="p-2 border text-emerald-700 font-semibold">Mubtadi</td>
             </tr>
           </tbody>
@@ -136,12 +140,13 @@
               <th class="p-2 border w-20">Serial</th>
               <th class="p-2 border w-28">Reg No</th>
               <th class="p-2 border">Name</th>
+              <th class="p-2 border w-40">Phone</th>
               <th class="p-2 border w-40">Result</th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="!other.length">
-              <td colspan="5" class="p-3 border text-center text-gray-400">
+              <td colspan="6" class="p-3 border text-center text-gray-400">
                 No failed students.
               </td>
             </tr>
@@ -154,6 +159,7 @@
               <td class="p-2 border font-semibold whitespace-nowrap">{{ row.serial }}</td>
               <td class="p-2 border whitespace-nowrap">{{ row.reg_no }}</td>
               <td class="p-2 border text-left">{{ row.name_en }}</td>
+              <td class="p-2 border whitespace-nowrap">{{ row.phone }}</td>
               <td class="p-2 border text-red-700 font-semibold">Not Selected</td>
             </tr>
           </tbody>
@@ -175,12 +181,13 @@
               <th class="p-2 border w-20">Serial</th>
               <th class="p-2 border w-28">Reg No</th>
               <th class="p-2 border">Name</th>
+              <th class="p-2 border w-40">Phone</th>
               <th class="p-2 border w-40">Result</th>
             </tr>
           </thead>
           <tbody>
             <tr v-if="!sections.absent.length">
-              <td colspan="5" class="p-3 border text-center text-gray-400">
+              <td colspan="6" class="p-3 border text-center text-gray-400">
                 No absent students.
               </td>
             </tr>
@@ -193,6 +200,7 @@
               <td class="p-2 border font-semibold whitespace-nowrap">{{ row.serial }}</td>
               <td class="p-2 border whitespace-nowrap">{{ row.reg_no }}</td>
               <td class="p-2 border text-left">{{ row.name_en }}</td>
+              <td class="p-2 border whitespace-nowrap">{{ row.phone }}</td>
               <td class="p-2 border text-red-600 font-semibold">Absent</td>
             </tr>
           </tbody>

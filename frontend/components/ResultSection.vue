@@ -50,44 +50,48 @@
       </div>
     </div>
 
-    <!-- Table -->
-    <table class="w-full text-left border-collapse">
-      <thead>
-        <tr :class="['text-center', tone.head]">
-          <th class="p-2 border w-12">#</th>
-          <th class="p-2 border w-20">Serial</th>
-          <th class="p-2 border w-28">Reg No</th>
-          <th class="p-2 border">Name</th>
-          <th class="p-2 border w-40">Phone</th>
-          <th class="p-2 border w-32">Result</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="row in rows"
-          :key="row.serial + '-' + row.reg_no"
-          class="text-center hover:bg-gray-50"
-        >
-          <td class="p-2 border font-semibold">{{ row.sl }}</td>
-          <td class="p-2 border font-semibold whitespace-nowrap">
-            {{ row.serial }}
-          </td>
-          <td class="p-2 border whitespace-nowrap">{{ row.reg_no || "—" }}</td>
-          <td class="p-2 border text-left">{{ row.name_en || "—" }}</td>
-          <td class="p-2 border whitespace-nowrap">{{ row.phone || "—" }}</td>
-          <td class="p-2 border">
-            <span
-              :class="[
-                'inline-block px-2 py-0.5 rounded-full text-xs font-semibold',
-                badgeToneClass,
-              ]"
-            >
-              {{ badgeText }}
-            </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Table — wrapped in an overflow-x-auto container so on narrow
+         screens the table scrolls horizontally instead of being clipped
+         (the parent section uses overflow-hidden). -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse min-w-[640px]">
+        <thead>
+          <tr :class="['text-center', tone.head]">
+            <th class="p-2 border w-12">#</th>
+            <th class="p-2 border w-20">Serial</th>
+            <th class="p-2 border w-28">Reg No</th>
+            <th class="p-2 border">Name</th>
+            <th class="p-2 border w-40">Phone</th>
+            <th class="p-2 border w-32">Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="row in rows"
+            :key="row.serial + '-' + row.reg_no"
+            class="text-center hover:bg-gray-50"
+          >
+            <td class="p-2 border font-semibold">{{ row.sl }}</td>
+            <td class="p-2 border font-semibold whitespace-nowrap">
+              {{ row.serial }}
+            </td>
+            <td class="p-2 border whitespace-nowrap">{{ row.reg_no || "—" }}</td>
+            <td class="p-2 border text-left">{{ row.name_en || "—" }}</td>
+            <td class="p-2 border whitespace-nowrap">{{ row.phone || "—" }}</td>
+            <td class="p-2 border">
+              <span
+                :class="[
+                  'inline-block px-2 py-0.5 rounded-full text-xs font-semibold',
+                  badgeToneClass,
+                ]"
+              >
+                {{ badgeText }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- Detail modal -->
     <Teleport to="body">
@@ -181,12 +185,12 @@
 
   const toneMap = {
     emerald: {
-      bar: "border-l-4 border-emerald-500",
+      bar: "",
       title: "text-emerald-700",
       head: "bg-emerald-50",
     },
     red: {
-      bar: "border-l-4 border-red-500",
+      bar: "",
       title: "text-red-700",
       head: "bg-red-50",
     },
