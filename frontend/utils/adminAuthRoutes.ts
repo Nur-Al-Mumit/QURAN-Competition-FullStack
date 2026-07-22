@@ -22,8 +22,11 @@ export const adminAuthRoutes = {
     "/admin/submit-viva-result",
     "/admin/verify-registration",
     "/admin/training-attendance",
+    "/admin/training-attendance-view",
+    "/admin/training-dates",
     "/admin/training-id-card",
     "/admin/view-registrations",
     "/admin/create-admin",
+    "/x",
   ],
 };

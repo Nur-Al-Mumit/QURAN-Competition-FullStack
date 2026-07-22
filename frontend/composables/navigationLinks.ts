@@ -101,6 +101,21 @@ export const useNavigationLinks = () => {
       icon: "Circular",
       link: "/admin/training-id-card",
     },
+    {
+      title: "Training Dates",
+      icon: "Circular",
+      link: "/admin/training-dates",
+    },
+    {
+      title: "Attendance Sheet",
+      icon: "Circular",
+      link: "/x",
+    },
+    {
+      title: "Attendance View",
+      icon: "Circular",
+      link: "/admin/training-attendance-view",
+    },
   ];
 
   const superAdminLinks = [

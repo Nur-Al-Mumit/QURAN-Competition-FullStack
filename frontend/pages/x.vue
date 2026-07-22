@@ -274,11 +274,11 @@
 
   // Generate dates from 3 Aug 2025 to 7 Aug 2025
   const attendanceDates = ref([
-    { shortDate: "3 Aug", day: "Sun", date: "2025-08-03" },
-    { shortDate: "4 Aug", day: "Mon", date: "2025-08-04" },
-    { shortDate: "5 Aug", day: "Tue", date: "2025-08-05" },
-    { shortDate: "6 Aug", day: "Wed", date: "2025-08-06" },
-    { shortDate: "7 Aug", day: "Thu", date: "2025-08-07" },
+    { shortDate: "22 July", day: "Sun", date: "2025-07-22" },
+    { shortDate: "23 July", day: "Mon", date: "2025-07-23" },
+    { shortDate: "25 July", day: "Tue", date: "2025-07-25" },
+    { shortDate: "26 July", day: "Wed", date: "2025-07-26" },
+    { shortDate: "27 July", day: "Thu", date: "2025-07-27" },
   ]);
 
   // Split students into chunks of 10 for pagination
