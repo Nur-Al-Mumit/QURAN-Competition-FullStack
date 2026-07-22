@@ -83,6 +83,11 @@ export const useNavigationLinks = () => {
       icon: "Circular",
       link: "/admin/verify-registration",
     },
+    {
+      title: "Training Attendance",
+      icon: "Circular",
+      link: "/admin/training-attendance",
+    },
   ];
 
   const adminLinks = [
@@ -90,6 +95,11 @@ export const useNavigationLinks = () => {
       title: "View Registrations",
       icon: "Circular",
       link: "/admin/view-registrations",
+    },
+    {
+      title: "Training ID Cards",
+      icon: "Circular",
+      link: "/admin/training-id-card",
     },
   ];
 

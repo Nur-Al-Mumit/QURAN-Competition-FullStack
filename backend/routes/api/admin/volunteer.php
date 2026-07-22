@@ -6,5 +6,11 @@ use Illuminate\Support\Facades\Route;
 Route::controller(VolunteerController::class)->prefix('volunteer')->group(function () {
     Route::post('verify-registration', 'verifyRegistration');
     Route::post('submit-user-attendance', 'submitUserAttendance');
-    Route::post('submit-training-attendance', 'submitTrainingAttendance');
+
+    // Training attendance (users_training_attendances) — QR-scan flow
+    Route::post('verify-training-registration', 'verifyTrainingRegistration');
+    Route::post('submit-training-attendance-v2', 'submitTrainingAttendance');
+
+    // Legacy training-attendance endpoint (ReturningUserService-based)
+    Route::post('submit-training-attendance', 'submitTrainingAttendanceLegacy');
 });

@@ -9,4 +9,5 @@ Route::middleware(['auth:admin-api'])->prefix('admin')->group(function () {
     include __DIR__ . '/dashboard-settings.php';
     include __DIR__ . '/viva-result.php';
     include __DIR__ . '/result-card.php';
+    include __DIR__ . '/training-id-card.php';
 });
