@@ -21,6 +21,7 @@ export const adminAuthRoutes = {
     "/admin/report-issues",
     "/admin/submit-viva-result",
     "/admin/verify-registration",
+    "/admin/training-attendance",
     "/admin/view-registrations",
     "/admin/create-admin",
   ],

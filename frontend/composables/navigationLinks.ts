@@ -83,6 +83,11 @@ export const useNavigationLinks = () => {
       icon: "Circular",
       link: "/admin/verify-registration",
     },
+    {
+      title: "Training Attendance",
+      icon: "Circular",
+      link: "/admin/training-attendance",
+    },
   ];
 
   const adminLinks = [

@@ -16,7 +16,12 @@ class UserTrainingAttendance extends Model
         'user_id',
         'season_id',
         'attendance_status',
+        'date',
         'updated_by',
+    ];
+
+    protected $casts = [
+        'date' => 'date',
     ];
 
     public function user()
