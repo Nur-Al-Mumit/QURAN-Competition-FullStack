@@ -78,6 +78,27 @@ axios.interceptors.response.use(
         return axios(originalRequest);
       } catch (refreshError) {
         console.error("Failed to refresh token:", refreshError);
+        if (process.client) {
+          const adminAuthInfoStore = useAdminAuthInfoStore();
+          const isRefreshEndpoint = String(originalRequest.url || "").includes(
+            "/auth/admin/refresh"
+          );
+          if (
+            adminAuthInfoStore.isAdminLoggedIn &&
+            !isRefreshEndpoint &&
+            !originalRequest._authCleared
+          ) {
+            originalRequest._authCleared = true;
+            const { clearAdminAuth } = useAdminAuthClear();
+            window.showError?.(
+              "Session expired",
+              "Please sign in again.",
+              3000
+            );
+            clearAdminAuth();
+          }
+        }
+
         return Promise.reject(refreshError);
       }
     }

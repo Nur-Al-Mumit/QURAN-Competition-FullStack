@@ -47,16 +47,16 @@ export const useAuthLogout = () => {
       const { data } = await useAdminAuthenticatedAxios(endpoint);
 
       if (data?.data) {
-        adminAuthInfoStore.isAdminLoggedIn = false;
-        adminAuthInfoStore.loggedInData = null;
-        clearCookies();
+        const { clearAdminAuth } = useAdminAuthClear();
+        clearAdminAuth();
         window.showSuccess("Success!", "Logout successfully", 2000);
-        navigateTo("/admin/sign-in");
       }
     } catch (err) {
+      const { clearAdminAuth } = useAdminAuthClear();
+      clearAdminAuth();
       window.showError(
-        "Error!",
-        err?.response?.data?.message || "Logout failed",
+        "Session expired",
+        err?.response?.data?.message || "You have been logged out.",
         3000
       );
     }
