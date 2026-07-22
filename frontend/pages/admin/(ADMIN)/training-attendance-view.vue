@@ -1,21 +1,21 @@
 <template>
-  <div class="p-6 bg-gray-50 min-h-screen">
+  <div class="sm:p-6 bg-gray-50 min-h-screen">
     <div class="max-w-7xl mx-auto">
       <!-- Header + season filter -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
-        <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 class="text-xl font-bold text-gray-900">Training Attendance View</h1>
             <p class="text-sm text-gray-500 mt-0.5">
               Recorded attendance (from QR scans) per student per training date.
             </p>
           </div>
-          <div class="flex items-center gap-2">
-            <label class="text-sm font-medium text-gray-700">Season</label>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">Season</label>
             <select
               v-model="filters.season_id"
               @change="fetchData"
-              class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              class="flex-1 sm:flex-none min-w-0 max-w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               :disabled="loading"
             >
               <option value="">Select season</option>
