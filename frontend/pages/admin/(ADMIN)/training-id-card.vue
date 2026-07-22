@@ -4,6 +4,7 @@
     <div class="control-bar print:hidden">
       <div class="control-inner">
         <div class="control-left">
+          <NuxtLink to="/admin/dashboard" class="back-link">← Dashboard</NuxtLink>
           <label class="season-label">Season</label>
           <select
             v-model="filters.season_id"
@@ -45,25 +46,24 @@
       No Mubtadi training-pass students found for this season.
     </div>
 
-    <!-- ===================== CARD PAGES ===================== -->
-    <!-- One .card-page per student → page-break-after:always in print CSS
-         gives one card per A4 page. -->
-    <div
-      v-for="(student, index) in cards"
-      :key="student.reg_no || index"
-      class="card-page"
-    >
+    <!-- ===================== CARDS GRID ===================== -->
+    <!-- Cards tile in a grid (2 per row) both on screen and in print. In print
+         the grid fills the A4 page and the browser paginates naturally;
+         break-inside:avoid keeps each card intact across page breaks. -->
+    <div class="cards-grid">
+      <div
+        v-for="(student, index) in cards"
+        :key="student.reg_no || index"
+        class="card-page"
+      >
       <div class="id-card" :id="`id-card-${index}`">
         <!-- Top accent -->
         <div class="accent-top"></div>
 
-        <!-- HEADER -->
+        <!-- HEADER (competition name, centered) -->
         <div class="hdr">
-          <img src="~/assets/imgs/logo.png" alt="Logo" class="hdr-logo" />
-          <div class="hdr-center">
-            <h1 class="hdr-org">এসো কুরআন শিখি</h1>
-            <p class="hdr-comp">বিশুদ্ধ কুরআন প্রতিযোগিতা</p>
-          </div>
+          <p class="hdr-comp">বিশুদ্ধ কুরআন প্রতিযোগিতা</p>
+          <p class="hdr-year">১৪৪৮ হিজরি</p>
         </div>
 
         <!-- PASS LABEL -->
@@ -87,7 +87,7 @@
           <p class="qr-caption">Scan to verify</p>
         </div>
 
-        <!-- FOOTER ROW -->
+        <!-- FOOTER ROW (reg no / group / serial) -->
         <div class="card-footer">
           <div class="footer-item">
             <span class="footer-lbl">Reg No</span>
@@ -103,8 +103,15 @@
           </div>
         </div>
 
+        <!-- ORG FOOTER (logo + org name side by side, centered) -->
+        <div class="org-footer">
+          <img src="~/assets/imgs/logo.png" alt="Logo" class="org-logo" />
+          <span class="org-name">এসো কুরআন শিখি</span>
+        </div>
+
         <!-- Bottom accent -->
         <div class="accent-bot"></div>
+      </div>
       </div>
     </div>
   </div>
@@ -264,6 +271,19 @@
     gap: 0.6rem;
   }
 
+  .back-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #2563eb;
+    text-decoration: none;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.4rem;
+    transition: background 0.15s ease;
+  }
+  .back-link:hover {
+    background: #eff6ff;
+  }
+
   .season-label {
     font-size: 0.85rem;
     font-weight: 600;
@@ -328,13 +348,24 @@
     font-size: 0.95rem;
   }
 
-  /* ===================== CARD PAGE (screen) =====================
-     Each .card-page is one screen "sheet"; in print it becomes one A4 page. */
+  /* ===================== CARD GRID (screen + print) =====================
+     Cards tile in a grid so what you see matches what prints. CR80 cards are
+     85.6mm wide, so 2 columns fit an A4 page (2×85.6mm + gap ≈ 177mm < 210mm).
+     break-inside:avoid keeps a card from splitting across pages. */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 85.6mm);
+    gap: 6mm;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
   .card-page {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem 1rem;
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
   /* ===================== ID CARD =====================
@@ -365,35 +396,23 @@
     margin-top: auto;
   }
 
-  /* HEADER */
+  /* HEADER — competition name centered at the top */
   .hdr {
-    display: flex;
-    align-items: center;
-    gap: 1.5mm;
-    padding: 1.2mm 2.5mm 0.8mm;
-  }
-  .hdr-logo {
-    width: 6mm;
-    height: 6mm;
-    object-fit: contain;
-    flex-shrink: 0;
-  }
-  .hdr-center {
-    flex: 1;
-    min-width: 0;
     text-align: center;
-  }
-  .hdr-org {
-    font-size: 2.6mm;
-    font-weight: 800;
-    color: #047857;
-    line-height: 1.1;
-    margin: 0;
+    padding: 1.4mm 2.5mm 1mm;
   }
   .hdr-comp {
-    font-size: 1.9mm;
-    color: #6b7280;
+    font-size: 2.4mm;
+    font-weight: 700;
+    color: #047857;
     margin: 0;
+    line-height: 1.1;
+  }
+  .hdr-year {
+    font-size: 1.8mm;
+    font-weight: 600;
+    color: #6b7280;
+    margin: 0.3mm 0 0;
     line-height: 1.1;
   }
 
@@ -497,29 +516,82 @@
     max-width: 100%;
   }
 
-  /* ===================== PRINT ===================== */
+  /* ORG FOOTER — logo + org name side by side, centered, at the bottom */
+  .org-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 0.3mm solid #f3f4f6;
+    gap: 1.2mm;
+    padding: 1mm 2.5mm;
+  }
+  .org-logo {
+    width: 5mm;
+    height: 5mm;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+  .org-name {
+    font-size: 2.2mm;
+    font-weight: 700;
+    color: #047857;
+    white-space: nowrap;
+  }
+
+  /* ===================== PRINT (card-specific, scoped) ===================== */
   @media print {
     .id-card-page {
       background: #fff !important;
-      padding: 0 !important;
     }
 
-    /* One card per A4 page */
-    .card-page {
-      width: 210mm; /* A4 width */
-      height: 297mm; /* A4 height */
-      padding: 0;
-      page-break-after: always;
-      break-after: page;
-    }
-    .card-page:last-child {
-      page-break-after: auto;
-      break-after: auto;
+    .cards-grid {
+      grid-template-columns: repeat(2, 85.6mm);
+      gap: 6mm;
+      padding: 8mm; /* A4 margins */
     }
 
     .id-card {
       box-shadow: none;
       border: 0.2mm dashed #cbd5e1; /* guide line for cutting */
+    }
+  }
+</style>
+
+<!-- Global (non-scoped) print rules. Must NOT be scoped because it targets
+     body * — i.e. the layout chrome (Navbar / Sidebar / Footer) which lives
+     outside this component and cannot be reached by scoped styles. The
+     visibility pattern hides everything, then re-shows only this page's
+     card grid, so print output contains nothing but the cards. -->
+<style>
+  @media print {
+    /* Hide EVERYTHING on the page first. visibility:hidden keeps the layout
+       boxes (so pagination still works) but paints nothing — the layout's
+       Navbar / Sidebar / Footer vanish from print. */
+    body * {
+      visibility: hidden !important;
+    }
+
+    /* Re-show only the card grid and its descendants. */
+    .id-card-page,
+    .id-card-page * {
+      visibility: visible !important;
+    }
+
+    /* Lift the card grid to the top-left of the page so it isn't offset by
+       the (now invisible) layout padding/nav. */
+    .id-card-page {
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    /* Control bar / loading state must never print. */
+    .id-card-page .control-bar,
+    .id-card-page .state-msg {
+      display: none !important;
     }
   }
 </style>
