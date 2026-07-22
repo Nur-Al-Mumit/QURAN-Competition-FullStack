@@ -219,7 +219,7 @@
 
           <!-- Section 4: Absent -->
           <ResultSection
-            v-if="filtered.absent.length"
+            v-if="false"
             title="Section 4 — Absent"
             :count="filtered.absent.length"
             :total="sections.absent.length"
