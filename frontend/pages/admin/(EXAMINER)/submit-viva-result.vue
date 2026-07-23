@@ -495,15 +495,6 @@
   });
 </script>
 
-<style>
-  @media print {
-    @page {
-      size: A4 landscape;
-      margin: 12mm;
-    }
-  }
-</style>
-
 <style scoped>
   @media print {
     .attendance-sheet,

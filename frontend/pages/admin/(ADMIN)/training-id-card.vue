@@ -119,10 +119,6 @@
 
 <script setup>
   import QRCode from "qrcode";
-
-  // Inject the A4 @page rule inline into <head> for reliable browser honoring
-  // (some browsers ignore `size` from async CSS chunks). margin:0 lets the
-  // card center cleanly with its own internal padding.
   useHead({
     style: [
       {

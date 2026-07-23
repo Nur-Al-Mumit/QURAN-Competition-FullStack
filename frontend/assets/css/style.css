@@ -169,7 +169,7 @@
 
 .modal-scroll::-webkit-scrollbar-track {
   background: transparent;
-  margin: 0.5rem 0; /* keeps the track clear of the rounded top/bottom corners */
+  margin: 0.5rem 0;
 }
 
 .modal-scroll::-webkit-scrollbar-thumb {
@@ -185,9 +185,9 @@
 }
 
 @media print {
-  body * {
+  /* body * {
     visibility: hidden;
-  }
+  } */
 
   body {
     -webkit-print-color-adjust: exact !important;
