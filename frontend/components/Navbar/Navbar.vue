@@ -455,7 +455,7 @@
 
   // Navigation links only (logout handled by bottom dropup card)
   const navLinks = computed(() =>
-    (menuStore.links || []).filter((l) => l && l.link),
+    (menuStore.links || []).filter((l) => l && (l.link || l.children)),
   );
 
   function toggleProfileMenu() {

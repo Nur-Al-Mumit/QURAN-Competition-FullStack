@@ -276,7 +276,7 @@
 
   // Split links: navigation items only (logout handled by dropdown)
   const navLinks = computed(() =>
-    (menuStore.links || []).filter((l) => l && l.link),
+    (menuStore.links || []).filter((l) => l && (l.link || l.children)),
   );
 
   onMounted(async () => {

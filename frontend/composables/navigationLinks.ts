@@ -107,14 +107,21 @@ export const useNavigationLinks = () => {
       link: "/admin/training-dates",
     },
     {
-      title: "Attendance Sheet",
+      title: "Attendance",
       icon: "Circular",
-      link: "/x",
-    },
-    {
-      title: "Attendance View",
-      icon: "Circular",
-      link: "/admin/training-attendance-view",
+      link: null,
+      children: [
+        {
+          title: "Attendance Sheet",
+          icon: "Circular",
+          link: "/x",
+        },
+        {
+          title: "Attendance View",
+          icon: "Circular",
+          link: "/admin/training-attendance-view",
+        },
+      ],
     },
   ];
 
