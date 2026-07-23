@@ -3,6 +3,8 @@ export const useAuthLogout = () => {
   const studentInfoStore = useStudentInfoStore();
   const useFormStore = useCompetitionFormStore();
   const adminAuthInfoStore = useAdminAuthInfoStore();
+  const adminInfoStore = useAdminInfoStore();
+  const sideBarStore = useSideBarStore();
 
   function clearCookies() {
     document.cookie.split(";").forEach((cookie) => {
@@ -37,18 +39,25 @@ export const useAuthLogout = () => {
   }
 
   async function adminLogOut() {
+    const clearAdminSession = () => {
+      adminInfoStore.profileLoaded = false;
+      adminInfoStore.admin = null;
+      sideBarStore.user = {};
+      clearCookies();
+      const { clearAdminAuth } = useAdminAuthClear();
+      clearAdminAuth();
+    };
+
     try {
       const endpoint = "/auth/admin/logout";
       const { data } = await useAdminAuthenticatedAxios(endpoint);
 
       if (data?.data) {
-        const { clearAdminAuth } = useAdminAuthClear();
-        clearAdminAuth();
+        clearAdminSession();
         window.showSuccess("Success!", "Logout successfully", 2000);
       }
     } catch (err) {
-      const { clearAdminAuth } = useAdminAuthClear();
-      clearAdminAuth();
+      clearAdminSession();
       window.showError(
         "Session expired",
         err?.response?.data?.message || "You have been logged out.",
