@@ -111,7 +111,15 @@
 
   const statusFor = (student, date) => {
     if (!student.user_id) return null;
-    return attendance.value[student.user_id]?.[date] ?? null;
+    const recorded = attendance.value[student.user_id]?.[date] ?? null;
+    if (recorded !== null) return recorded;
+    // No recorded row → default to Absent (2), but only for sessions
+    // that have already happened (date < today). Today and future dates
+    // stay blank until attendance is recorded.
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (new Date(date) < today) return 2;
+    return null;
   };
 
   // 1 = Present (green), 2 = Absent (red), 3 = Late (amber), blank = grey.
