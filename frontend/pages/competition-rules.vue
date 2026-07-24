@@ -236,7 +236,9 @@
             <span class="absolute -left-10 sm:-left-12 top-0 flex items-center justify-center w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-sm">১</span>
             <h3 class="font-bold text-emerald-950 text-[16px] sm:text-lg mb-1">রেজিস্ট্রেশন</h3>
             <p class="text-gray-600 text-sm">
-              ২০শে জুলাই রাত ১২:০০ টার মধ্যে ওয়েবসাইটে (<NuxtLink id="rules-registration-link" to="/registration" class="text-emerald-600 underline font-semibold">competition.eshoquranshikhi.org/<br class="sm:hidden " />registration</NuxtLink>) রেজিস্ট্রেশন সম্পন্ন করতে হবে।
+            <p class="text-gray-600 text-sm">
+              এবারের প্রতিযোগিতার রেজিস্ট্রেশন <span class="font-semibold text-red-600">সম্পন্ন হয়ে গেছে।</span>
+            </p>
             </p>
           </div>
 
@@ -326,8 +328,8 @@
 
       <!-- Back Link -->
       <div class="text-center mt-10">
-        <NuxtLink id="back-to-registration-link" to="/registration" class="inline-flex items-center gap-1.5 text-emerald-700 hover:text-emerald-950 hover:underline text-sm font-semibold transition">
-          <span>←</span> রেজিস্ট্রেশন ফর্মে ফিরে যান
+        <NuxtLink id="back-to-registration-link" to="/" class="inline-flex items-center gap-1.5 text-emerald-700 hover:text-emerald-950 hover:underline text-sm font-semibold transition">
+          <span>←</span> হোমপেজে ফিরে যান
         </NuxtLink>
       </div>
     </div>

@@ -135,15 +135,15 @@
       </div>
     </section>
 
-    <!-- Registration Section -->
-    <section class="py-10 bg-gradient-to-r from-emerald-500 to-emerald-600">
+    <!-- Registration Section (Closed) -->
+    <section class="py-10 bg-gradient-to-r from-gray-400 to-gray-500">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-3xl shadow-2xl p-3 lg:p-12 text-center">
           <div
-            class="inline-flex items-center justify-center w-20 h-20 bg-emerald-100 rounded-full mb-6"
+            class="inline-flex items-center justify-center w-20 h-20 bg-red-100 rounded-full mb-6"
           >
             <svg
-              class="w-10 h-10 text-emerald-600"
+              class="w-10 h-10 text-red-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -152,26 +152,25 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
               />
             </svg>
           </div>
 
           <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            রেজিস্ট্রেশন চলছে
+            রেজিস্ট্রেশন বন্ধ হয়ে গেছে
           </h2>
 
           <p class="text-lg text-gray-600 mb-8">
-            রেজিস্ট্রেশনের শেষ তারিখ:
-            <span class="font-bold text-emerald-700">
-              ২০শে জুলাই, রাত ১২:০০
+            এবারের প্রতিযোগিতার রেজিস্ট্রেশন সময় শেষ হয়ে গেছে।
+            <span class="font-bold text-red-600">
+              নতুন রেজিস্ট্রেশন গ্রহণ করা হচ্ছে না।
             </span>
           </p>
 
-          <div class="border-emerald-ripple inline-block">
-            <button
-              @click="() => navigateTo('/registration')"
-              class="group relative inline-flex items-center justify-center px-8 py-4 sm:text-xl font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 shine-sweep-effect"
+          <div class="inline-block">
+            <div
+              class="inline-flex items-center justify-center px-8 py-4 sm:text-xl font-semibold text-gray-400 bg-gray-200 rounded-xl cursor-not-allowed"
             >
               <span class="relative flex items-center whitespace-nowrap">
                 <svg
@@ -184,22 +183,13 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
                   />
                 </svg>
-                এখনই রেজিস্ট্রেশন করুন
+                রেজিস্ট্রেশন সমাপ্ত
               </span>
-            </button>
+            </div>
           </div>
-
-          <p class="mt-6">
-            <a href="/registration" class="text-[13px] text-gray-500">
-              রেজিস্ট্রেশন লিংক:
-              <span class="text-emerald-600 font-medium">
-                competition.eshoquranshikhi.org/registration
-              </span>
-            </a>
-          </p>
         </div>
       </div>
     </section>
@@ -481,13 +471,10 @@
                     </h3>
                   </div>
                   <p class="text-emerald-700">
-                    ২০শে জুলাই রাত ১২:০০ টার মধ্যে ওয়েবসাইটে
-                    <span class="font-semibold">
-                      (competition.eshoquranshikhi.org/
-                      <br class="sm:hidden" />
-                      registration)
+                    এবারের প্রতিযোগিতার রেজিস্ট্রেশন
+                    <span class="font-semibold text-red-600">
+                      সম্পন্ন হয়ে গেছে।
                     </span>
-                    রেজিস্ট্রেশন সম্পন্ন করতে হবে।
                   </p>
                 </div>
               </div>
