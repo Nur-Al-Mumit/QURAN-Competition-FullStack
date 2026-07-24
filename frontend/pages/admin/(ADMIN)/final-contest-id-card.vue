@@ -122,7 +122,7 @@
               </div>
             </div>
             <div class="back-spacer"></div>
-            <div class="org-footer">
+            <div class="org-footer-back">
               <img src="~/assets/imgs/logo.png" alt="Logo" class="org-logo" />
               <span class="org-name">এসো কুরআন শিখি</span>
               <img v-if="orgQrUrl" :src="orgQrUrl" alt="QR" class="org-qr" />
@@ -531,10 +531,19 @@
   .org-footer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     border-top: 0.3mm solid #f3f4f6;
     gap: 1.5mm;
     padding: 1.5mm 3mm;
+    flex-shrink: 0;
+  }
+  .org-footer-back {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 0.3mm solid #f3f4f6;
+    gap: 1.5mm;
+    padding: 1mm 2mm;
     flex-shrink: 0;
   }
   .org-logo {
