@@ -109,60 +109,15 @@
             </div>
             <div class="back-divider"></div>
             <div class="instructions-list">
-              <div class="instr-item">
-                <span class="instr-icon">📋</span>
+              <div
+                v-for="(instr, i) in instructions"
+                :key="i"
+                class="instr-item"
+              >
+                <span class="instr-bullet"></span>
                 <div class="instr-text">
-                  <span class="instr-bn">পরীক্ষা শুরুর সময়</span>
-                  <span class="instr-en">Exam Start: সকাল ১০:০০টা</span>
-                </div>
-              </div>
-              <div class="instr-item">
-                <span class="instr-icon">🏆</span>
-                <div class="instr-text">
-                  <span class="instr-bn">পুরস্কার বিতরণী অনুষ্ঠান</span>
-                  <span class="instr-en">Prize Ceremony: বিকাল ৪:০০টা</span>
-                </div>
-              </div>
-              <div class="instr-item">
-                <span class="instr-icon">🍽️</span>
-                <div class="instr-text">
-                  <span class="instr-bn">লাঞ্চ ব্রেক</span>
-                  <span class="instr-en">
-                    Lunch Break: দুপুর ১:০০টা - ২:০০টা
-                  </span>
-                </div>
-              </div>
-              <div class="instr-item">
-                <span class="instr-icon">📖</span>
-                <div class="instr-text">
-                  <span class="instr-bn">
-                    নিজের মুসহাফ (কুরআনের কপি) আনতে হবে
-                  </span>
-                  <span class="instr-en">
-                    Bring your own Mushaf (Quran copy)
-                  </span>
-                </div>
-              </div>
-              <div class="instr-item">
-                <span class="instr-icon">🎲</span>
-                <div class="instr-text">
-                  <span class="instr-bn">
-                    লটারির মাধ্যমে সিরিয়াল ও প্রশ্ন নির্ধারণ
-                  </span>
-                  <span class="instr-en">
-                    Lottery will determine your serial & question
-                  </span>
-                </div>
-              </div>
-              <div class="instr-item">
-                <span class="instr-icon">📄</span>
-                <div class="instr-text">
-                  <span class="instr-bn">
-                    ২ পৃষ্ঠা পড়া — ১টি পরিচিত, ১টি অপরিচিত
-                  </span>
-                  <span class="instr-en">
-                    2 page reading — 1 known, 1 unknown
-                  </span>
+                  <span class="instr-bn">{{ instr.bn }}</span>
+                  <span class="instr-en">{{ instr.en }}</span>
                 </div>
               </div>
             </div>
@@ -170,6 +125,7 @@
             <div class="org-footer">
               <img src="~/assets/imgs/logo.png" alt="Logo" class="org-logo" />
               <span class="org-name">এসো কুরআন শিখি</span>
+              <img v-if="orgQrUrl" :src="orgQrUrl" alt="QR" class="org-qr" />
             </div>
             <div class="accent-bot"></div>
           </div>
@@ -196,9 +152,54 @@
   const cards = ref([]);
   const loading = ref(true);
 
+  // Dynamic instruction items — edit this array to update the back side.
+  const instructions = [
+    {
+      bn: "পরীক্ষা শুরুর সময় (দুপুর ১২:০০টা)",
+      en: "Exam Start Time: 12:00 PM",
+    },
+    {
+      bn: "স্বালাত ও দুপুরের খাবার (১:০০টা - ২:০০টা)",
+      en: "Salah And Lunch Break: 1:00 PM - 2:00 PM",
+    },
+    {
+      bn: "পুরস্কার বিতরণী অনুষ্ঠান (বিকাল ৪:০০টা)",
+      en: "Prize Ceremony: 4:00 PM",
+    },
+    {
+      bn: "নিজের মুসহাফ (কুরআনের কপি) সাথে আনতে হবে",
+      en: "Bring your own Mushaf (Quran copy)",
+    },
+    {
+      bn: "পরীক্ষা শুরুর ১৫ মিনিট পূর্বে লটারির মাধ্যমে সকল পরীক্ষার্থীর সিরিয়াল নির্ধারণ করা হবে",
+      en: "All candidates serial numbers will be determined by lottery 15 minutes before the exam starts",
+    },
+    {
+      bn: "নিজ পরীক্ষা শুরু হওয়ার ৫ মিনিট পূর্বে প্রশ্নের লটারি তুলে প্রস্তুতি গ্রহণ করতে হবে",
+      en: "Each candidate must draw their question 5 minutes before their turn",
+    },
+    {
+      bn: "পরীক্ষায় মোট ২টি প্রশ্ন থাকবে: ১টি পরীক্ষার্থীর নিজ পছন্দের (সর্বোচ্চ ১ পৃষ্ঠা) এবং ১টি লটারির অজানা প্রশ্ন। মোট পড়ার সময় ৭ মিনিট।",
+      en: "The exam consists of 2 questions: 1 candidate's choice (max 1 page) and 1 unknown draw. Total recitation time is 7 minutes.",
+    },
+  ];
+
   // Pre-generated QR data-URLs keyed by card index.
   // Using data URLs (base64 images) instead of canvas refs — no DOM timing issues.
   const qrDataUrls = ref({});
+  const orgQrUrl = ref("");
+
+  const generateOrgQR = async () => {
+    try {
+      orgQrUrl.value = await QRCode.toDataURL("https://eshoquranshikhi.org/", {
+        width: 100,
+        margin: 1,
+        color: { dark: "#1a1a1a", light: "#FFFFFF" },
+      });
+    } catch (error) {
+      console.error("Error generating org QR code:", error);
+    }
+  };
 
   const generateAllQRCodes = async (cardList) => {
     const urls = {};
@@ -250,6 +251,7 @@
   };
 
   onMounted(async () => {
+    await generateOrgQR();
     await fetchData();
   });
 </script>
@@ -529,7 +531,7 @@
   .org-footer {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     border-top: 0.3mm solid #f3f4f6;
     gap: 1.5mm;
     padding: 1.5mm 3mm;
@@ -541,6 +543,13 @@
     object-fit: contain;
     flex-shrink: 0;
   }
+  .org-qr {
+    width: 6mm;
+    height: 6mm;
+    object-fit: contain;
+    flex-shrink: 0;
+    opacity: 0.8;
+  }
   .org-name {
     font-size: 3mm;
     font-weight: 700;
@@ -550,7 +559,7 @@
 
   /* ===================== BACK SIDE SPECIFIC ===================== */
   .back-divider {
-    height: 0.5mm;
+    height: 0.3mm;
     background: linear-gradient(
       90deg,
       transparent,
@@ -559,7 +568,6 @@
       #10b981,
       transparent
     );
-    margin: 1mm 4mm;
     flex-shrink: 0;
   }
 
@@ -583,6 +591,14 @@
     flex-shrink: 0;
     margin-top: 0.3mm;
   }
+  .instr-bullet {
+    width: 1.5mm;
+    height: 1.5mm;
+    background: #059669;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 1mm;
+  }
 
   .instr-text {
     display: flex;
@@ -591,16 +607,16 @@
   }
 
   .instr-bn {
-    font-size: 2.6mm;
+    font-size: 8px;
     font-weight: 600;
     color: #111827;
     line-height: 1.15;
   }
 
   .instr-en {
-    font-size: 2.1mm;
+    font-size: 7px;
     color: #6b7280;
-    line-height: 1.1;
+    line-height: 1.2;
   }
 
   .back-spacer {
@@ -618,10 +634,6 @@
       display: none !important;
     }
 
-    /* Convert both grids to 2-column A4 layout
-       8 cards per page: 2 cols × 4 rows
-       Width:  2×97mm + 4mm gap + 2×6mm padding = 210mm (A4)
-       Height: 4×68.25mm + 3×4mm gap + 2×6mm padding = 297mm (A4) */
     .cards-grid {
       display: grid !important;
       grid-template-columns: repeat(2, 97mm);
