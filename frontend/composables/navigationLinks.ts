@@ -92,34 +92,41 @@ export const useNavigationLinks = () => {
 
   const adminLinks = [
     {
-      title: "View Registrations",
-      icon: "Circular",
-      link: "/admin/view-registrations",
-    },
-    {
-      title: "Training ID Cards",
-      icon: "Circular",
-      link: "/admin/training-id-card",
-    },
-    {
-      title: "Training Dates",
-      icon: "Circular",
-      link: "/admin/training-dates",
-    },
-    {
-      title: "Attendance",
+      title: "Training",
       icon: "Circular",
       link: null,
       children: [
         {
           title: "Attendance Sheet",
           icon: "Circular",
-          link: "/x",
+          link: "/admin/training-attendance-view",
         },
         {
-          title: "Attendance View",
+          title: "Training Dates",
           icon: "Circular",
-          link: "/admin/training-attendance-view",
+          link: "/admin/training-dates",
+        },
+        {
+          title: "Training ID Cards",
+          icon: "Circular",
+          link: "/admin/training-id-card",
+        },
+      ],
+    },
+    {
+      title: "Primary Selection",
+      icon: "Circular",
+      link: null,
+      children: [
+        {
+          title: "Verify Registration",
+          icon: "Circular",
+          link: "/admin/verify-registration",
+        },
+        {
+          title: "Submit Viva Result",
+          icon: "Circular",
+          link: "/admin/submit-viva-result",
         },
       ],
     },

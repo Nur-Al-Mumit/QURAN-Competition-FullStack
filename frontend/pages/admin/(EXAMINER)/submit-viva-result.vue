@@ -253,9 +253,9 @@
 </template>
 
 <script setup>
-  // definePageMeta({
-  //   layout: "split",
-  // });
+  definePageMeta({
+    layout: "split",
+  });
 
   // Inject the landscape @page rule inline into <head>. Some browsers
   // ignore `size` from async/code-split CSS chunks but reliably honor an
