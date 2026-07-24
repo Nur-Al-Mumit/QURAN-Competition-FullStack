@@ -117,6 +117,33 @@
               </tr>
             </thead>
             <tbody>
+              <tr class="bg-gray-50 border-b-2 border-gray-300 print:font-semibold">
+                <td colspan="3" class="p-3 text-xs font-semibold uppercase text-gray-600">
+                  Total
+                </td>
+                <td
+                  v-for="d in dates"
+                  :key="d.date"
+                  class="p-3 text-center text-xs"
+                  :class="d.is_off_day ? 'bg-amber-50' : ''"
+                >
+                  <span v-if="d.is_off_day">—</span>
+                  <template v-else-if="dailyCounts[d.date]">
+                    <span class="text-emerald-700 font-semibold">
+                      {{ dailyCounts[d.date].present }}P
+                    </span>
+                    <span class="text-red-700 font-semibold">
+                      {{ dailyCounts[d.date].absent }}A
+                    </span>
+                    <span
+                      v-if="dailyCounts[d.date].late"
+                      class="text-amber-700 font-semibold"
+                    >
+                      {{ dailyCounts[d.date].late }}L
+                    </span>
+                  </template>
+                </td>
+              </tr>
               <tr
                 v-for="(student, i) in filteredStudents"
                 :key="student.user_id || student.reg_no || i"
@@ -189,6 +216,27 @@
     return students.value.filter((s) =>
       (s.reg_no || "").toLowerCase().includes(q),
     );
+  });
+
+  // Per-day tallies across all (unfiltered) students.
+  // { [date]: { present: n, absent: n, late: n } }
+  const dailyCounts = computed(() => {
+    const counts = {};
+    for (const d of dates.value) {
+      if (d.is_off_day) continue;
+      const date = d.date;
+      let present = 0,
+        absent = 0,
+        late = 0;
+      for (const s of students.value) {
+        const status = statusFor(s, date);
+        if (status === 1) present++;
+        else if (status === 2) absent++;
+        else if (status === 3) late++;
+      }
+      counts[date] = { present, absent, late };
+    }
+    return counts;
   });
 
   const formatShort = (date) =>
