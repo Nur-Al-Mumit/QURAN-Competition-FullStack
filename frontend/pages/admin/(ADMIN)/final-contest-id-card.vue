@@ -52,9 +52,12 @@
               <p class="hdr-comp">বিশুদ্ধ কুরআন প্রতিযোগিতা</p>
               <p class="hdr-year">১৪৪৮ হিজরি</p>
             </div>
-            <div class="pass-strip">
-              <span class="pass-label-bn">Final Competition Pass Card</span>
-              <span class="pass-tier">Mahir · الماهر · Expert</span>
+            <div class="tier-strip">
+              <span class="tier-left"></span>
+              <span class="tier-text">Final Competition Pass Card</span>
+              <span class="tier-divider">|</span>
+              <span class="tier-badge">দক্ষ · الماهر · Expert</span>
+              <span class="tier-right"></span>
             </div>
             <div class="name-block">
               <p class="name-bn">{{ student.name_bn || "—" }}</p>
@@ -413,40 +416,45 @@
     margin: 0.5mm 0 0;
     line-height: 1.1;
   }
+
+  /* TIER STRIP — elegant horizontal bar with decorative lines */
+  .tier-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5mm;
+    padding: 0.8mm 3mm;
+    flex-shrink: 0;
+  }
+  .tier-left,
+  .tier-right {
+    flex: 1;
+    height: 0.2mm;
+    background: #047857;
+  }
+  .tier-text {
+    font-size: 2.6mm;
+    font-weight: 600;
+    color: #374151;
+    white-space: nowrap;
+  }
+  .tier-divider {
+    font-size: 2mm;
+    color: #d1d5db;
+  }
+  .tier-badge {
+    font-size: 2.2mm;
+    font-weight: 700;
+    color: #047857;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+  }
   .hdr-sub {
     font-size: 2.4mm;
     font-weight: 600;
     color: #374151;
     margin: 0.5mm 0 0;
     line-height: 1.1;
-  }
-
-  /* PASS STRIP (front only) */
-  .pass-strip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2mm;
-    background: #ecfdf5;
-    border-top: 0.3mm solid #a7f3d0;
-    border-bottom: 0.3mm solid #a7f3d0;
-    padding: 1mm 3mm;
-    flex-shrink: 0;
-  }
-  .pass-label-bn {
-    font-size: 2.8mm;
-    font-weight: 700;
-    color: #065f46;
-  }
-  .pass-tier {
-    font-size: 2.2mm;
-    font-weight: 600;
-    color: #047857;
-    background: #fff;
-    border: 0.3mm solid #6ee7b7;
-    border-radius: 9999px;
-    padding: 0.2mm 1.5mm;
-    white-space: nowrap;
   }
 
   /* NAME BLOCK (front only) */
