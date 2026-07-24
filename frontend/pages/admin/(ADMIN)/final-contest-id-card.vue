@@ -53,7 +53,7 @@
               <p class="hdr-year">১৪৪৮ হিজরি</p>
             </div>
             <div class="pass-strip">
-              <span class="pass-label-bn">চূড়ান্ত প্রতিযোগিতা পাস কার্ড</span>
+              <span class="pass-label-bn">Final Competition Pass Card</span>
               <span class="pass-tier">Mahir · الماهر · Expert</span>
             </div>
             <div class="name-block">
@@ -377,8 +377,8 @@
 
   /* ===================== ID CARD (shared front & back) ===================== */
   .id-card {
-    width: 85.6mm;
-    height: 54mm;
+    width: 97mm;
+    height: 68.25mm;
     background: #ffffff;
     border-radius: 0;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
@@ -391,42 +391,31 @@
     print-color-adjust: exact;
   }
 
-  .accent-top {
-    height: 2mm;
-    background: linear-gradient(90deg, #059669, #10b981);
-    flex-shrink: 0;
-  }
-  .accent-bot {
-    height: 1.2mm;
-    background: linear-gradient(90deg, #10b981, #059669);
-    flex-shrink: 0;
-  }
-
   /* HEADER */
   .hdr {
     text-align: center;
-    padding: 1.4mm 2.5mm 1mm;
+    padding: 2mm 3mm 1.5mm;
     flex-shrink: 0;
   }
   .hdr-comp {
-    font-size: 2.4mm;
+    font-size: 3.2mm;
     font-weight: 700;
     color: #047857;
     margin: 0;
     line-height: 1.1;
   }
   .hdr-year {
-    font-size: 1.8mm;
+    font-size: 2.4mm;
     font-weight: 600;
     color: #6b7280;
-    margin: 0.3mm 0 0;
+    margin: 0.5mm 0 0;
     line-height: 1.1;
   }
   .hdr-sub {
-    font-size: 1.8mm;
+    font-size: 2.4mm;
     font-weight: 600;
     color: #374151;
-    margin: 0.3mm 0 0;
+    margin: 0.5mm 0 0;
     line-height: 1.1;
   }
 
@@ -435,52 +424,51 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1.5mm;
+    gap: 2mm;
     background: #ecfdf5;
     border-top: 0.3mm solid #a7f3d0;
     border-bottom: 0.3mm solid #a7f3d0;
-    padding: 0.6mm 2.5mm;
+    padding: 1mm 3mm;
     flex-shrink: 0;
   }
   .pass-label-bn {
-    font-size: 2mm;
+    font-size: 2.8mm;
     font-weight: 700;
     color: #065f46;
   }
   .pass-tier {
-    font-size: 1.6mm;
+    font-size: 2.2mm;
     font-weight: 600;
     color: #047857;
     background: #fff;
     border: 0.3mm solid #6ee7b7;
     border-radius: 9999px;
-    padding: 0.1mm 1.2mm;
+    padding: 0.2mm 1.5mm;
     white-space: nowrap;
   }
 
   /* NAME BLOCK (front only) */
   .name-block {
-    padding: 1mm 2.5mm 0;
     flex-shrink: 0;
   }
   .name-bn {
-    font-size: 3mm;
+    font-size: 4mm;
     font-weight: 700;
     color: #111827;
     margin: 0;
     line-height: 1.15;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    padding: 1.5mm 3mm 0;
   }
   .name-en {
-    font-size: 2mm;
+    font-size: 2.8mm;
     color: #4b5563;
     margin: 0;
     line-height: 1.1;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    padding: 0mm 3mm 0;
   }
 
   /* QR CODE (front only) — using <img> with data-URL src */
@@ -494,23 +482,24 @@
     min-height: 0;
   }
   .qr-img {
-    width: 16mm;
-    height: 16mm;
+    margin-top: 2px;
+    width: 18mm;
+    height: 18mm;
     object-fit: contain;
   }
   .qr-caption {
-    font-size: 1.5mm;
+    font-size: 2mm;
     color: #9ca3af;
-    margin: 0.3mm 0 0;
+    margin: 0.5mm 0 0;
   }
 
   /* FOOTER ROW (front only) */
   .card-footer {
     display: flex;
     justify-content: space-between;
-    gap: 0.5mm;
-    padding: 0.8mm 2.5mm 1mm;
-    border-top: 0.2mm solid #f3f4f6;
+    gap: 1mm;
+    padding: 1.5mm 3mm 1.5mm;
+    border-top: 0.3mm solid #f3f4f6;
     flex-shrink: 0;
   }
   .footer-item {
@@ -521,13 +510,13 @@
     flex: 1;
   }
   .footer-lbl {
-    font-size: 1.3mm;
+    font-size: 1.8mm;
     color: #9ca3af;
     text-transform: uppercase;
     letter-spacing: 0.02em;
   }
   .footer-val {
-    font-size: 1.8mm;
+    font-size: 2.5mm;
     font-weight: 700;
     color: #111827;
     white-space: nowrap;
@@ -542,18 +531,18 @@
     align-items: center;
     justify-content: center;
     border-top: 0.3mm solid #f3f4f6;
-    gap: 1.2mm;
-    padding: 1mm 2.5mm;
+    gap: 1.5mm;
+    padding: 1.5mm 3mm;
     flex-shrink: 0;
   }
   .org-logo {
-    width: 5mm;
-    height: 5mm;
+    width: 7mm;
+    height: 7mm;
     object-fit: contain;
     flex-shrink: 0;
   }
   .org-name {
-    font-size: 2.2mm;
+    font-size: 3mm;
     font-weight: 700;
     color: #047857;
     white-space: nowrap;
@@ -561,7 +550,7 @@
 
   /* ===================== BACK SIDE SPECIFIC ===================== */
   .back-divider {
-    height: 0.4mm;
+    height: 0.5mm;
     background: linear-gradient(
       90deg,
       transparent,
@@ -570,29 +559,29 @@
       #10b981,
       transparent
     );
-    margin: 0.5mm 3mm;
+    margin: 1mm 4mm;
     flex-shrink: 0;
   }
 
   .instructions-list {
-    padding: 0.8mm 3mm 0;
+    padding: 1.5mm 4mm 0;
     display: flex;
     flex-direction: column;
-    gap: 0.6mm;
+    gap: 1.2mm;
     flex: 1;
   }
 
   .instr-item {
     display: flex;
     align-items: flex-start;
-    gap: 1mm;
+    gap: 1.5mm;
   }
 
   .instr-icon {
-    font-size: 2.2mm;
+    font-size: 3mm;
     line-height: 1;
     flex-shrink: 0;
-    margin-top: 0.2mm;
+    margin-top: 0.3mm;
   }
 
   .instr-text {
@@ -602,14 +591,14 @@
   }
 
   .instr-bn {
-    font-size: 1.8mm;
+    font-size: 2.6mm;
     font-weight: 600;
     color: #111827;
     line-height: 1.15;
   }
 
   .instr-en {
-    font-size: 1.5mm;
+    font-size: 2.1mm;
     color: #6b7280;
     line-height: 1.1;
   }
@@ -629,12 +618,15 @@
       display: none !important;
     }
 
-    /* Convert both grids to 2-column A4 layout */
+    /* Convert both grids to 2-column A4 layout
+       8 cards per page: 2 cols × 4 rows
+       Width:  2×97mm + 4mm gap + 2×6mm padding = 210mm (A4)
+       Height: 4×68.25mm + 3×4mm gap + 2×6mm padding = 297mm (A4) */
     .cards-grid {
       display: grid !important;
-      grid-template-columns: repeat(2, 85.6mm);
-      gap: 6mm;
-      padding: 8mm;
+      grid-template-columns: repeat(2, 97mm);
+      gap: 4mm;
+      padding: 6mm;
       justify-content: center;
     }
 
