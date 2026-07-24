@@ -1,6 +1,6 @@
 <template>
   <div
-    class="sm:p-6 bg-gray-50 min-h-screen attendance-sheet print:p-0 print:m-0"
+    class="sm:p-6 min-h-screen attendance-sheet print:p-0 print:m-0"
   >
     <div class="max-w-7xl mx-auto">
       <!-- Header + season filter (screen only) -->
@@ -18,7 +18,7 @@
               Recorded attendance (from QR scans) per student per training date.
             </p>
           </div>
-          <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+            <div class="grid grid-cols-1 sm:flex sm:flex-wrap sm:items-center gap-3 w-full sm:w-auto">
             <div class="flex items-center gap-2">
               <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
                 Season
@@ -26,7 +26,7 @@
               <select
                 v-model="filters.season_id"
                 @change="fetchData"
-                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-0 flex-1"
                 :disabled="loading"
               >
                 <option value="">Select season</option>
@@ -44,7 +44,7 @@
                 v-model="filters.reg_no"
                 type="text"
                 placeholder="Search reg no…"
-                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 w-40"
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 w-full sm:w-40"
               />
             </div>
           </div>
