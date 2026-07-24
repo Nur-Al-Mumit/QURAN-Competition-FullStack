@@ -18,22 +18,35 @@
               Recorded attendance (from QR scans) per student per training date.
             </p>
           </div>
-          <div class="flex items-center gap-2 w-full sm:w-auto">
-            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
-              Season
-            </label>
-            <select
-              v-model="filters.season_id"
-              @change="fetchData"
-              class="flex-1 sm:flex-none min-w-0 max-w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              :disabled="loading"
-            >
-              <option value="">Select season</option>
-              <option v-for="s in seasons" :key="s.id" :value="s.id">
-                {{ s.name }} ({{ s.year }})
-                <template v-if="s.is_active">— Active</template>
-              </option>
-            </select>
+          <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+            <div class="flex items-center gap-2">
+              <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                Season
+              </label>
+              <select
+                v-model="filters.season_id"
+                @change="fetchData"
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                :disabled="loading"
+              >
+                <option value="">Select season</option>
+                <option v-for="s in seasons" :key="s.id" :value="s.id">
+                  {{ s.name }} ({{ s.year }})
+                  <template v-if="s.is_active">— Active</template>
+                </option>
+              </select>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                Reg No
+              </label>
+              <input
+                v-model="filters.reg_no"
+                type="text"
+                placeholder="Search reg no…"
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 w-40"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -46,10 +59,14 @@
         Loading attendance…
       </div>
       <div
-        v-else-if="!students.length || !dates.length"
+        v-else-if="!filteredStudents.length || !dates.length">
+        No data for this season.
+      </div>
+      <div
+        v-else-if="!filteredStudents.length && filters.reg_no && students.length"
         class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center text-gray-400 text-sm"
       >
-        No data for this season.
+        No student found with that registration number.
       </div>
 
       <!-- Attendance table -->
@@ -101,7 +118,7 @@
             </thead>
             <tbody>
               <tr
-                v-for="(student, i) in students"
+                v-for="(student, i) in filteredStudents"
                 :key="student.user_id || student.reg_no || i"
                 class="hover:bg-gray-50"
               >
@@ -160,11 +177,19 @@
   });
 
   const seasons = ref([]);
-  const filters = ref({ season_id: "" });
+  const filters = ref({ season_id: "", reg_no: "" });
   const students = ref([]);
   const dates = ref([]);
   const attendance = ref({}); // { [user_id]: { [date]: status } }
   const loading = ref(false);
+
+  const filteredStudents = computed(() => {
+    const q = filters.value.reg_no.trim().toLowerCase();
+    if (!q) return students.value;
+    return students.value.filter((s) =>
+      (s.reg_no || "").toLowerCase().includes(q),
+    );
+  });
 
   const formatShort = (date) =>
     new Date(date).toLocaleDateString("en-US", {
