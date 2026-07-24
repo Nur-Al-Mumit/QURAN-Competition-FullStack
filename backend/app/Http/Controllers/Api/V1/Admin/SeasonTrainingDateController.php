@@ -9,6 +9,7 @@ use App\Models\SeasonTrainingDate;
 use App\Models\UserPreliminaryResult;
 use App\Models\UserTrainingAttendance;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Manages per-season training dates and serves the data the printable
@@ -153,7 +154,7 @@ class SeasonTrainingDateController extends Controller
         $attendanceMap = [];
         if ($userIds && $dateStrings) {
             $rows = UserTrainingAttendance::whereIn('user_id', $userIds)
-                ->whereDate('date', $dateStrings)
+                ->whereIn(DB::raw('DATE(date)'), $dateStrings)
                 ->get(['user_id', 'date', 'attendance_status']);
 
             foreach ($rows as $row) {
