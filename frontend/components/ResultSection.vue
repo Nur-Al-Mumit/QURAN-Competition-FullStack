@@ -61,7 +61,6 @@
             <th class="p-2 border w-20">Serial</th>
             <th class="p-2 border w-28">Reg No</th>
             <th class="p-2 border">Name</th>
-            <th class="p-2 border w-40">Phone</th>
             <th class="p-2 border w-32">Result</th>
           </tr>
         </thead>
@@ -77,7 +76,6 @@
             </td>
             <td class="p-2 border whitespace-nowrap">{{ row.reg_no || "—" }}</td>
             <td class="p-2 border text-left">{{ row.name_en || "—" }}</td>
-            <td class="p-2 border whitespace-nowrap">{{ row.phone || "—" }}</td>
             <td class="p-2 border">
               <span
                 :class="[
