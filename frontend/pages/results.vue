@@ -112,7 +112,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">
               Search
               <span class="text-gray-400 font-normal">
-                (name, phone, reg no, or serial)
+                (name, reg no, or serial)
               </span>
             </label>
             <div class="relative">
@@ -350,11 +350,11 @@
   // Filters each section by the search query across name / phone /
   // reg_no / serial (case-insensitive). When the query is empty the
   // sections are returned unchanged so the whole list is visible.
+  // row.phone || "",
   const matches = (row, q) => {
     if (!q) return true;
     const hay = [
       row.name_en || "",
-      row.phone || "",
       row.reg_no || "",
       row.serial || "",
     ]

@@ -78,7 +78,7 @@ class ResultCardController extends Controller
         // cannot stitch the related models back onto their parents and
         // the relation resolves to null for every row.
         $allocations = AttendanceAllocation::with([
-            'userCompetitionForm:id,reg_no,name_en,phone',
+            'userCompetitionForm:id,reg_no,name_en',
             'userPreliminaryResult:id,user_id,season_id,result_category_id,attendance_status,attendance_allocation_id',
         ])
             ->when($seasonId, fn ($q) => $q->where('season_id', $seasonId))
@@ -144,7 +144,7 @@ class ResultCardController extends Controller
                 'serial'  => $item->serial,
                 'reg_no'  => $form?->reg_no ?? '',
                 'name_en' => $form?->name_en ?? '',
-                'phone'   => $form?->phone ?? '',
+                // 'phone'   => $form?->phone ?? '',
                 'result_category_id' => $decision?->result_category_id,
             ];
 
