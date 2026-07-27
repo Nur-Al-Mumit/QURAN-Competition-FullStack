@@ -114,6 +114,11 @@
                     {{ formatDay(d.date) }}
                   </div>
                 </th>
+                <th
+                  class="p-3 border-b text-xs font-semibold uppercase tracking-wide text-center w-20 bg-emerald-50 text-emerald-800"
+                >
+                  Total
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -143,6 +148,9 @@
                     </span>
                   </template>
                 </td>
+                <td class="p-3 text-center text-xs font-semibold text-emerald-800 bg-emerald-50">
+                  {{ totalTrainingDays }}
+                </td>
               </tr>
               <tr
                 v-for="(student, i) in filteredStudents"
@@ -171,6 +179,19 @@
                 >
                   <span v-if="d.is_off_day">—</span>
                   <span v-else>{{ cellLabel(student, d.date) }}</span>
+                </td>
+                <td class="p-3 border-b text-center font-semibold bg-emerald-50">
+                  <span
+                    :class="
+                      presentRatio(student) === totalTrainingDays
+                        ? 'text-emerald-700'
+                        : presentRatio(student) >= totalTrainingDays / 2
+                          ? 'text-amber-700'
+                          : 'text-red-700'
+                    "
+                  >
+                    {{ presentRatio(student) }}/{{ totalTrainingDays }}
+                  </span>
                 </td>
               </tr>
             </tbody>
@@ -212,11 +233,36 @@
 
   const filteredStudents = computed(() => {
     const q = filters.value.reg_no.trim().toLowerCase();
-    if (!q) return students.value;
-    return students.value.filter((s) =>
-      (s.reg_no || "").toLowerCase().includes(q),
-    );
+    const list = !q
+      ? students.value
+      : students.value.filter((s) =>
+          (s.reg_no || "").toLowerCase().includes(q),
+        );
+    // Sort by total present count descending (5/5 first, then 4/5, ...).
+    return [...list].sort((a, b) => {
+      const diff = presentRatio(b) - presentRatio(a);
+      if (diff !== 0) return diff;
+      // Tiebreaker: stable by name/reg_no.
+      return (a.name_en || a.name_bn || "").localeCompare(
+        b.name_en || b.name_bn || "",
+      );
+    });
   });
+
+  // Total count of non-off-day training dates (dynamic, never hardcoded).
+  const totalTrainingDays = computed(
+    () => dates.value.filter((d) => !d.is_off_day).length,
+  );
+
+  // Number of training days a student was present (status === 1).
+  const presentRatio = (student) => {
+    let count = 0;
+    for (const d of dates.value) {
+      if (d.is_off_day) continue;
+      if (statusFor(student, d.date) === 1) count++;
+    }
+    return count;
+  };
 
   // Per-day tallies across all (unfiltered) students.
   // { [date]: { present: n, absent: n, late: n } }
