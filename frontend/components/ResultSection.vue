@@ -61,6 +61,7 @@
             <th class="p-2 border w-20">Serial</th>
             <th class="p-2 border w-28">Reg No</th>
             <th class="p-2 border">Name</th>
+            <th v-if="showSeason" class="p-2 border w-20">Season</th>
             <th v-if="criteriaField" class="p-2 border w-32">Criteria</th>
             <th class="p-2 border w-32">{{ statusField ? 'Confirmation' : 'Result' }}</th>
           </tr>
@@ -77,6 +78,7 @@
             </td>
             <td class="p-2 border whitespace-nowrap">{{ row.reg_no || "—" }}</td>
             <td class="p-2 border text-left">{{ row.name_en || "—" }}</td>
+            <td v-if="showSeason" class="p-2 border whitespace-nowrap">{{ row.season_id }}</td>
             <td v-if="criteriaField" class="p-2 border whitespace-nowrap">
               {{ getCriteriaName(row[criteriaField]) }}
             </td>
@@ -195,6 +197,8 @@
       validator: (v) => ["emerald", "red"].includes(v),
     },
     rows: { type: Array, required: true },
+    // When true, shows a Season column.
+    showSeason: { type: Boolean, default: false },
     // Field name on each row to read per-row status (1=YES, 2=NO).
     // When set, the badge is rendered per-row instead of using static badgeText.
     statusField: { type: String, default: "" },

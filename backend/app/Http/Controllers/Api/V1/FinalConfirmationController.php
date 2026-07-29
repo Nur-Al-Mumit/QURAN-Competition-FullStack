@@ -48,79 +48,55 @@ class FinalConfirmationController extends Controller
             'season_id' => 'nullable|integer|exists:seasons,id',
         ]);
 
-        $seasonId = $request->filled('season_id')
-            ? (int) $request->input('season_id')
-            : (Season::where('is_active', 1)->latest()->value('id') ?? null);
+        // TODO: Starting next year, only fetch the active season.
+        // Uncomment the two lines below and remove the hardcoded fallback.
+        // $seasonId = $request->filled('season_id')
+        //     ? (int) $request->input('season_id')
+        //     : (Season::where('is_active', 1)->latest()->value('id') ?? null);
+
+        // This year only: hardcode season 1 (mahir) + season 2 (mubtadi).
+        $seasonId = null;
 
         // Canonical result-category ids: 1 = Mahir, 2 = Mubtadi.
         $mahirId = 1;
         $mubtadiId = 2;
 
-        // Fetch all final_confirmation records for the season, eager-load
-        // the competition form (for reg_no, name_en) and the preliminary result
-        // (for result_category_id to determine mahir/mubtadi grouping).
-        $confirmations = FinalConfirmation::with([
+        // This year: fetch all allocations from both seasons.
+        // Mahir and mubtadi can exist in either season.
+        // TODO: Next year, remove this and use single $seasonId above.
+        $allocations = AttendanceAllocation::with([
             'userCompetitionForm:id,reg_no,name_en',
+            'userPreliminaryResult:id,user_id,season_id,criteria_id,result_category_id,attendance_status,attendance_allocation_id',
         ])
-            ->when($seasonId, fn ($q) => $q->where('season_id', $seasonId))
+            ->whereIn('season_id', [1, 2])
             ->get();
 
-        if ($confirmations->isEmpty()) {
-            return JsonResponse::success([
-                'season_id' => $seasonId,
-                'sections'  => [
-                    'mahir'   => [],
-                    'mubtadi' => [],
-                ],
-            ]);
-        }
-
-        // Collect all user_ids to fetch preliminary results in bulk.
-        $userIds = $confirmations->pluck('user_id')->unique()->all();
-
-        $preliminaryMap = UserPreliminaryResult::whereIn('user_id', $userIds)
-            ->when($seasonId, fn ($q) => $q->where('season_id', $seasonId))
-            ->get()
-            ->keyBy('user_id');
-
-        // Build a map of criteria_id from preliminary results (the source of truth).
-        $criteriaMap = [];
-        foreach ($preliminaryMap as $uid => $prelim) {
-            if ($prelim->criteria_id) {
-                $criteriaMap[$uid] = $prelim->criteria_id;
-            }
-        }
-
-        // Collect allocation serials for display order.
-        $allocationMap = AttendanceAllocation::whereIn('user_id', $userIds)
-            ->when($seasonId, fn ($q) => $q->where('season_id', $seasonId))
+        // Confirmation records for both seasons.
+        $allUserIds = $allocations->pluck('user_id')->unique()->all();
+        $confirmationMap = FinalConfirmation::whereIn('user_id', $allUserIds)
+            ->whereIn('season_id', [1, 2])
             ->get()
             ->keyBy('user_id');
 
         $mahir = [];
         $mubtadi = [];
 
-        foreach ($confirmations as $conf) {
-            $form = $conf->userCompetitionForm;
-            $preliminary = $preliminaryMap[$conf->user_id] ?? null;
-            $allocation = $allocationMap[$conf->user_id] ?? null;
+        foreach ($allocations as $item) {
+            $form = $item->userCompetitionForm;
+            $decision = $item->userPreliminaryResult;
+            $conf = $confirmationMap[$item->user_id] ?? null;
 
             $row = [
-                'serial'                    => $allocation?->serial ?? '',
-                'reg_no'                    => $form?->reg_no ?? '',
-                'name_en'                   => $form?->name_en ?? '',
-                'criteria_id'               => $criteriaMap[$conf->user_id] ?? null,
-                'status'                    => $conf->status,
+                'serial'   => $item->serial,
+                'reg_no'   => $form?->reg_no ?? '',
+                'name_en'  => $form?->name_en ?? '',
+                'season_id' => $item->season_id,
+                'status'   => $conf ? $conf->status : 2,
             ];
 
-            // Group by result_category_id from preliminary results.
-            if ($preliminary && $preliminary->result_category_id === $mahirId) {
+            if ($decision && $decision->result_category_id === $mahirId) {
                 $mahir[] = $row;
-            } elseif ($preliminary && $preliminary->result_category_id === $mubtadiId) {
-                $mubtadi[] = $row;
-            } elseif ($preliminary) {
-                // Has a preliminary result but neither mahir nor mubtadi (e.g. Fail).
-                // Place in mubtadi bucket as fallback since they were still confirmed.
+            } elseif ($decision && $decision->result_category_id === $mubtadiId) {
                 $mubtadi[] = $row;
             }
         }

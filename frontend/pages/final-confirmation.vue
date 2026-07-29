@@ -32,36 +32,13 @@
         </p>
       </div>
 
-      <!-- Controls: season + search -->
+      <!-- Controls: search only -->
       <div
         class="bg-white rounded-2xl shadow-lg border border-gray-200 p-5 mb-8"
       >
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Season -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Season
-            </label>
-            <select
-              v-model="filters.season_id"
-              @change="fetchData"
-              :disabled="loading"
-              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:bg-gray-100"
-            >
-              <option value="">All Seasons</option>
-              <option
-                v-for="season in seasons"
-                :key="season.id"
-                :value="season.id"
-              >
-                {{ season.name }} ({{ season.year }})
-                <template v-if="season.is_active">— Active</template>
-              </option>
-            </select>
-          </div>
-
+        <div class="grid grid-cols-1 gap-4">
           <!-- Search -->
-          <div class="md:col-span-2">
+          <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
               Search
               <span class="text-gray-400 font-normal">
@@ -142,6 +119,7 @@
             badge-text="Mahir"
             badge-tone="emerald"
             :rows="filtered.mahir"
+            show-season
             status-field="status"
           />
 
@@ -155,6 +133,7 @@
             badge-text="Mubtadi"
             badge-tone="emerald"
             :rows="filtered.mubtadi"
+            show-season
             status-field="status"
           />
 
@@ -177,48 +156,17 @@
   // Public final confirmation page — no auth required.
   // Calls the public /final-confirmation/* endpoints via useAxios.
 
-  const seasons = ref([]);
-  const filters = ref({ season_id: "" });
-
   const sections = ref({ mahir: [], mubtadi: [] });
   const loading = ref(true);
-  const criteriaMap = ref({});
 
   // Client-side search query. Empty by default → the whole list shows.
   const searchQuery = ref("");
 
-  const fetchSeasons = async () => {
-    try {
-      const { data } = await useAxios(
-        "/final-confirmation/seasons",
-        null,
-        null,
-        "GET",
-      );
-      if (data?.data?.seasons) {
-        seasons.value = data.data.seasons;
-        const activeId = data.data.active_season_id;
-        if (activeId && filters.value.season_id === "") {
-          filters.value.season_id = String(activeId);
-        }
-      }
-    } catch (err) {
-      window.showError(
-        "Error!",
-        err?.response?.data?.message || "Failed to load seasons",
-        3000,
-      );
-    }
-  };
-
   const fetchData = async () => {
     loading.value = true;
     try {
-      const query = filters.value.season_id
-        ? `?season_id=${filters.value.season_id}`
-        : "";
       const { data } = await useAxios(
-        `/final-confirmation/data${query}`,
+        `/final-confirmation/data`,
         null,
         null,
         "GET",
@@ -231,17 +179,8 @@
           mahir: s.mahir || [],
           mubtadi: s.mubtadi || [],
         };
-        // Build a criteria name map from criteria_id values in the data.
-        const map = {};
-        [...(s.mahir || []), ...(s.mubtadi || [])].forEach((row) => {
-          if (row.criteria_id) {
-            map[row.criteria_id] = `Criteria #${row.criteria_id}`;
-          }
-        });
-        criteriaMap.value = map;
       } else {
         sections.value = { mahir: [], mubtadi: [] };
-        criteriaMap.value = {};
       }
     } catch (err) {
       window.showError(
@@ -250,7 +189,6 @@
         3000,
       );
       sections.value = { mahir: [], mubtadi: [] };
-      criteriaMap.value = {};
     } finally {
       loading.value = false;
     }
@@ -283,7 +221,6 @@
   );
 
   onMounted(async () => {
-    await fetchSeasons();
     await fetchData();
   });
 </script>
