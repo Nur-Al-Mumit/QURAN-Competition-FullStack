@@ -111,6 +111,12 @@ const adminLinks: NavLinkItem[] = [
         link: "/admin/submit-viva-result",
         roles: ["SUPER_ADMIN", "ADMIN", "EXAMINER"],
       },
+      {
+        title: "Final Confirmation",
+        icon: "Circular",
+        link: "/admin/final-confirmation",
+        roles: ["SUPER_ADMIN", "ADMIN"],
+      },
     ],
   },
 

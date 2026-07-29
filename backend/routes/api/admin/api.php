@@ -12,4 +12,5 @@ Route::middleware(['auth:admin-api'])->prefix('admin')->group(function () {
     include __DIR__ . '/training-id-card.php';
     include __DIR__ . '/final-contest-id-card.php';
     include __DIR__ . '/season-training-dates.php';
+    include __DIR__ . '/final-confirmation.php';
 });
