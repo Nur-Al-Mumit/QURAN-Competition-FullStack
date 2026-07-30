@@ -14,4 +14,5 @@ Route::middleware(['auth:admin-api'])->prefix('admin')->group(function () {
     include __DIR__ . '/season-training-dates.php';
     include __DIR__ . '/final-confirmation.php';
     include __DIR__ . '/final-attendance.php';
+    include __DIR__ . '/final-attendance-view.php';
 });

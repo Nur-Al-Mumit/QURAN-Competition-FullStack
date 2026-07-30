@@ -7,7 +7,9 @@ use App\Lib\JsonResponse;
 use App\Models\AttendanceAllocation;
 use App\Models\FinalConfirmation;
 use App\Models\Season;
+use App\Models\SeasonTrainingDate;
 use App\Models\UserPreliminaryResult;
+use App\Models\UserTrainingAttendance;
 use Illuminate\Http\Request;
 
 /**
@@ -141,25 +143,36 @@ class FinalConfirmationController extends Controller
             'season_id' => 'nullable|integer|exists:seasons,id',
         ]);
 
-        $seasonId = $request->filled('season_id')
-            ? (int) $request->input('season_id')
-            : (Season::where('is_active', 1)->latest()->value('id') ?? null);
-
         $mahirId = 1;
         $mubtadiId = 2;
 
-        // Roster: every allocated seat for the season.
+        // Fetch all allocations from both seasons.
         $allocations = AttendanceAllocation::with([
             'userCompetitionForm:id,reg_no,name_en',
             'userPreliminaryResult:id,user_id,season_id,criteria_id,result_category_id,attendance_status,attendance_allocation_id',
         ])
-            ->when($seasonId, fn ($q) => $q->where('season_id', $seasonId))
+            ->whereIn('season_id', [1, 2])
             ->get();
 
-        // Existing confirmation records for the season.
         $allocationUserIds = $allocations->pluck('user_id')->unique()->all();
+
+        // Existing confirmation records for both seasons.
         $confirmations = FinalConfirmation::whereIn('user_id', $allocationUserIds)
-            ->when($seasonId, fn ($q) => $q->where('season_id', $seasonId))
+            ->whereIn('season_id', [1, 2])
+            ->get()
+            ->keyBy('user_id');
+
+        // Total training days (non-off days) summed across both seasons.
+        $totalTrainingDays = SeasonTrainingDate::whereIn('season_id', [1, 2])
+            ->where('is_off_day', false)
+            ->count();
+
+        // Training attendance: count present (1) + late (3) per user across both seasons.
+        $attendanceCounts = UserTrainingAttendance::whereIn('user_id', $allocationUserIds)
+            ->whereIn('season_id', [1, 2])
+            ->whereIn('attendance_status', [1, 3]) // Present or Late
+            ->selectRaw('user_id, COUNT(*) as present_count')
+            ->groupBy('user_id')
             ->get()
             ->keyBy('user_id');
 
@@ -170,6 +183,7 @@ class FinalConfirmationController extends Controller
             $form = $item->userCompetitionForm;
             $decision = $item->userPreliminaryResult;
             $conf = $confirmations[$item->user_id] ?? null;
+            $attendance = $attendanceCounts[$item->user_id] ?? null;
 
             $row = [
                 'user_id'                => $item->user_id,
@@ -177,10 +191,13 @@ class FinalConfirmationController extends Controller
                 'serial'                 => $item->serial,
                 'reg_no'                 => $form?->reg_no ?? '',
                 'name_en'                => $form?->name_en ?? '',
+                'season_id'              => $item->season_id,
                 'criteria_id'            => $decision?->criteria_id,
                 'result_category_id'     => $decision?->result_category_id,
                 'confirmation_status'     => $conf?->status ?? null,
                 'confirmation_id'        => $conf?->id ?? null,
+                'attendance_present'     => $attendance ? (int) $attendance->present_count : 0,
+                'attendance_total'       => $totalTrainingDays,
             ];
 
             if ($decision && $decision->result_category_id === $mahirId) {
@@ -204,7 +221,7 @@ class FinalConfirmationController extends Controller
         };
 
         return JsonResponse::success([
-            'season_id' => $seasonId,
+            'season_id' => null,
             'sections'  => [
                 'mahir'   => $numbered($mahir),
                 'mubtadi' => $numbered($mubtadi),

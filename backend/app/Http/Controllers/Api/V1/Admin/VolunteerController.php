@@ -403,4 +403,84 @@ class VolunteerController extends Controller
         }
     }
 
+    /**
+     * Read-only view of all final attendance + confirmation data.
+     * Optionally filter by season_id. Returns grouped data with user info,
+     * criteria, confirmation status, and attendance status.
+     */
+    public function finalAttendanceView(Request $request)
+    {
+        $admin = Auth::guard('admin-api')->user();
+        if (!$admin) {
+            return JsonResponse::error('Unauthorized', 401);
+        }
+
+        $seasonId = $request->query('season_id');
+
+        // Fetch all seasons for the dropdown
+        $allSeasons = Season::orderByDesc('id')->get(['id', 'year', 'name']);
+
+        // Base query: join final attendance with user competition forms, criteria, seasons
+        // Only return rows that have a criteria_id (old rows without it are legacy data)
+        $query = UserFinalAttendance::query()
+            ->whereNotNull('users_final_attendances.criteria_id')
+            ->select([
+                'users_final_attendances.user_id',
+                'users_final_attendances.season_id',
+                'users_final_attendances.criteria_id',
+                'users_final_attendances.attendance_status',
+                'users_final_attendances.created_at',
+                'user_competition_forms.name_en',
+                'user_competition_forms.name_bn',
+                'user_competition_forms.reg_no',
+                'user_competition_forms.phone',
+                'criteria.name_en as criteria_name',
+                'seasons.year as season_year',
+            ])
+            ->join('user_competition_forms', function ($join) {
+                $join->on('users_final_attendances.user_id', '=', 'user_competition_forms.user_id')
+                     ->on('users_final_attendances.season_id', '=', 'user_competition_forms.season_id');
+            })
+            ->leftJoin('criteria', 'users_final_attendances.criteria_id', '=', 'criteria.id')
+            ->leftJoin('seasons', 'users_final_attendances.season_id', '=', 'seasons.id');
+
+        // Filter by season if provided
+        if ($seasonId) {
+            $query->where('users_final_attendances.season_id', $seasonId);
+        }
+
+        $rows = $query->orderBy('users_final_attendances.criteria_id')
+            ->orderBy('users_final_attendances.season_id')
+            ->orderBy('user_competition_forms.name_en')
+            ->get();
+
+        // For each row, fetch confirmation status (left-join equivalent)
+        $result = $rows->map(function ($row) {
+            $confirmation = FinalConfirmation::where('user_id', $row->user_id)
+                ->where('season_id', $row->season_id)
+                ->first();
+
+            return [
+                'user_id' => $row->user_id,
+                'name_en' => $row->name_en,
+                'name_bn' => $row->name_bn,
+                'reg_no' => $row->reg_no,
+                'phone' => $row->phone,
+                'season_id' => $row->season_id,
+                'season_year' => $row->season_year,
+                'criteria_id' => $row->criteria_id,
+                'criteria_name' => $row->criteria_name,
+                'attendance_status' => $row->attendance_status,
+                'confirmation_status' => $confirmation ? $confirmation->status : null,
+                'has_consideration' => $confirmation ? $confirmation->has_consideration : null,
+                'recorded_at' => $row->created_at?->toISOString(),
+            ];
+        });
+
+        return JsonResponse::success(data: [
+            'records' => $result,
+            'seasons' => $allSeasons,
+        ]);
+    }
+
 }

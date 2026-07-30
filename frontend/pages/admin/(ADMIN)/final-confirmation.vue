@@ -74,14 +74,15 @@
                 <th class="p-2 border w-24">Serial</th>
                 <th class="p-2 border w-32">Reg No</th>
                 <th class="p-2 border">Name</th>
-                <th class="p-2 border w-32">Criteria</th>
+                <th class="p-2 border w-32">Season</th>
+                <th class="p-2 border w-36">Attendance</th>
                 <th class="p-2 border w-48">Confirmation</th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="!filtered.mahir.length">
                 <td
-                  colspan="6"
+                  colspan="7"
                   class="p-3 border text-center text-gray-400 text-sm"
                 >
                   No Mahir students.
@@ -99,7 +100,20 @@
                 <td class="p-2 border whitespace-nowrap">{{ row.reg_no }}</td>
                 <td class="p-2 border text-left">{{ row.name_en }}</td>
                 <td class="p-2 border whitespace-nowrap">
-                  {{ row.criteria_id || "—" }}
+                  {{ row.season_id || "—" }}
+                </td>
+                <td class="p-2 border whitespace-nowrap text-sm">
+                  <span
+                    :class="[
+                      row.attendance_total > 0 && row.attendance_present >= row.attendance_total
+                        ? 'text-emerald-600 font-semibold'
+                        : row.attendance_present > 0
+                          ? 'text-amber-600'
+                          : 'text-red-600',
+                    ]"
+                  >
+                    {{ row.attendance_present }}/{{ row.attendance_total }}
+                  </span>
                 </td>
                 <td class="p-2 border">
                   <div class="flex items-center justify-center gap-2">
@@ -163,14 +177,15 @@
                 <th class="p-2 border w-24">Serial</th>
                 <th class="p-2 border w-32">Reg No</th>
                 <th class="p-2 border">Name</th>
-                <th class="p-2 border w-32">Criteria</th>
+                <th class="p-2 border w-32">Season</th>
+                <th class="p-2 border w-36">Attendance</th>
                 <th class="p-2 border w-48">Confirmation</th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="!filtered.mubtadi.length">
                 <td
-                  colspan="6"
+                  colspan="7"
                   class="p-3 border text-center text-gray-400 text-sm"
                 >
                   No Mubtadi students.
@@ -188,7 +203,20 @@
                 <td class="p-2 border whitespace-nowrap">{{ row.reg_no }}</td>
                 <td class="p-2 border text-left">{{ row.name_en }}</td>
                 <td class="p-2 border whitespace-nowrap">
-                  {{ row.criteria_id || "—" }}
+                  {{ row.season_id || "—" }}
+                </td>
+                <td class="p-2 border whitespace-nowrap text-sm">
+                  <span
+                    :class="[
+                      row.attendance_total > 0 && row.attendance_present >= row.attendance_total
+                        ? 'text-emerald-600 font-semibold'
+                        : row.attendance_present > 0
+                          ? 'text-amber-600'
+                          : 'text-red-600',
+                    ]"
+                  >
+                    {{ row.attendance_present }}/{{ row.attendance_total }}
+                  </span>
                 </td>
                 <td class="p-2 border">
                   <div class="flex items-center justify-center gap-2">

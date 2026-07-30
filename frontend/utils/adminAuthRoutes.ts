@@ -28,6 +28,7 @@ export const adminAuthRoutes = {
     "/admin/final-contest-id-card",
     "/admin/final-confirmation",
     "/admin/final-attendance",
+    "/admin/final-attendance-view",
     "/admin/view-registrations",
     "/admin/create-admin",
     "/x",

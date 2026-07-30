@@ -92,18 +92,24 @@ const adminLinks: NavLinkItem[] = [
     ],
   },
 
-  // Final group — visible to admin and superadmin
+  // Final group — visible to admin, superadmin, volunteer
   {
     title: "Final",
     icon: "Circular",
     link: null,
-    roles: ["SUPER_ADMIN", "ADMIN"],
+    roles: ["SUPER_ADMIN", "ADMIN", "VOLUNTEER"],
     children: [
       {
         title: "Final Attendance",
         icon: "Circular",
         link: "/admin/final-attendance",
         roles: ["SUPER_ADMIN", "ADMIN"],
+      },
+      {
+        title: "Final Attendance View",
+        icon: "Circular",
+        link: "/admin/final-attendance-view",
+        roles: ["SUPER_ADMIN", "ADMIN", "VOLUNTEER"],
       },
     ],
   },
