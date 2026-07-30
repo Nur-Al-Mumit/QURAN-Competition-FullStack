@@ -35,35 +35,6 @@
         No students found.
       </div>
 
-      <!-- Cover Page -->
-      <div v-if="!loading && students.length" class="w-full bg-white shadow-lg print:shadow-none relative overflow-hidden mb-8 print:mb-0 print:break-after-page">
-        <div class="relative min-h-[297mm] flex flex-col items-center justify-center">
-          <div class="absolute inset-8 border-4 border-emerald-600 rounded-lg opacity-20"></div>
-          <div class="absolute inset-12 border-1 border-emerald-400 rounded-lg opacity-30"></div>
-          <div class="text-center z-10 px-8">
-            <h1 class="text-5xl font-bold text-emerald-800 mb-8 leading-tight">বিশুদ্ধ কুরআন পাঠ প্রতিযোগিতা</h1>
-            <div class="text-3xl font-semibold text-emerald-700 mb-12">১৪৪৮ হিজরি</div>
-            <div class="flex items-center justify-center mb-12">
-              <div class="w-16 h-1 bg-emerald-600"></div>
-              <div class="w-4 h-4 bg-emerald-600 rounded-full mx-4"></div>
-              <div class="w-16 h-1 bg-emerald-600"></div>
-            </div>
-            <h2 class="text-4xl font-bold text-emerald-800 mb-16">FINAL ROUND MARK SHEET</h2>
-          </div>
-          <div class="text-center mt-16">
-            <div class="w-24 h-1 bg-emerald-600 mx-auto mb-4"></div>
-            <p class="text-gray-600 text-lg font-medium">Final Round Examination</p>
-          </div>
-          <div class="absolute bottom-12 left-1/2 transform -translate-x-1/2">
-            <div class="flex space-x-2">
-              <div class="w-3 h-3 bg-emerald-600 rounded-full"></div>
-              <div class="w-3 h-3 bg-emerald-400 rounded-full"></div>
-              <div class="w-3 h-3 bg-emerald-600 rounded-full"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Mark Sheets -->
       <div v-if="!loading && students.length">
         <div
@@ -194,7 +165,7 @@
       padding: 0;
     }
     .exam-sheet, .exam-sheet * {
-      visibility: visible;
+      visibility: visible !important;
     }
     .print\:break-after-page {
     page-break-after: always;

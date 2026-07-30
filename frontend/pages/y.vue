@@ -81,7 +81,7 @@
               <p class="text-gray-600 text-lg font-medium">
                 Examination Report
               </p>
-              <div class="text-lg text-emerald-700">9 August, 2025</div>
+              <div class="text-lg text-emerald-700">30 July, 2026</div>
             </div>
             <!-- Bottom Decoration -->
             <div class="absolute bottom-12 left-1/2 transform -translate-x-1/2">
@@ -485,10 +485,9 @@
   });
 
   const examiners = ref([
-    { id: 1, name: "Ustadh Mufti Muaddab" },
-    { id: 2, name: "Sheikh Majedul Islam Madani" },
-    { id: 3, name: "Imaam Md. Sadiqur Rahman" },
-    { id: 4, name: "Imaam Ahmed Abdul Basit" },
+    { id: 1, name: "Ustadh Muhammad Naseel Shahrukh" },
+    { id: 2, name: "Ustadh Emon Ahmed" },
+    { id: 3, name: "Ustadh Muddassir Ahmod" },
   ]);
 
   const students = ref([
@@ -599,7 +598,7 @@
     .exam-sheet,
     .exam-sheet *,
     .mark-sheet * {
-      visibility: visible;
+      visibility: visible !important;
     }
 
     .print\:break-after-page {
