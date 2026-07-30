@@ -95,6 +95,12 @@ const adminLinks: NavLinkItem[] = [
         link: "/admin/final-round-id-card",
         roles: ["SUPER_ADMIN", "ADMIN"],
       },
+      {
+        title: "Final Round Mark Sheet",
+        icon: "Circular",
+        link: "/admin/final-round-mark-sheet",
+        roles: ["SUPER_ADMIN", "ADMIN"],
+      },
     ],
   },
 
