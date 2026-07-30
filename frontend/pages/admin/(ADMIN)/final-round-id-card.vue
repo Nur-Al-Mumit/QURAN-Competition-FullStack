@@ -103,9 +103,6 @@
               <p class="back-org-name">এসো কুরআন শিখি</p>
             </div>
 
-            <!-- Decorative divider -->
-            <div class="back-divider"></div>
-
             <!-- Centered QR + contact -->
             <div class="back-main">
               <div class="back-qr-section">
@@ -118,7 +115,8 @@
               </div>
               <div class="back-contact">
                 <span class="back-contact-item">eshoquranshikhi.org</span>
-                <span class="back-contact-item">+880 1XXX-XXXXXX</span>
+                <span class="back-contact-item pt-8">Contact Info</span>
+                <span class="back-contact-item">01 805 777 332</span>
               </div>
             </div>
 
