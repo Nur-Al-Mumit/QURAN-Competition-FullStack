@@ -15,6 +15,7 @@ class FinalConfirmation extends Model
         'season_id',
         'criteria_id',
         'status',
+        'has_consideration',
         'admin_id',
     ];
 

@@ -15,6 +15,7 @@ class UserFinalAttendance extends Model
     protected $fillable = [
         'user_id',
         'season_id',
+        'criteria_id',
         'attendance_status',
         'updated_by',
     ];
@@ -32,5 +33,10 @@ class UserFinalAttendance extends Model
     public function updatedBy()
     {
         return $this->belongsTo(Admin::class, 'updated_by');
+    }
+
+    public function criteria()
+    {
+        return $this->belongsTo(Criteria::class, 'criteria_id');
     }
 }

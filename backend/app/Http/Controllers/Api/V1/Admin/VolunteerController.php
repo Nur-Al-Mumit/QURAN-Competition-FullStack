@@ -5,10 +5,14 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Lib\JsonResponse;
 use App\Models\AttendanceAllocation;
+use App\Models\FinalConfirmation;
 use App\Models\Season;
+use App\Models\SeasonTrainingDate;
 use App\Models\User;
 use App\Models\UserAttendance;
 use App\Models\UserCompetitionForm;
+use App\Models\UserFinalAttendance;
+use App\Models\UserPreliminaryResult;
 use App\Models\UserTrainingAttendance;
 use App\Services\Registration\ReturningUserService;
 use Illuminate\Http\Request;
@@ -232,6 +236,168 @@ class VolunteerController extends Controller
             );
 
             return JsonResponse::success($attendance);
+        } catch (\Throwable $th) {
+            return JsonResponse::error($th->getMessage());
+        }
+    }
+
+    /**
+     * Look up a participant by registration code for the final-attendance
+     * flow. Verifies the user exists in user_preliminary_results. For
+     * criteria 1, looks across all seasons; for criteria 2, uses the active
+     * season. Returns participant details, existing final attendance,
+     * criteria-specific data (confirmation for criteria 1, attendance summary
+     * for criteria 2).
+     */
+    public function verifyFinalRegistration(Request $request)
+    {
+        $validate = $request->validate([
+            'reg_no' => 'required',
+        ]);
+
+        $admin = Auth::guard('admin-api')->user();
+        if (!$admin) {
+            return JsonResponse::error('Unauthorized', 401);
+        }
+
+        $form = UserCompetitionForm::where('reg_no', $validate['reg_no'])
+            ->where('is_active', 1)
+            ->first();
+
+        if (!$form) {
+            return JsonResponse::error('Registration not found', 404);
+        }
+
+        $form->load('user');
+
+        // Resolve the current active season
+        $seasonId = Season::where('is_active', 1)->latest()->value('id')
+            ?? $form->user?->season_id;
+
+        // Verify user exists in preliminary results.
+        // Criteria 1 users may span across multiple seasons, so search all seasons.
+        // Criteria 2 users are season-specific.
+        $preliminary = UserPreliminaryResult::where('user_id', $form->user_id)
+            ->orderByDesc('season_id')
+            ->first();
+
+        if (!$preliminary) {
+            return JsonResponse::error('User not found in preliminary results', 404);
+        }
+
+        $criteriaId = $preliminary->criteria_id;
+        $preliminarySeasonId = $preliminary->season_id;
+
+        // For criteria 2, verify the preliminary result is for the active season
+        if ($criteriaId == 2 && $preliminarySeasonId != $seasonId) {
+            return JsonResponse::error('User not found in preliminary results for this season', 404);
+        }
+
+        // Use the preliminary result's season for criteria 1 (may differ from active)
+        $effectiveSeasonId = ($criteriaId == 1) ? $preliminarySeasonId : $seasonId;
+
+        // Look up existing final attendance for this user + effective season + criteria
+        $currentAttendance = UserFinalAttendance::where('user_id', $form->user_id)
+            ->where('season_id', $effectiveSeasonId)
+            ->where('criteria_id', $criteriaId)
+            ->latest()
+            ->first();
+
+        $response = [
+            'participant' => $form,
+            'current_attendance' => $currentAttendance,
+            'criteria_id' => $criteriaId,
+            'season_id' => $effectiveSeasonId,
+        ];
+
+        // TEMPORARY for this season: criteria 1 = show confirmation data
+        if ($criteriaId == 1) {
+            $confirmation = FinalConfirmation::where('user_id', $form->user_id)
+                ->where('season_id', $effectiveSeasonId)
+                ->first();
+            $response['confirmation'] = $confirmation;
+        }
+
+        // Criteria 2 = show training attendance summary
+        if ($criteriaId == 2) {
+            $totalTrainingDays = SeasonTrainingDate::where('season_id', $effectiveSeasonId)
+                ->where('is_off_day', false)
+                ->count();
+
+            $totalPresentDays = UserTrainingAttendance::where('user_id', $form->user_id)
+                ->where('season_id', $effectiveSeasonId)
+                ->where('attendance_status', UserTrainingAttendance::STATUS_PRESENT)
+                ->count();
+
+            $totalLateDays = UserTrainingAttendance::where('user_id', $form->user_id)
+                ->where('season_id', $effectiveSeasonId)
+                ->where('attendance_status', UserTrainingAttendance::STATUS_LATE)
+                ->count();
+
+            $response['attendance_summary'] = [
+                'total_training_days' => $totalTrainingDays,
+                'total_present_days'  => $totalPresentDays,
+                'total_late_days'     => $totalLateDays,
+            ];
+        }
+
+        return JsonResponse::success($response);
+    }
+
+    /**
+     * Record final attendance for a participant. Uses updateOrCreate on
+     * (user_id, season_id, criteria_id) so a re-scan updates the existing
+     * row instead of throwing on the unique constraint.
+     */
+    public function submitFinalAttendance(Request $request)
+    {
+        $validate = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'attendance_status' => 'required|in:1,2,3',
+            'season_id' => 'nullable|exists:seasons,id',
+        ]);
+
+        $admin = Auth::guard('admin-api')->user();
+        if (!$admin) {
+            return JsonResponse::error('Unauthorized', 401);
+        }
+
+        $user = User::find($validate['user_id']);
+        if (!$user) {
+            return JsonResponse::error('User not found', 404);
+        }
+
+        // Use season_id from request (criteria 1 may differ from active), fall back to active
+        $seasonId = $validate['season_id']
+            ?? Season::where('is_active', 1)->latest()->value('id')
+            ?? $user->season_id;
+
+        // Always resolve criteria_id from user_preliminary_results — not from the client
+        $criteriaId = UserPreliminaryResult::where('user_id', $user->id)
+            ->where('season_id', $seasonId)
+            ->value('criteria_id');
+
+        // For criteria 1, search across all seasons if not found for this specific season
+        if (!$criteriaId) {
+            $criteriaId = UserPreliminaryResult::where('user_id', $user->id)
+                ->orderByDesc('season_id')
+                ->value('criteria_id');
+        }
+
+        try {
+            $attendance = UserFinalAttendance::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'season_id' => $seasonId,
+                    'criteria_id' => $criteriaId,
+                ],
+                [
+                    'attendance_status' => (int) $validate['attendance_status'],
+                    'updated_by' => $admin->id,
+                ]
+            );
+
+            return JsonResponse::success(data: $attendance);
         } catch (\Throwable $th) {
             return JsonResponse::error($th->getMessage());
         }

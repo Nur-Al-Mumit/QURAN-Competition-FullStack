@@ -223,6 +223,7 @@ class FinalConfirmationController extends Controller
             'season_id'              => 'required|integer|exists:seasons,id',
             'criteria_id'            => 'nullable|integer|exists:criteria,id',
             'status'                 => 'required|integer|in:1,2',
+            'has_consideration'      => 'nullable|string',
         ]);
 
         $adminId = auth('admin-api')->id();
@@ -246,14 +247,16 @@ class FinalConfirmationController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'status'      => 'required|integer|in:1,2',
-            'criteria_id' => 'nullable|integer|exists:criteria,id',
+            'status'           => 'required|integer|in:1,2',
+            'criteria_id'      => 'nullable|integer|exists:criteria,id',
+            'has_consideration' => 'nullable|string',
         ]);
 
         $record = FinalConfirmation::findOrFail($id);
-        $record->status     = $request->input('status');
-        $record->criteria_id = $request->input('criteria_id', $record->criteria_id);
-        $record->admin_id   = auth('admin-api')->id();
+        $record->status           = $request->input('status');
+        $record->criteria_id      = $request->input('criteria_id', $record->criteria_id);
+        $record->has_consideration = $request->input('has_consideration', $record->has_consideration);
+        $record->admin_id         = auth('admin-api')->id();
         $record->save();
 
         return JsonResponse::success([
