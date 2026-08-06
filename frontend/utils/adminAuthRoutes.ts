@@ -33,6 +33,7 @@ export const adminAuthRoutes = {
     "/admin/final-attendance-view",
     "/admin/view-registrations",
     "/admin/create-admin",
+    "/admin/link-stats",
     "/x",
   ],
 };

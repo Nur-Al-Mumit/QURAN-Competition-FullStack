@@ -161,6 +161,12 @@ const adminLinks: NavLinkItem[] = [
     link: "/admin/create-admin",
     roles: ["SUPER_ADMIN"],
   },
+  {
+    title: "Link Stats",
+    icon: "Dashboard",
+    link: "/admin/link-stats",
+    roles: ["SUPER_ADMIN", "ADMIN"],
+  },
 
   // Bottom links
   {
