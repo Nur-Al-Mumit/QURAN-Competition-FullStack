@@ -27,6 +27,7 @@ export const adminAuthRoutes = {
     "/admin/training-id-card",
     "/admin/final-contest-id-card",
     "/admin/final-round-id-card",
+    "/admin/teacher-id-card",
     "/admin/final-round-mark-sheet",
     "/admin/final-confirmation",
     "/admin/final-attendance",

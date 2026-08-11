@@ -96,6 +96,12 @@ const adminLinks: NavLinkItem[] = [
         roles: ["SUPER_ADMIN", "ADMIN"],
       },
       {
+        title: "Teacher ID Cards",
+        icon: "Circular",
+        link: "/admin/teacher-id-card",
+        roles: ["SUPER_ADMIN", "ADMIN"],
+      },
+      {
         title: "Final Round Mark Sheet",
         icon: "Circular",
         link: "/admin/final-round-mark-sheet",
