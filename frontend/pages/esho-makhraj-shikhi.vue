@@ -66,6 +66,27 @@
           একটি করে ক্লাস হবে ইন শা আল্লাহ।
         </p>
 
+        <!-- Course details -->
+        <section
+          class="rounded-2xl bg-white p-4 ring-1 ring-gray-100 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.12)]"
+        >
+          <h2 class="text-center text-[14px] font-bold text-gray-900">কোর্সটি সম্পর্কে বিস্তারিত</h2>
+          <ul class="mt-3 space-y-2.5">
+            <li
+              v-for="(point, i) in coursePoints"
+              :key="i"
+              class="flex items-start gap-2.5 text-[13px] leading-snug text-gray-700"
+            >
+              <span
+                class="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-bold text-emerald-700"
+              >
+                {{ i + 1 }}
+              </span>
+              <span>{{ point }}</span>
+            </li>
+          </ul>
+        </section>
+
         <!-- Info cards -->
         <div class="space-y-2.5">
           <div
@@ -95,16 +116,11 @@
               :key="trainer.name"
               class="flex items-start gap-3 rounded-xl bg-gray-50/80 p-3"
             >
-              <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-600/10 text-emerald-700">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-                  />
-                </svg>
-              </span>
+              <img
+                :src="trainer.photo"
+                :alt="trainer.name"
+                class="h-14 w-14 flex-shrink-0 rounded-full object-cover ring-2 ring-emerald-600/20"
+              />
               <div class="min-w-0">
                 <p class="text-[13.5px] font-bold text-gray-900 leading-tight">{{ trainer.name }}</p>
                 <p class="mt-0.5 text-[12px] leading-snug text-gray-500">{{ trainer.title }}</p>
@@ -219,14 +235,30 @@
     },
   ];
 
+  const coursePoints = [
+    "এটি একটি ধারাবাহিক কোর্স, এর একটি নির্দিষ্ট সিলেবাস রয়েছে এবং প্রতিটি ক্লাস সেই সিলেবাস অনুযায়ী পরিচালিত হবে ইন শা আল্লাহ।",
+    "প্রতিটি ক্লাস রেকর্ড করা হবে, ফলে কোনো ক্লাস মিস হলেও পরে তা দেখে নেওয়ার সুযোগ থাকবে।",
+    "এই কোর্সের জন্য একটি নির্দিষ্ট PDF থাকবে, যেখান থেকে পাঠদান করা হবে।",
+    "যারা নিয়মিত পর পর ৩টি ক্লাসে অংশগ্রহণ করবেন, তাদেরকে রেজিস্ট্রেশন করে EMSB-1 (Esho Makhraj Shikhi — Batch 1) ব্যাচে এনরোল করা হবে।",
+    "ব্যাচের শিক্ষার্থীদের আইডি কার্ড প্রদান করা হবে।",
+    "ব্যাচের শিক্ষার্থীদের নির্দিষ্ট পড়া (হরফ/মাখরাজ অনুশীলন) দেওয়া হবে এবং পরবর্তী ক্লাসে তাদের থেকে তা শুনে নেওয়া হবে।",
+    "শিক্ষার্থীদের একটি আলাদা গ্রুপে যুক্ত করা হবে, যেখানে তারা সরাসরি উস্তাযদের সাথে যোগাযোগ করে শিখতে পারবেন।",
+    "সাধারণভাবে প্রতিটি ক্লাস সবার জন্য উন্মুক্ত থাকবে, তবে সবার থেকে পড়া শুনে নেওয়া হবে না — শুধুমাত্র ব্যাচের শিক্ষার্থীদের থেকেই পড়া শুনে নেওয়া হবে।",
+  ];
+
+  import muddassirPhoto from "~/assets/imgs/trainers/muddassir.jpg";
+  import imonPhoto from "~/assets/imgs/trainers/imon.jpg";
+
   const trainers = [
-    {
-      name: "হাফেজ ইমন আহমদ",
-      title: "বিভাগীয় প্রধান, হিফজ শাখা, উম্মুল ক্বোরা মাদরাসা এন্ড মাসজিদ কমপ্লেক্স",
-    },
     {
       name: "হাফেজ মুদ্দাচ্ছির আহমদ মাশহুদ",
       title: "শিক্ষক, হিফজ বিভাগ, উম্মুল ক্বোরা মাদরাসা এন্ড মাসজিদ কমপ্লেক্স",
+      photo: muddassirPhoto,
+    },
+    {
+      name: "হাফেজ ইমন আহমদ",
+      title: "বিভাগীয় প্রধান, হিফজ শাখা, উম্মুল ক্বোরা মাদরাসা এন্ড মাসজিদ কমপ্লেক্স",
+      photo: imonPhoto,
     },
   ];
 
